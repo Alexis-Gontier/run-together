@@ -2,6 +2,7 @@ import "@/styles/globals.css";
 
 import Providers from "@/app/providers";
 import { Toaster } from "@/components/shadcn-ui/sonner"
+import { Analytics } from "@vercel/analytics/next"
 
 export default function RootLayout({
   children,
@@ -15,6 +16,7 @@ export default function RootLayout({
           {children}
         </Providers>
         <Toaster />
+        <Analytics />
       </body>
     </html>
   );
