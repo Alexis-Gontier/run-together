@@ -1,5 +1,5 @@
-import { env } from "@/utils/env"
-import { notFound } from "next/navigation"
+// import { env } from "@/utils/env"
+// import { notFound } from "next/navigation"
 import { prisma } from "@/lib/prisma"
 
 export default async function TestPage() {
