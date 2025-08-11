@@ -6,10 +6,13 @@ import { LogOut, Loader } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useTransition } from 'react'
 import { toast } from 'sonner'
+import { LogoutIcon, LogoutIconHandle } from '@/components/shadcn-ui/logout'
+import { useRef } from "react"
 
 export default function SignOutButton() {
     const router = useRouter()
     const [isPending, startTransition] = useTransition()
+    const iconRef = useRef<LogoutIconHandle>(null)
 
     function handleSignOut() {
         startTransition(async () => {
@@ -33,6 +36,8 @@ export default function SignOutButton() {
                 className="w-full p-0 cursor-pointer"
                 disabled={isPending}
                 formAction={handleSignOut}
+                onMouseEnter={() => iconRef.current?.startAnimation()}
+                onMouseLeave={() => iconRef.current?.stopAnimation()}
             >
                 {isPending ? (
                     <>
@@ -41,7 +46,9 @@ export default function SignOutButton() {
                     </>
                 ) : (
                     <>
-                        <LogOut />
+                        <LogoutIcon
+                            ref={iconRef}
+                        />
                         Déconnexion
                     </>
                 )}

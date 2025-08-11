@@ -15,7 +15,7 @@ import {
 } from "@/components/shadcn-ui/form"
 import { Input } from "@/components/shadcn-ui/input"
 
-import { useTransition } from "react"
+import { useRef, useTransition } from "react"
 
 import {
     KeyRound,
@@ -24,6 +24,10 @@ import {
 import { authClient } from "@/lib/auth-client"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
+import {
+    FingerprintIcon,
+    FingerprintIconHandle
+} from "@/components/shadcn-ui/fingerprint"
 
 const formSchema = z.object({
     username: z
@@ -39,6 +43,8 @@ export function SignInForm() {
     const router = useRouter()
 
     const [isPending, setIsPending] = useTransition()
+
+    const iconRef = useRef<FingerprintIconHandle>(null)
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -102,11 +108,16 @@ export function SignInForm() {
                     type="submit"
                     disabled={isPending}
                     className="w-full cursor-pointer"
+                    onMouseEnter={() => iconRef.current?.startAnimation()}
+                    onMouseLeave={() => iconRef.current?.stopAnimation()}
                 >
                     {isPending ? (
                         <Loader className="size-4 animate-spin" />
                     ) : (
-                        <KeyRound className="size-4" />
+                        <FingerprintIcon
+                            ref={iconRef}
+                            className="size-4"
+                        />
                     )}
                     Se connecter
                 </Button>
