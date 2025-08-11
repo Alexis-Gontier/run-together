@@ -1,4 +1,5 @@
 import "@/styles/globals.css";
+import { inter } from "@/styles/fonts";
 
 import Providers from "@/app/providers";
 import { Toaster } from "@/components/shadcn-ui/sonner"
@@ -11,7 +12,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr" suppressHydrationWarning>
-      <body>
+      <body className={inter.className}>
         <Providers>
           {children}
         </Providers>
