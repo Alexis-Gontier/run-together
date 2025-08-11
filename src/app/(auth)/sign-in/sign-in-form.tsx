@@ -21,6 +21,7 @@ import { useTransition } from "react"
 import { Loader, Send } from "lucide-react"
 import { authClient } from "@/lib/auth-client"
 import { toast } from "sonner"
+import { useRouter } from "next/navigation"
 
 const formSchema = z.object({
     username: z
@@ -32,6 +33,9 @@ const formSchema = z.object({
 })
 
 export function SignInForm() {
+
+    const router = useRouter()
+
     const [isPending, setIsPending] = useTransition()
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -53,6 +57,7 @@ export function SignInForm() {
                     onRequest: () => {},
                     onSuccess: () => {
                         toast.success("Connexion réussie !");
+                        router.push("/dashboard");
                     },
                     onError: () => {
                         toast.error("Erreur de connexion.");
