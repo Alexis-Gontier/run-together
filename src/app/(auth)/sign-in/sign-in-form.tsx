@@ -8,7 +8,6 @@ import { Button } from "@/components/shadcn-ui/button"
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -18,7 +17,10 @@ import { Input } from "@/components/shadcn-ui/input"
 
 import { useTransition } from "react"
 
-import { Loader, Send } from "lucide-react"
+import {
+    KeyRound,
+    Loader
+} from "lucide-react"
 import { authClient } from "@/lib/auth-client"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
@@ -75,9 +77,9 @@ export function SignInForm() {
                     name="username"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Nom d'utilisateur</FormLabel>
+                            <FormLabel>Pseudo</FormLabel>
                             <FormControl>
-                                <Input placeholder="Nom d'utilisateur" {...field} />
+                                <Input placeholder="Votre pseudo" {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -90,7 +92,7 @@ export function SignInForm() {
                         <FormItem>
                             <FormLabel>Password</FormLabel>
                             <FormControl>
-                                <Input type="password" placeholder="••••••" {...field} />
+                                <Input type="password" placeholder="••••••••" {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -104,7 +106,7 @@ export function SignInForm() {
                     {isPending ? (
                         <Loader className="size-4 animate-spin" />
                     ) : (
-                        <Send className="size-4" />
+                        <KeyRound className="size-4" />
                     )}
                     Se connecter
                 </Button>
