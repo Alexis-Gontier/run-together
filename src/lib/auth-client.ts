@@ -1,5 +1,5 @@
 import { createAuthClient } from "better-auth/react"
-import { APP_URL } from "@/utils/constants"
+// import { APP_URL } from "@/utils/constants"
 import {
     adminClient,
     usernameClient

@@ -1,7 +1,9 @@
-import React from 'react'
+import SignOutButton from '@/components/auth/sign-out-button'
 
 export default function DashboardPage() {
   return (
-    <div>Dashboard</div>
+    <div>
+      <SignOutButton />
+    </div>
   )
 }

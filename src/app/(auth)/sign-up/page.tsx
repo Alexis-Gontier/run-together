@@ -1,8 +1,6 @@
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardTitle
 } from "@/components/shadcn-ui/card"
 import { SignUpForm } from "./sign-up-form"
 import { env } from "@/utils/env"

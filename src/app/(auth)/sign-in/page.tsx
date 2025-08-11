@@ -43,7 +43,7 @@ export default function SignUpPage() {
         </CardContent>
       </Card>
       <div className="text-center text-xs px-6 text-muted-foreground">
-        En continuant, vous acceptez <Link href="" className="underline">nos Conditions d'utilisation</Link> et notre <Link href="" className="underline">Politique de confidentialité</Link>
+        En continuant, vous acceptez <Link href="" className="underline">nos Conditions d&apos;utilisation</Link> et notre <Link href="" className="underline">Politique de confidentialité</Link>
       </div>
     </div>
   )

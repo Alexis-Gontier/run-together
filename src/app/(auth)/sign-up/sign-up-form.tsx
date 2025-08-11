@@ -8,7 +8,6 @@ import { Button } from "@/components/shadcn-ui/button"
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -80,7 +79,7 @@ export function SignUpForm() {
                     name="username"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Nom d'utilisateur</FormLabel>
+                            <FormLabel>Nom d&apos;utilisateur</FormLabel>
                             <FormControl>
                                 <Input placeholder="Nom d'utilisateur" {...field} />
                             </FormControl>
@@ -137,7 +136,7 @@ export function SignUpForm() {
                     ) : (
                         <Send className="size-4" />
                     )}
-                    S'inscrire
+                    S&apos;inscrire
                 </Button>
             </form>
         </Form>
