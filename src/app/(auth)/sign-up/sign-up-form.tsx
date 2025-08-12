@@ -21,26 +21,13 @@ import { Loader, Send } from "lucide-react"
 import { authClient } from "@/lib/auth-client"
 import { toast } from "sonner"
 
-const formSchema = z.object({
-    username: z
-        .string()
-        .min(2),
-    name: z
-        .string()
-        .min(2),
-    email: z
-        .string()
-        .email(),
-    password: z
-        .string()
-        .min(2)
-})
+import { signUpSchema, type SignUpFormData } from "@/schemas/auth.schema"
 
 export function SignUpForm() {
     const [isPending, setIsPending] = useTransition()
 
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const form = useForm<SignUpFormData>({
+        resolver: zodResolver(signUpSchema),
             defaultValues: {
                 username: "",
                 name: "",
@@ -49,7 +36,7 @@ export function SignUpForm() {
             },
     })
 
-    async function onSubmit(values: z.infer<typeof formSchema>) {
+    async function onSubmit(values: SignUpFormData) {
         setIsPending(async () => {
             await authClient.signUp.email(
                 {

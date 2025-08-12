@@ -29,6 +29,8 @@ import {
     FingerprintIconHandle
 } from "@/components/shadcn-ui/fingerprint"
 
+import { signInSchema, type SignInFormData } from "@/schemas/auth.schema"
+
 const formSchema = z.object({
     username: z
         .string()
@@ -46,15 +48,15 @@ export function SignInForm() {
 
     const iconRef = useRef<FingerprintIconHandle>(null)
 
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const form = useForm<SignInFormData>({
+        resolver: zodResolver(signInSchema),
             defaultValues: {
                 username: "",
                 password: "",
             },
     })
 
-    async function onSubmit(values: z.infer<typeof formSchema>) {
+    async function onSubmit(values: SignInFormData) {
         setIsPending(async () => {
             await authClient.signIn.username(
                 {
