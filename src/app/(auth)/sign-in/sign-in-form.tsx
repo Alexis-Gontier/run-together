@@ -2,7 +2,6 @@
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { z } from "zod"
 
 import { Button } from "@/components/shadcn-ui/button"
 import {
@@ -18,7 +17,6 @@ import { Input } from "@/components/shadcn-ui/input"
 import { useRef, useTransition } from "react"
 
 import {
-    KeyRound,
     Loader
 } from "lucide-react"
 import { authClient } from "@/lib/auth-client"
@@ -30,15 +28,6 @@ import {
 } from "@/components/shadcn-ui/fingerprint"
 
 import { signInSchema, type SignInFormData } from "@/schemas/auth.schema"
-
-const formSchema = z.object({
-    username: z
-        .string()
-        .min(2),
-    password: z
-        .string()
-        .min(2)
-})
 
 export function SignInForm() {
 
@@ -69,8 +58,8 @@ export function SignInForm() {
                         toast.success("Connexion réussie !");
                         router.push("/dashboard");
                     },
-                    onError: () => {
-                        toast.error("Erreur de connexion.");
+                    onError: (ctx) => {
+                        toast.error(ctx.error.message);
                     },
                 }
             )

@@ -2,7 +2,6 @@
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { z } from "zod"
 
 import { Button } from "@/components/shadcn-ui/button"
 import {
@@ -22,8 +21,10 @@ import { authClient } from "@/lib/auth-client"
 import { toast } from "sonner"
 
 import { signUpSchema, type SignUpFormData } from "@/schemas/auth.schema"
+import { useRouter } from "next/navigation"
 
 export function SignUpForm() {
+    const router = useRouter()
     const [isPending, setIsPending] = useTransition()
 
     const form = useForm<SignUpFormData>({
@@ -49,9 +50,10 @@ export function SignUpForm() {
                     onRequest: () => {},
                     onSuccess: () => {
                         toast.success("Inscription réussie !");
+                        router.push("/sign-in");
                     },
-                    onError: () => {
-                        toast.error("Erreur d'inscription.");
+                    onError: (ctx) => {
+                        toast.error(ctx.error.message);
                     },
                 }
             )

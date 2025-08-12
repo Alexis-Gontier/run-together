@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/shadcn-ui/button'
 import { authClient } from '@/lib/auth-client'
-import { LogOut, Loader } from 'lucide-react'
+import { Loader } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useTransition } from 'react'
 import { toast } from 'sonner'
@@ -21,6 +21,9 @@ export default function SignOutButton() {
                     onSuccess: () => {
                         toast.success("Déconnexion réussie");
                         router.push("/sign-in");
+                    },
+                    onError: (ctx) => {
+                        toast.error(ctx.error.message);
                     },
                 },
             })
