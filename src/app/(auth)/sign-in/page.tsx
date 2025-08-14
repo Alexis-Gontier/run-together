@@ -6,25 +6,15 @@ import {
   CardTitle
 } from "@/components/shadcn-ui/card"
 import { SignInForm } from "./sign-in-form"
-import Image from "next/image"
-import { APP_LOGO } from "@/utils/constants"
 import { Separator } from "@/components/shadcn-ui/separator"
 import { Button } from "@/components/shadcn-ui/button"
 import Link from "next/link"
+import AppBranding from "@/components/ui/app-branding"
 
 export default function SignUpPage() {
   return (
     <div className="space-y-4 w-full">
-      <h1 className="flex items-center justify-center gap-2">
-        <Image
-          priority
-          src={APP_LOGO}
-          alt="logo"
-          width={36}
-          height={36}
-        />
-        <span className="font-medium">RunTogether.</span>
-      </h1>
+      <AppBranding />
       <Card className="w-full">
         <CardHeader>
           <CardTitle className="">Connexion</CardTitle>
