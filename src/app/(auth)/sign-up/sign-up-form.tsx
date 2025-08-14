@@ -25,7 +25,7 @@ import { useRouter } from "next/navigation"
 
 export function SignUpForm() {
     const router = useRouter()
-    const [isPending, setIsPending] = useTransition()
+    const [isPending, startTransition] = useTransition()
 
     const form = useForm<SignUpFormData>({
         resolver: zodResolver(signUpSchema),
@@ -38,7 +38,7 @@ export function SignUpForm() {
     })
 
     async function onSubmit(values: SignUpFormData) {
-        setIsPending(async () => {
+        startTransition(async () => {
             await authClient.signUp.email(
                 {
                     username: values.username,

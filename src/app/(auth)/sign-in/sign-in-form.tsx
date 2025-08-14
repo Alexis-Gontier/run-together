@@ -33,7 +33,7 @@ export function SignInForm() {
 
     const router = useRouter()
 
-    const [isPending, setIsPending] = useTransition()
+    const [isPending, startTransition] = useTransition()
 
     const iconRef = useRef<FingerprintIconHandle>(null)
 
@@ -46,7 +46,7 @@ export function SignInForm() {
     })
 
     async function onSubmit(values: SignInFormData) {
-        setIsPending(async () => {
+        startTransition(async () => {
             await authClient.signIn.username(
                 {
                     username: values.username,
