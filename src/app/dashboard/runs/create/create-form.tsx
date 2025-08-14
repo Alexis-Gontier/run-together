@@ -24,17 +24,21 @@ import {
 import { createRun } from "@/actions/run/create-run.action"
 import { Textarea } from "@/components/shadcn-ui/textarea"
 import Link from "next/link"
+import { CirclePlus, Loader } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { secondsToTimeString, timeStringToSeconds } from "@/utils/date"
 
 export function CreateRunForm() {
 
+    const router = useRouter()
     const [isPending, startTransition] = useTransition()
 
     const form = useForm<CreateRunData>({
         resolver: zodResolver(createRunSchema),
             defaultValues: {
                 date: new Date(),
-                distance: null,
-                duration: null,
+                distance: undefined,
+                duration: 0,
                 elevation: null,
                 location: "",
                 notes: "",
@@ -46,6 +50,7 @@ export function CreateRunForm() {
             try {
                 await createRun(values);
                 toast.success("Course créée avec succès!");
+                router.push("/dashboard/runs");
             } catch (error) {
                 toast.error("Erreur lors de la création de la course");
                 console.error(error);
@@ -112,14 +117,16 @@ export function CreateRunForm() {
                     name="duration"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Durée (secondes)</FormLabel>
+                            <FormLabel>Durée</FormLabel>
                             <FormControl>
                                 <Input
-                                    type="number"
-                                    placeholder="Entrez la durée"
+                                    type="time"
+                                    step="1"
                                     {...field}
-                                    value={field.value === null || field.value === undefined ? "" : field.value}
-                                    onChange={(e) => field.onChange(e.target.value === "" ? null : parseInt(e.target.value))}
+                                    value={secondsToTimeString(field.value || 0)}
+                                    onChange={(e) => {
+                                        field.onChange(e.target.value === "" ? 0 : timeStringToSeconds(e.target.value));
+                                    }}
                                 />
                             </FormControl>
                             <FormMessage />
@@ -196,7 +203,8 @@ export function CreateRunForm() {
                         disabled={isPending}
                         className="w-full flex-1 cursor-pointer"
                     >
-                        {isPending ? "Création..." : "Créer la course"}
+                        {isPending ? <Loader className="animate-spin" /> : <CirclePlus />}
+                        Créer la course
                     </Button>
                 </div>
             </form>
