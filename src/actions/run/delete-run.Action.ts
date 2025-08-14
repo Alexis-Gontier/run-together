@@ -2,7 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { getUser } from "@/lib/auth-server";
 
 export async function deleteRun(runId: string) {
@@ -24,7 +24,6 @@ export async function deleteRun(runId: string) {
     });
 
     revalidatePath("/dashboard/runs");
-    redirect("/dashboard/runs");
 
     return run;
 }
