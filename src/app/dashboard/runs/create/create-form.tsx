@@ -23,6 +23,7 @@ import {
 } from "@/schemas/run.schema"
 import { createRun } from "@/actions/run/create-run.action"
 import { Textarea } from "@/components/shadcn-ui/textarea"
+import Link from "next/link"
 
 export function CreateRunForm() {
 
@@ -32,8 +33,8 @@ export function CreateRunForm() {
         resolver: zodResolver(createRunSchema),
             defaultValues: {
                 date: new Date(),
-                distance: 0,
-                duration: 0,
+                distance: null,
+                duration: null,
                 elevation: null,
                 location: "",
                 notes: "",
@@ -65,8 +66,19 @@ export function CreateRunForm() {
                             <FormControl>
                                 <Input
                                     type="datetime-local"
+                                    placeholder="Entrez la date"
                                     {...field}
-                                    value={field.value?.toISOString().slice(0, 16)}
+                                    value={
+                                        field.value
+                                            ? new Date(field.value).toLocaleString("sv-SE", {
+                                                year: "numeric",
+                                                month: "2-digit",
+                                                day: "2-digit",
+                                                hour: "2-digit",
+                                                minute: "2-digit",
+                                            }).replace(" ", "T")
+                                            : ""
+                                    }
                                     onChange={(e) => field.onChange(new Date(e.target.value))}
                                 />
                             </FormControl>
@@ -84,9 +96,10 @@ export function CreateRunForm() {
                             <FormControl>
                                 <Input
                                     type="number"
-                                    step="0.1"
+                                    placeholder="Entrez la distance"
                                     {...field}
-                                    onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                                    value={field.value === null || field.value === undefined ? "" : field.value}
+                                    onChange={(e) => field.onChange(e.target.value === "" ? null : parseInt(e.target.value))}
                                 />
                             </FormControl>
                             <FormMessage />
@@ -103,8 +116,10 @@ export function CreateRunForm() {
                             <FormControl>
                                 <Input
                                     type="number"
+                                    placeholder="Entrez la durée"
                                     {...field}
-                                    onChange={(e) => field.onChange(parseInt(e.target.value))}
+                                    value={field.value === null || field.value === undefined ? "" : field.value}
+                                    onChange={(e) => field.onChange(e.target.value === "" ? null : parseInt(e.target.value))}
                                 />
                             </FormControl>
                             <FormMessage />
@@ -121,6 +136,7 @@ export function CreateRunForm() {
                             <FormControl>
                                 <Input
                                     type="number"
+                                    placeholder="Entrez l'élévation"
                                     {...field}
                                     value={field.value === null || field.value === undefined ? "" : field.value}
                                     onChange={(e) => field.onChange(e.target.value === "" ? null : parseInt(e.target.value))}
@@ -138,7 +154,10 @@ export function CreateRunForm() {
                         <FormItem>
                             <FormLabel>Lieu - Optionnel</FormLabel>
                             <FormControl>
-                                <Input {...field} />
+                                <Input
+                                    placeholder="Entrez le lieu"
+                                    {...field}
+                                />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -152,20 +171,34 @@ export function CreateRunForm() {
                         <FormItem>
                             <FormLabel>Notes - Optionnel</FormLabel>
                             <FormControl>
-                                <Textarea {...field} rows={3} />
+                                <Textarea
+                                    placeholder="Ajoutez des notes ici..."
+                                    {...field} rows={3}
+                                />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
                     )}
                 />
 
-                <Button
-                    type="submit"
-                    disabled={isPending}
-                    className="w-full cursor-pointer"
-                >
-                    {isPending ? "Création..." : "Créer la course"}
-                </Button>
+                <div className="flex items-center gap-2">
+                    <Button
+                        variant="outline"
+                        className="flex-1 cursor-pointer"
+                        asChild
+                    >
+                        <Link href="/dashboard/runs">
+                            Annuler
+                        </Link>
+                    </Button>
+                    <Button
+                        type="submit"
+                        disabled={isPending}
+                        className="w-full flex-1 cursor-pointer"
+                    >
+                        {isPending ? "Création..." : "Créer la course"}
+                    </Button>
+                </div>
             </form>
         </Form>
     )

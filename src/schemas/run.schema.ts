@@ -16,7 +16,8 @@ const distanceValidation = z
   })
   .max(DISTANCE_MAX, {
     message: `La distance ne peut pas dépasser ${DISTANCE_MAX} km.`
-  });
+  })
+  .nullable();
 
 const durationValidation = z
   .number()
@@ -28,7 +29,8 @@ const durationValidation = z
   })
   .max(DURATION_MAX, {
     message: `La durée ne peut pas dépasser ${DURATION_MAX} secondes.`
-  });
+  })
+  .nullable();
 
 const elevationValidation = z
   .number()
