@@ -17,7 +17,6 @@ const distanceValidation = z
   .max(DISTANCE_MAX, {
     message: `La distance ne peut pas dépasser ${DISTANCE_MAX} km.`
   })
-  .nullable();
 
 const durationValidation = z
   .number()
@@ -30,7 +29,6 @@ const durationValidation = z
   .max(DURATION_MAX, {
     message: `La durée ne peut pas dépasser ${DURATION_MAX} secondes.`
   })
-  .nullable();
 
 const elevationValidation = z
   .number()
@@ -70,4 +68,14 @@ export const createRunSchema = z.object({
   notes: notesValidation,
 });
 
+export const updateRunSchema = z.object({
+  date: z.date().optional(),
+  distance: distanceValidation.optional(),
+  duration: durationValidation,
+  elevation: elevationValidation,
+  location: locationValidation,
+  notes: notesValidation,
+});
+
 export type CreateRunData = z.infer<typeof createRunSchema>;
+export type UpdateRunData = z.infer<typeof updateRunSchema>;
