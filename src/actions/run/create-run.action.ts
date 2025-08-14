@@ -16,6 +16,8 @@ export async function createRun(data: CreateRunData) {
         data: {
             ...validatedData,
             userId: user.id,
+            distance: validatedData.distance ?? 0,
+            duration: validatedData.duration ?? 0,
         }
     });
 

@@ -18,6 +18,15 @@ export async function getRuns() {
         orderBy: {
             date: "desc",
         },
+        select: {
+            id: true,
+            date: true,
+            distance: true,
+            duration: true,
+            elevation: true,
+            location: true,
+            notes: true,
+        },
     });
 
     return runs as Run[];
