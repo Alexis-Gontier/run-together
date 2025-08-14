@@ -15,13 +15,13 @@ import {
 
 const LINKITEMS = [
     {
-        href: "/dashboard",
+        href: "/",
         label: "Home",
         icon: HomeIcon,
     },
     {
-        href: "/run",
-        label: "Run",
+        href: "/runs",
+        label: "Runs",
         icon: Footprints,
     },
 ]
@@ -41,7 +41,7 @@ export function AppSidebar() {
                             size="lg"
                             asChild
                         >
-                            <Link href={item.href} className="flex justify-start">
+                            <Link href={`/dashboard${item.href}`} className="flex justify-start">
                                 <item.icon className="size-4" />
                                 {item.label}
                             </Link>
