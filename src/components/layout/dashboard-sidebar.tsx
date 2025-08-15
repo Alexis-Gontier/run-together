@@ -4,12 +4,15 @@ import { usePathname } from "next/navigation"
 import {
     Sidebar,
     SidebarContent,
+    SidebarFooter,
     SidebarGroup,
     SidebarHeader,
+    useSidebar,
 } from "@/components/shadcn-ui/sidebar"
 import Link from "next/link"
 import { Button } from "@/components/shadcn-ui/button"
 import {
+    ArrowLeftToLine,
     Footprints,
     HomeIcon,
     Users,
@@ -36,9 +39,10 @@ const LINKITEMS = [
 
 export function AppSidebar() {
     const pathname = usePathname()
+    const { toggleSidebar } = useSidebar()
 
     return (
-        <Sidebar>
+        <Sidebar collapsible="icon">
             <SidebarHeader className="p-0">
                 <Link href="/dashboard" className="p-4 pb-[15px]">
                     <h1 className="flex justify-center items-center gap-3">
@@ -54,11 +58,11 @@ export function AppSidebar() {
                 <SidebarGroup className="p-4">
                     {LINKITEMS.map((item) => (
                         <Button
-                            key={item.href}
-                            className="w-full"
-                            variant={pathname === item.href ? "outline" : "ghost"}
-                            size="lg"
-                            asChild
+                        key={item.href}
+                        className="w-full"
+                        variant={pathname === item.href ? "outline" : "ghost"}
+                        size="lg"
+                        asChild
                         >
                             <Link href={`/dashboard${item.href}`} className="flex justify-start">
                                 <item.icon className="size-4" />
@@ -68,6 +72,17 @@ export function AppSidebar() {
                     ))}
                 </SidebarGroup>
             </SidebarContent>
+            <Separator />
+            <SidebarFooter className="p-0">
+                <Button
+                    variant="ghost"
+                    className="p-6 rounded-none cursor-pointer"
+                    onClick={toggleSidebar}
+                >
+                    <ArrowLeftToLine />
+                    Collapse Menu
+                </Button>
+            </SidebarFooter>
         </Sidebar>
     )
 }
