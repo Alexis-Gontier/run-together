@@ -95,6 +95,9 @@ importers:
       tailwind-merge:
         specifier: ^3.3.1
         version: 3.3.1
+      up-fetch:
+        specifier: ^2.3.0
+        version: 2.3.0
       xlsx:
         specifier: ^0.18.5
         version: 0.18.5
@@ -3011,6 +3014,10 @@ packages:
 
   unrs-resolver@1.11.1:
     resolution: {integrity: sha512-bSjt9pjaEBnNiGgc9rUiHGKv5l4/TGzDmYw3RhnkJGtLhbnnA/5qJj7x3dNDCRx/PJxu774LlH8lCOlB4hEfKg==}
+
+  up-fetch@2.3.0:
+    resolution: {integrity: sha512-wHkl4mFKxoVvfODp2jgWSPVLQjO1DARSvkCXc+lNVcFP5NylxS7Uioa1XwgxcXA6rpJB2FFuJ3vMQ/3R5PiEZg==}
+    engines: {node: '>=18'}
 
   uri-js@4.4.1:
     resolution: {integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==}
@@ -6075,6 +6082,8 @@ snapshots:
       '@unrs/resolver-binding-win32-arm64-msvc': 1.11.1
       '@unrs/resolver-binding-win32-ia32-msvc': 1.11.1
       '@unrs/resolver-binding-win32-x64-msvc': 1.11.1
+
+  up-fetch@2.3.0: {}
 
   uri-js@4.4.1:
     dependencies:
