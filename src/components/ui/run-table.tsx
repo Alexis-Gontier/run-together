@@ -14,8 +14,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/shadcn-ui/dropdown-menu"
 import {
@@ -27,13 +25,10 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/shadcn-ui/alert-dialog"
 import { Badge } from "@/components/shadcn-ui/badge"
 import {
-  ArrowUpDown,
   Clock,
-  Ellipsis,
   EllipsisVertical,
   Eye,
   Loader,
@@ -188,6 +183,7 @@ function DropdownAction({ id } : { id: string }) {
       setDropdownOpen(false);
     } catch (error) {
       toast.error("Erreur lors de la suppression de la course.");
+      console.error(error);
     }
   }
 

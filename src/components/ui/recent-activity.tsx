@@ -2,12 +2,9 @@ import {
     Card,
     CardContent,
     CardDescription,
-    CardFooter,
     CardHeader,
     CardTitle
  } from '@/components/shadcn-ui/card'
-import { Button } from '../shadcn-ui/button'
-import Link from 'next/link'
 import RecentActivityItem from './recent-activity-item'
 import { prisma } from '@/lib/prisma'
 import { Run } from '@prisma/client'

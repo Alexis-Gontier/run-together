@@ -2,7 +2,7 @@ import TextHeading from "@/components/ui/text-heading";
 import { getRuns } from "@/actions/run/get-runs.action";
 import RunTable from "@/components/ui/run-table";
 import { Button } from "@/components/shadcn-ui/button";
-import { Ellipsis, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import Link from "next/link";
 import ExportButtons from "@/components/ui/export-button";
 

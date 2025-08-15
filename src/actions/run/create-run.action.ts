@@ -2,7 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { getUser } from "@/lib/auth-server";
 import { CreateRunData, createRunSchema } from "@/schemas/run.schema";
 
