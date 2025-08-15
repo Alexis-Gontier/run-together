@@ -12,9 +12,9 @@ import { Button } from "@/components/shadcn-ui/button"
 import {
     Footprints,
     HomeIcon,
+    Users,
 } from "lucide-react"
 import { Separator } from "@/components/shadcn-ui/separator"
-import AppBranding from "../ui/app-branding"
 
 const LINKITEMS = [
     {
@@ -26,6 +26,11 @@ const LINKITEMS = [
         href: "/runs",
         label: "Runs",
         icon: Footprints,
+    },
+    {
+        href: "/friends",
+        label: "Friends",
+        icon: Users,
     },
 ]
 
