@@ -24,7 +24,7 @@ export default async function RecentActivityItem({ run } : RecentActivityItemPro
 
   return (
     <Link href={`/dashboard/runs/${run.id}`} className="">
-      <div className={`bg-secondary p-3 rounded-md flex items-start gap-4 outline-offset-2 hover:outline-2 ${currentUser?.id === run.user.id ? 'border-2' : ''}`}>
+      <div className={`bg-secondary p-3 rounded-md flex items-start gap-4 outline-offset-2 border-primary hover:outline-2 ${currentUser?.id === run.user.id ? 'border-2' : ''}`}>
           <Avatar>
               <AvatarImage src={run.user.image || ""} />
               <AvatarFallback>
