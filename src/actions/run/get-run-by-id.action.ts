@@ -14,7 +14,7 @@ export async function getRunById(id: string) {
     const run = await prisma.run.findUnique({
         where: {
             id: id,
-            userId: user.id,
+            // userId: user.id,
         },
     });
 
