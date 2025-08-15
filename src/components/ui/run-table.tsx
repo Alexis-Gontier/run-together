@@ -45,7 +45,7 @@ import {
 import { Run } from "@/types/run"
 import { calculatePace } from "@/utils/peace"
 import { formatSecondsToHMS } from "@/utils/date"
-import { deleteRun } from "@/actions/run/delete-run.Action"
+import { deleteRun } from "@/actions/run/delete-run.action"
 import { toast } from "sonner"
 import Link from "next/link"
 
