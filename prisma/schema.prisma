@@ -32,6 +32,8 @@ model User {
   banReason  String?
   banExpires DateTime?
 
+  runs Run[]
+
   @@unique([email])
   @@map("user")
   @@unique([username])
@@ -82,4 +84,23 @@ model Verification {
   updatedAt  DateTime?
 
   @@map("verification")
+}
+
+model Run {
+  id String @id @default(cuid())
+
+  date      DateTime @default(now())
+  distance  Float
+  duration  Int
+  elevation Int?
+  location  String?
+  notes     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("runs")
 }

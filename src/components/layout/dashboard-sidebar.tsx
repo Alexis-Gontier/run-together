@@ -5,24 +5,32 @@ import {
     Sidebar,
     SidebarContent,
     SidebarGroup,
+    SidebarHeader,
 } from "@/components/shadcn-ui/sidebar"
 import Link from "next/link"
 import { Button } from "@/components/shadcn-ui/button"
 import {
     Footprints,
     HomeIcon,
+    Users,
 } from "lucide-react"
+import { Separator } from "@/components/shadcn-ui/separator"
 
 const LINKITEMS = [
     {
-        href: "/dashboard",
+        href: "/",
         label: "Home",
         icon: HomeIcon,
     },
     {
-        href: "/run",
-        label: "Run",
+        href: "/runs",
+        label: "Runs",
         icon: Footprints,
+    },
+    {
+        href: "/friends",
+        label: "Friends",
+        icon: Users,
     },
 ]
 
@@ -31,6 +39,17 @@ export function AppSidebar() {
 
     return (
         <Sidebar>
+            <SidebarHeader className="p-0">
+                <Link href="/dashboard" className="p-4 pb-[15px]">
+                    <h1 className="flex justify-center items-center gap-3">
+                        <div className="bg-primary p-2 rounded-md">
+                            <Footprints color="white" size="16" className="rotate-12" />
+                        </div>
+                        <span className="text-lg font-semibold text-foreground">RunTogether.</span>
+                    </h1>
+                </Link>
+            </SidebarHeader>
+            <Separator />
             <SidebarContent>
                 <SidebarGroup className="p-4">
                     {LINKITEMS.map((item) => (
@@ -41,7 +60,7 @@ export function AppSidebar() {
                             size="lg"
                             asChild
                         >
-                            <Link href={item.href} className="flex justify-start">
+                            <Link href={`/dashboard${item.href}`} className="flex justify-start">
                                 <item.icon className="size-4" />
                                 {item.label}
                             </Link>

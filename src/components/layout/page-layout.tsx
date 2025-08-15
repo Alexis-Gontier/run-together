@@ -7,7 +7,7 @@ export default function PageLayout({
 }) {
 
   return (
-    <div className={`w-full max-w-7xl mx-auto space-y-6 ${className}`}>
+    <div className={`w-full h-full max-w-7xl mx-auto space-y-6 ${className}`}>
       {children}
     </div>
   )
