@@ -66,6 +66,7 @@ export default function LeaderboardCard() {
           <SelectContent>
             <SelectItem value="7">7 J</SelectItem>
             <SelectItem value="30">30 J</SelectItem>
+            <SelectItem value="90">90 J</SelectItem>
             <SelectItem value="365">365 J</SelectItem>
           </SelectContent>
         </Select>
@@ -112,7 +113,7 @@ export function LeaderboardItem({
             className="rounded-full object-cover size-8"
           />
         ) : (
-          <div className="uppercase flex items-center justify-center size-10 rounded-full bg-background text-secondary-foreground font-semibold">
+          <div className="uppercase flex items-center justify-center size-8 rounded-full bg-background text-secondary-foreground font-semibold">
             {user.displayUsername[0]}
           </div>
         )}
@@ -127,7 +128,7 @@ export function LeaderboardItem({
         </div>
       </div>
       <div>
-        <span className="text-primary font-bold">
+        <span className="text-muted-foreground font-bold">
           {user.totalDistance.toFixed(2)} km
         </span>
       </div>
