@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { getUser } from '@/lib/auth-server';
 
 export async function GET(request: NextRequest) {
   try {
+    const user = await getUser();
     const { searchParams } = new URL(request.url);
     const daysParam = searchParams.get('days');
 
@@ -50,6 +52,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
+      userId: user?.id,
       data: userStats,
       meta: {
         periodDays: days,
