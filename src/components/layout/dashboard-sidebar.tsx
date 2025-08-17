@@ -7,15 +7,16 @@ import {
     SidebarFooter,
     SidebarGroup,
     SidebarHeader,
-    useSidebar,
+    // useSidebar,
 } from "@/components/shadcn-ui/sidebar"
 import Link from "next/link"
 import { Button } from "@/components/shadcn-ui/button"
 import {
-    ArrowLeftToLine,
+    // ArrowLeftToLine,
     Footprints,
     HomeIcon,
     Users,
+    Target
 } from "lucide-react"
 import { Separator } from "@/components/shadcn-ui/separator"
 
@@ -35,11 +36,16 @@ const LINKITEMS = [
         label: "Friends",
         icon: Users,
     },
+    {
+        href: "/progress",
+        label: "Progress",
+        icon: Target,
+    },
 ]
 
 export function AppSidebar() {
     const pathname = usePathname()
-    const { toggleSidebar } = useSidebar()
+    // const { toggleSidebar } = useSidebar()
 
     return (
         <Sidebar collapsible="icon">
@@ -74,14 +80,14 @@ export function AppSidebar() {
             </SidebarContent>
             <Separator />
             <SidebarFooter className="p-0">
-                <Button
+                {/* <Button
                     variant="ghost"
                     className="p-6 rounded-none cursor-pointer"
                     onClick={toggleSidebar}
                 >
                     <ArrowLeftToLine />
                     Collapse Menu
-                </Button>
+                </Button> */}
             </SidebarFooter>
         </Sidebar>
     )
