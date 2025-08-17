@@ -1,7 +1,9 @@
 import { up } from 'up-fetch'
 
+const API_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+
 export const api = up(fetch, () => ({
-    baseUrl: `http://localhost:3000/api`,
+    baseUrl: `${API_URL}/api`,
     timeout: 30000,
     headers: {
         'Content-Type': 'application/json',
