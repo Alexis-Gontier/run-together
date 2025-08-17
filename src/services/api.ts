@@ -1,7 +1,7 @@
 import { up } from 'up-fetch'
 
 export const api = up(fetch, () => ({
-    baseUrl: '/api',
+    baseUrl: `http://localhost:3000/api`,
     timeout: 30000,
     headers: {
         'Content-Type': 'application/json',
@@ -10,7 +10,7 @@ export const api = up(fetch, () => ({
         console.error('API Error:', error, request)
     },
     retry: {
-        attempts: 3,
+        attempts: 2,
         delay: 1000,
     },
 }))
