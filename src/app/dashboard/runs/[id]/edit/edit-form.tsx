@@ -109,7 +109,7 @@ export function UpdateRunForm({ run }: UpdateRunFormProps) {
                                     placeholder="Entrez la distance"
                                     {...field}
                                     value={field.value === null || field.value === undefined ? "" : field.value}
-                                    onChange={(e) => field.onChange(e.target.value === "" ? null : parseInt(e.target.value))}
+                                    onChange={(e) => field.onChange(e.target.value === "" ? null : parseFloat(e.target.value))}
                                 />
                             </FormControl>
                             <FormMessage />
