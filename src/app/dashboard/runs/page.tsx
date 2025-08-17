@@ -32,11 +32,11 @@ export default async function RunsPage() {
       <RunTable
         runs={runs}
       />
-      <code>
+      {/* <code>
         <pre>
           {JSON.stringify(runs, null, 2)}
         </pre>
-      </code>
+      </code> */}
     </>
   )
 }
