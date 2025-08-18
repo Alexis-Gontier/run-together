@@ -23,17 +23,17 @@ export default function SignUpPage() {
         <CardContent className="space-y-6">
           <Separator />
           <SignInForm />
-          <Separator />
+          {/* <Separator />
           <Button
             className="w-full cursor-pointer"
             variant="outline"
           >
             Mot de passe oublié ?
-          </Button>
+          </Button> */}
         </CardContent>
       </Card>
       <div className="text-center text-xs px-6 text-muted-foreground">
-        En continuant, vous acceptez <Link href="" className="underline">nos Conditions d&apos;utilisation</Link> et notre <Link href="" className="underline">Politique de confidentialité</Link>
+        En continuant, vous acceptez nos <Link href="" className="underline">Conditions d&apos;utilisation</Link> et notre <Link href="" className="underline">Politique de confidentialité</Link>
       </div>
     </div>
   )
