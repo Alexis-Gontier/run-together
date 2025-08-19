@@ -17,7 +17,7 @@ export async function GET() {
     });
 
     // Objectif : 55 min = 3300s
-    const prediction = predictRunPerformance(runs, 3300);
+    const prediction = predictRunPerformance(runs, 3300, 10);
 
     return NextResponse.json({
       userId: user.id,
