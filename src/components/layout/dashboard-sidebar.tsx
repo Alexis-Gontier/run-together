@@ -20,6 +20,7 @@ import {
     Plus,
 } from "lucide-react"
 import { Separator } from "@/components/shadcn-ui/separator"
+import CountdownRaceTimer from "../ui/countdown-race-timer"
 
 const LINKITEMS = [
     {
@@ -84,16 +85,8 @@ export function AppSidebar() {
                     ))}
                 </SidebarGroup>
             </SidebarContent>
-            <Separator />
-            <SidebarFooter className="p-0">
-                {/* <Button
-                    variant="ghost"
-                    className="p-6 rounded-none cursor-pointer"
-                    onClick={toggleSidebar}
-                >
-                    <ArrowLeftToLine />
-                    Collapse Menu
-                </Button> */}
+            <SidebarFooter>
+                <CountdownRaceTimer />
             </SidebarFooter>
         </Sidebar>
     )

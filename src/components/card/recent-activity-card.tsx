@@ -7,13 +7,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/shadcn-ui/card"
-import { Badge } from "../shadcn-ui/badge"
+import { Badge } from "@/components/shadcn-ui/badge"
 import { api } from "@/services/api"
 import { useEffect, useState } from "react"
 import { formatDistanceToNow } from "date-fns"
 import { fr } from "date-fns/locale"
 import Image from "next/image"
-import { Skeleton } from "../shadcn-ui/skeleton"
+import { Skeleton } from "@/components/shadcn-ui/skeleton"
 
 type Activity = {
   id: string

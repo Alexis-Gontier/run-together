@@ -1,6 +1,6 @@
 import TextHeading from "@/components/ui/text-heading";
 import { getRuns } from "@/actions/run/get-runs.action";
-import RunTable from "@/components/ui/run-table";
+import RunTable from "@/components/table/run-table";
 import { Button } from "@/components/shadcn-ui/button";
 import { Plus } from "lucide-react";
 import Link from "next/link";

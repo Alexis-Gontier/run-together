@@ -18,8 +18,8 @@ import { api } from "@/services/api"
 import { useLeaderboardStore } from "@/stores/leaderboard.store"
 import Image from "next/image"
 import { useEffect, useState } from "react"
-import { Badge } from "../shadcn-ui/badge"
-import { Skeleton } from "../shadcn-ui/skeleton"
+import { Badge } from "@/components/shadcn-ui/badge"
+import { Skeleton } from "@/components/shadcn-ui/skeleton"
 
 type LeaderboardUser = {
   id: string
