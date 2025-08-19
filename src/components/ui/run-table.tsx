@@ -37,7 +37,7 @@ import {
   SquarePen,
   Trash2
 } from "lucide-react"
-import { Run } from "@/types/run"
+import { RunTableData } from "@/types/run"
 import { calculatePace } from "@/utils/peace"
 import { formatSecondsToHMS } from "@/utils/date"
 import { deleteRun } from "@/actions/run/delete-run.action"
@@ -45,7 +45,7 @@ import { toast } from "sonner"
 import Link from "next/link"
 
 type RunTableProps = {
-  runs: Run[]
+  runs: RunTableData[]
 }
 
 export default function RunTable({ runs }: RunTableProps) {
@@ -201,7 +201,7 @@ function DropdownAction({ id } : { id: string }) {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuItem asChild>
+          {/* <DropdownMenuItem asChild>
             <Link
               href={`/dashboard/runs/${id}`}
               className="cursor-pointer"
@@ -209,7 +209,7 @@ function DropdownAction({ id } : { id: string }) {
               <Eye />
               Voir
             </Link>
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
           <DropdownMenuItem asChild>
             <Link
               href={`/dashboard/runs/${id}/edit`}

@@ -3,14 +3,22 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { getUser } from "@/lib/auth-server";
-import { Run } from "@prisma/client";
 
-export async function getRuns() {
+type GetRunsParams = {
+  page?: number;
+  pageSize?: number;
+};
+
+export async function getRuns(params: GetRunsParams = {}) {
     const user = await getUser();
     if (!user) {
         notFound();
     }
 
+    const { page = 1, pageSize = 10 } = params;
+    const skip = (page - 1) * pageSize;
+
+    // Récupération des runs avec pagination
     const runs = await prisma.run.findMany({
         where: {
             userId: user.id,
@@ -27,7 +35,21 @@ export async function getRuns() {
             location: true,
             notes: true,
         },
+        skip,
+        take: pageSize,
     });
 
-    return runs as Run[];
+    // Comptage total des runs pour la pagination
+    const totalRuns = await prisma.run.count({
+        where: {
+            userId: user.id,
+        },
+    });
+
+    return {
+        runs,
+        totalRuns,
+        currentPage: page,
+        pageSize,
+    };
 }
