@@ -13,6 +13,7 @@ import { useEffect, useState } from "react"
 import { formatDistanceToNow } from "date-fns"
 import { fr } from "date-fns/locale"
 import Image from "next/image"
+import { Skeleton } from "../shadcn-ui/skeleton"
 
 type Activity = {
   id: string
@@ -29,15 +30,24 @@ type Activity = {
 export default function RecentActivityCard() {
   const [activities, setActivities] = useState<Activity[]>([])
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
-    api("/recent-activity")
-      .then((res) => {
+    const fetchRecentActivity = async () => {
+      setIsLoading(true)
+      try {
+        // await new Promise((resolve) => setTimeout(resolve, 5000))
+        const res = await api("/recent-activity")
         const payload = res as { userId: string; activities: Activity[] }
         setActivities(payload.activities || [])
         setCurrentUserId(payload.userId)
-      })
-      .catch((err) => console.error("Recent activity fetch error:", err))
+      } catch (err) {
+        console.error("Recent activity fetch error:", err)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    fetchRecentActivity()
   }, [])
 
   return (
@@ -49,7 +59,16 @@ export default function RecentActivityCard() {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-2">
-        {activities.length === 0 ? (
+        {isLoading ? ( // ✅ Affiche le loading
+          <>
+            <Skeleton className="h-17 w-full" />
+            <Skeleton className="h-17 w-full" />
+            <Skeleton className="h-17 w-full" />
+            <Skeleton className="h-17 w-full" />
+            <Skeleton className="h-17 w-full" />
+            <Skeleton className="h-17 w-full" />
+          </>
+        ) : activities.length === 0 ? (
           <p className="text-muted-foreground text-sm">
             Aucune activité récente
           </p>

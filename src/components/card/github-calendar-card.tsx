@@ -18,7 +18,7 @@ import {
 } from "date-fns";
 import { fr } from "date-fns/locale/fr";
 import clsx from "clsx";
-import Link from "next/link";
+// import Link from "next/link";
 
 export default function GithubCalendarCard() {
   const [runData, setRunData] = useState<{ date: Date; id: string }[]>([]);
@@ -105,7 +105,7 @@ export default function GithubCalendarCard() {
                           : day < exactStartDate
                           ? "bg-muted opacity-50"
                           : isRunDay(day)
-                          ? "bg-muted-foreground hover:bg-foreground cursor-pointer"
+                          ? "bg-muted-foreground hover:bg-foreground"
                           : "bg-muted"
                       )}
                     />
@@ -114,12 +114,17 @@ export default function GithubCalendarCard() {
                   return (
                     <div key={dayIdx}>
                       {runInfo ? (
-                        <Link
-                          href={`/dashboard/runs/${runInfo.id}`}
-                          className="block hover:scale-110 transition-transform duration-200"
+                        // <Link
+                        //   href={`/dashboard/runs/${runInfo.id}`}
+                        //   className="block hover:scale-110 transition-transform duration-200"
+                        // >
+                        //   {daySquare}
+                        // </Link>
+                        <div
+                          // className="block hover:scale-110 transition-transform duration-200"
                         >
                           {daySquare}
-                        </Link>
+                        </div>
                       ) : (
                         daySquare
                       )}

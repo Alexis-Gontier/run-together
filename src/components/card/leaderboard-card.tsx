@@ -17,8 +17,9 @@ import {
 import { api } from "@/services/api"
 import { useLeaderboardStore } from "@/stores/leaderboard.store"
 import Image from "next/image"
-import { useEffect, useState, useTransition } from "react"
+import { useEffect, useState } from "react"
 import { Badge } from "../shadcn-ui/badge"
+import { Skeleton } from "../shadcn-ui/skeleton"
 
 type LeaderboardUser = {
   id: string
@@ -32,22 +33,29 @@ export default function LeaderboardCard() {
   const { selectedDays, setSelectedDays } = useLeaderboardStore()
   const [data, setData] = useState<LeaderboardUser[]>([])
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
-  const [isPending, startTransition] = useTransition()
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
-    api("/users/leaderboard", { params: { days: selectedDays } })
-      .then((res) => {
-        startTransition(() => {
-          const payload = res as {
-            success: boolean
-            userId: string
-            data: LeaderboardUser[]
-          }
-          setData(payload.data || [])
-          setCurrentUserId(payload.userId) // ✅ on stocke le user courant
-        })
-      })
-      .catch((err) => console.error("Leaderboard fetch error:", err))
+    const fetchLeaderboard = async () => {
+      setIsLoading(true)
+      try {
+        // await new Promise((resolve) => setTimeout(resolve, 2000))
+        const res = await api("/users/leaderboard", { params: { days: selectedDays } })
+        const payload = res as {
+          success: boolean
+          userId: string
+          data: LeaderboardUser[]
+        }
+        setData(payload.data || [])
+        setCurrentUserId(payload.userId)
+      } catch (err) {
+        console.error("Leaderboard fetch error:", err)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchLeaderboard()
   }, [selectedDays])
 
   return (
@@ -72,15 +80,20 @@ export default function LeaderboardCard() {
         </Select>
       </CardHeader>
       <CardContent className="space-y-2">
-        {isPending ? (
-          <p>Loading...</p>
+        {isLoading ? (
+          <>
+            <Skeleton className="h-17 w-full" />
+            <Skeleton className="h-17 w-full" />
+            <Skeleton className="h-17 w-full" />
+            <Skeleton className="h-17 w-full" />
+          </>
         ) : (
           data.map((user, index) => (
             <LeaderboardItem
               key={user.id}
               user={user}
               rank={index + 1}
-              isCurrentUser={user.id === currentUserId} // ✅ check correct
+              isCurrentUser={user.id === currentUserId}
             />
           ))
         )}
