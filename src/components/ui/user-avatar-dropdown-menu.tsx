@@ -5,16 +5,11 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
+//   DropdownMenuLabel,
+//   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/shadcn-ui/dropdown-menu"
-import { headers } from 'next/headers'
-import { auth } from '@/lib/auth'
-import { redirect } from 'next/navigation'
-import { LogOut, Settings, ShieldUser, User } from 'lucide-react'
-import Link from 'next/link'
-import SignOutButton from '../auth/sign-out-button'
+import SignOutButton from '@/components/auth/sign-out-button'
 
 export default async function UserAvatarMenu() {
 

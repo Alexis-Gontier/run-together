@@ -30,7 +30,6 @@ import { Badge } from "@/components/shadcn-ui/badge"
 import {
   Clock,
   EllipsisVertical,
-  Eye,
   Loader,
   MapPin,
   MountainSnow,

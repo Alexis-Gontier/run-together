@@ -1,10 +1,6 @@
 "use client"
 
 import {
-  Card,
-  CardContent,
-} from "@/components/shadcn-ui/card"
-import {
   Select,
   SelectContent,
   SelectItem,

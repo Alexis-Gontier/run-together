@@ -3,7 +3,7 @@
 // import { Card, CardContent, CardFooter, CardHeader } from '@/components/shadcn-ui/card'
 // import { Calendar, Timer } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { differenceInDays, differenceInHours, differenceInMinutes, differenceInSeconds, format, parseISO } from 'date-fns';
+import { differenceInDays, differenceInHours, differenceInMinutes, differenceInSeconds, parseISO } from 'date-fns';
 // import { fr } from 'date-fns/locale';
 
 export default function CountdownRaceTimer() {

@@ -12,7 +12,7 @@ export default function GroupMemberCard({  }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Nom de l'utilisateur</CardTitle>
+        <CardTitle>Nom de l&apos;utilisateur</CardTitle>
       </CardHeader>
       <CardContent className="space-y-2">
         <div className="flex items-center gap-4">
