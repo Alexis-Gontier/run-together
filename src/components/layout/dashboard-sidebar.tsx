@@ -16,7 +16,8 @@ import {
     Footprints,
     HomeIcon,
     Users,
-    Target
+    Target,
+    Plus,
 } from "lucide-react"
 import { Separator } from "@/components/shadcn-ui/separator"
 
@@ -40,6 +41,11 @@ const LINKITEMS = [
         href: "/progress",
         label: "Progress",
         icon: Target,
+    },
+    {
+        href: "/runs/create",
+        label: "Create Run",
+        icon: Plus,
     },
 ]
 

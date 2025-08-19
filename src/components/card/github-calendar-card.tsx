@@ -20,7 +20,7 @@ import { fr } from "date-fns/locale/fr";
 import clsx from "clsx";
 import Link from "next/link";
 
-export default function GithubCalendar() {
+export default function GithubCalendarCard() {
   const [runData, setRunData] = useState<{ date: Date; id: string }[]>([]);
 
   useEffect(() => {

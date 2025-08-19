@@ -26,10 +26,10 @@ export function PredictionCard() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await api("/progress")
+        const res = await api("/prediction")
         setData(res as ProgressData)
       } catch (err) {
-        console.error("Erreur fetch /progress :", err)
+        console.error("Erreur fetch /prediction :", err)
       }
     }
     fetchData()
