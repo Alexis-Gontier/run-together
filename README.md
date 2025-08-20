@@ -2,6 +2,8 @@
 
 Run Together est une application privée permettant de suivre, visualiser et évaluer ses courses de running.
 Elle propose un dashboard moderne pour gérer ses sessions, analyser ses performances et garder la motivation
+<img width="1893" height="905" alt="image" src="https://github.com/user-attachments/assets/aac9ccb1-7ea7-4409-ac05-bb31e239cf9d" />
+<img width="1916" height="905" alt="image" src="https://github.com/user-attachments/assets/12c623bd-55a4-4eac-a663-7e0a4616a3c2" />
 
 
 ## 🚀 Stack Technique
