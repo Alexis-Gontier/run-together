@@ -4,7 +4,7 @@ import { Run } from '@prisma/client';
  * Prédit la performance de l'utilisateur
  * @param runs Liste des courses de l'utilisateur
  * @param targetTime Objectif en secondes (ex: 3300s = 55min)
- * @param objectiveDistance Distance cible en km (par défaut 10km)
+ * @param objectiveDistance Distance de l'objectif (par défaut 10km)
  */
 export function predictRunPerformance(
   runs: Run[],
@@ -20,51 +20,53 @@ export function predictRunPerformance(
     };
   }
 
-  // Trier les runs récents en premier
+  // Trier par date
   runs.sort((a, b) => b.date.getTime() - a.date.getTime());
 
-  // Fonction de pondération : plus proche de la distance cible → plus de poids
-  const weightByDistance = (d: number) => {
-    const ratio = Math.abs(d - objectiveDistance) / objectiveDistance;
-    // exemple : pile 10km = poids 1, à ±50% = poids ≈ 0.1
-    return Math.max(0.1, 1 - ratio * 1.5);
-  };
-
-  let estimatedTimeSeconds: number;
-
-  // On privilégie les runs autour de la cible (70–150% de l’objectif)
+  // On cherche les runs proches de l’objectif (ex : 7-15km pour un 10km)
   const comparableRuns = runs.filter(
     (r) =>
       r.distance >= objectiveDistance * 0.7 &&
       r.distance <= objectiveDistance * 1.5
   );
 
+  let estimatedTimeSeconds: number;
+
   if (comparableRuns.length > 0) {
-    // pondération selon distance + fraîcheur (récence)
-    let totalWeightedTime = 0;
-    let totalWeight = 0;
-
-    comparableRuns.forEach((r, index) => {
+    // Meilleure performance pondérée
+    const weightedBest = comparableRuns.reduce((best, r) => {
       const pace = r.duration / r.distance; // sec/km
-      const distanceWeight = weightByDistance(r.distance);
-      const recencyWeight = 1 + (comparableRuns.length - index) / comparableRuns.length;
-      const weight = distanceWeight * recencyWeight;
+      const distanceFactor = r.distance / objectiveDistance; // >1 si +long, <1 si +court
+      const closenessFactor =
+        1 / (1 + Math.abs(r.distance - objectiveDistance)); // pénalise si trop éloigné
 
-      totalWeightedTime += pace * objectiveDistance * weight;
-      totalWeight += weight;
-    });
+      const score = (1 / pace) * distanceFactor * closenessFactor;
 
-    estimatedTimeSeconds = totalWeightedTime / totalWeight;
+      return score > best.score
+        ? { run: r, score }
+        : best;
+    }, { run: comparableRuns[0], score: 0 });
+
+    const best = weightedBest.run;
+    // Appliquer Riegel pour extrapoler précisément
+    estimatedTimeSeconds =
+      best.duration *
+      Math.pow(objectiveDistance / best.distance, 1.06);
   } else {
-    // fallback : moyenne pondérée de toutes les courses
+    // Fallback : moyenne pondérée de toutes les courses
     let totalWeightedPace = 0;
     let totalWeight = 0;
 
     runs.forEach((run, index) => {
-      const pace = run.duration / run.distance;
-      const distanceWeight = weightByDistance(run.distance);
-      const recencyWeight = 1 + (runs.length - index) / runs.length;
-      const weight = distanceWeight * recencyWeight;
+      const pace = run.duration / run.distance; // sec/km
+
+      const distanceFactor = run.distance / objectiveDistance;
+      const closenessFactor =
+        1 / (1 + Math.abs(run.distance - objectiveDistance));
+
+      const recencyFactor = 1 + (runs.length - index) / runs.length;
+
+      const weight = distanceFactor * closenessFactor * recencyFactor;
 
       totalWeightedPace += pace * weight;
       totalWeight += weight;
@@ -77,19 +79,18 @@ export function predictRunPerformance(
   // Calcul amélioration par rapport à l’objectif
   const improve = estimatedTimeSeconds - targetTime;
 
-  // Nouvelle formule de confiance :
-  // - plus il y a de runs
-  // - plus ils sont proches de l’objectif
-  // - plus on monte vers 100, mais difficile d’y arriver
-  const distanceFactor = Math.min(
-    1,
-    comparableRuns.reduce((acc, r) => acc + weightByDistance(r.distance), 0) /
-      comparableRuns.length || 0
-  );
-  const volumeFactor = Math.log10(runs.length + 1) / 2; // tend vers 1 avec bcp de runs
+  // Score de confiance (basé sur nombre + volume + qualité des runs)
+  const totalDistance = runs.reduce((s, r) => s + r.distance, 0);
+  const distanceScore = Math.min(50, totalDistance / 20); // 1000km max ~ 50 pts
+  const volumeScore = Math.min(30, runs.length * 2); // 15 runs = 30 pts
+  const qualityScore = Math.min(
+    20,
+    comparableRuns.length * 4
+  ); // max 5 runs proches = 20 pts
+
   const confidence = Math.min(
     95,
-    Math.floor(distanceFactor * 100 * volumeFactor)
+    Math.floor(distanceScore + volumeScore + qualityScore)
   );
 
   return {
