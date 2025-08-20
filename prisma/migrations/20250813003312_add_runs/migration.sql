@@ -1,5 +1,5 @@
 -- CreateTable
-CREATE TABLE "public"."runs" (
+CREATE TABLE "public"."run" (
     "id" TEXT NOT NULL,
     "date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "distance" DOUBLE PRECISION NOT NULL,
@@ -11,8 +11,8 @@ CREATE TABLE "public"."runs" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "userId" TEXT,
 
-    CONSTRAINT "runs_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "run_pkey" PRIMARY KEY ("id")
 );
 
 -- AddForeignKey
-ALTER TABLE "public"."runs" ADD CONSTRAINT "runs_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "public"."run" ADD CONSTRAINT "run_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
