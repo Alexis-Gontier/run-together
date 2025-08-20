@@ -102,5 +102,5 @@ model Run {
   userId String?
   user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@map("runs")
+  @@map("run")
 }
