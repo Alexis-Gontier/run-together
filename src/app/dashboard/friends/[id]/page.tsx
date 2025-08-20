@@ -1,4 +1,5 @@
 import FriendRecentRuns from '@/components/card/friend-recent-runs'
+import GithubCalendarCard from '@/components/card/github-calendar-card'
 import { Button } from '@/components/shadcn-ui/button'
 import StatCard from '@/components/ui/stat-card'
 import { ArrowLeft } from 'lucide-react'
@@ -47,6 +48,7 @@ export default function page() {
           description="Temps total passé à courir"
         />
       </div>
+      <GithubCalendarCard />
       <FriendRecentRuns />
     </>
   )
