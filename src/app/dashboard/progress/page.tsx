@@ -6,15 +6,15 @@ import MonthlyTimeChart from '@/components/chart/monthly-time-chart'
 export default function ProgressPage() {
   return (
     <>
-        <TextHeading
-            title="Progression"
-            description="Suivez vos progrès et améliorez vos performances"
-        />
-        <PredictionCard />
-        <div className="grid grid-cols-2 gap-4">
-          <MonthlyTimeChart />
-          <MonthlyDistanceChart />
-        </div>
+      <TextHeading
+          title="Progression"
+          description="Suivez vos progrès et améliorez vos performances"
+      />
+      <PredictionCard />
+      <div className="grid grid-cols-2 gap-4">
+        <MonthlyTimeChart />
+        <MonthlyDistanceChart />
+      </div>
     </>
   )
 }
