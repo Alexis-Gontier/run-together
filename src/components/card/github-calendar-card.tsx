@@ -105,7 +105,7 @@ export default function GithubCalendarCard() {
                           : day < exactStartDate
                           ? "bg-muted opacity-50"
                           : isRunDay(day)
-                          ? "bg-muted-foreground hover:bg-foreground"
+                          ? "bg-primary hover:bg-primary/80"
                           : "bg-muted"
                       )}
                     />

@@ -28,6 +28,7 @@ export default async function UserAvatarMenu() {
             <DropdownMenuContent
                 className="w-46"
                 align="end"
+                sideOffset={10}
             >
                 <DropdownMenuItem asChild>
                     <SignOutButton />
