@@ -17,7 +17,7 @@
     "db:seed": "tsx prisma/seed.ts",
     "db:format": "prisma format",
     "postinstall": "prisma generate",
-    "vercel-build": "prisma generate && prisma migrate deploy && next build"
+    "vercel-build": "prisma generate && prisma db push && next build"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
