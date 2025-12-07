@@ -1,5 +1,5 @@
 import { PublicHero } from "@/components/public-hero"
-import { prisma } from "@/lib/db/prisma"
+import prisma from "@/lib/db/prisma"
 
 export default async function page() {
 
