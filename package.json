@@ -20,6 +20,9 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
+    "@prisma/adapter-pg": "^7.1.0",
+    "@prisma/client": "7.1.0",
+    "@prisma/client-runtime-utils": "^7.1.0",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-label": "^2.1.8",
     "@radix-ui/react-separator": "^1.1.8",
@@ -35,6 +38,7 @@
     "next-safe-action": "^8.0.11",
     "next-themes": "^0.4.6",
     "nuqs": "^2.8.3",
+    "pg": "^8.16.3",
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "react-hook-form": "^7.68.0",

@@ -1,12 +1,14 @@
 import { prisma } from "@/lib/db/prisma"
 
-export default function page() {
+export default async function page() {
 
-  const data = prisma.test.findMany()
+  const data = await prisma.test.findMany()
 
   return (
     <div>
-      {JSON.stringify(data, null, 2)}
+      <pre>
+        {JSON.stringify(data, null, 2)}
+      </pre>
     </div>
   )
 }
