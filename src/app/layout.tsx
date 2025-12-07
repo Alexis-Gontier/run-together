@@ -1,5 +1,8 @@
 import "@/styles/globals.css";
 
+import { Providers } from "@/app/providers";
+import { Toaster } from "@/components/shadcn-ui/sonner";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -8,7 +11,10 @@ export default function RootLayout({
   return (
     <html lang="fr" suppressHydrationWarning>
       <body>
-        {children}
+        <Providers>
+          {children}
+          <Toaster />
+        </Providers>
       </body>
     </html>
   );
