@@ -1,3 +1,4 @@
+import { PublicHero } from "@/components/public-hero"
 import { prisma } from "@/lib/db/prisma"
 
 export default async function page() {
@@ -5,10 +6,11 @@ export default async function page() {
   const data = await prisma.test.findMany()
 
   return (
-    <div>
+    <>
+      <PublicHero />
       <pre>
         {JSON.stringify(data, null, 2)}
       </pre>
-    </div>
+    </>
   )
 }
