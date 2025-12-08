@@ -1,4 +1,5 @@
 import "@/styles/globals.css";
+import { fontVariables } from "@/styles/fonts";
 
 import { Providers } from "@/app/providers";
 import { Toaster } from "@/components/shadcn-ui/sonner";
@@ -10,10 +11,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr" suppressHydrationWarning>
-      <body>
+      <body className={fontVariables}>
         <Providers>
           {children}
-          <Toaster />
+          <Toaster
+            position="bottom-right"
+            richColors
+            // closeButton
+          />
         </Providers>
       </body>
     </html>

@@ -1,5 +1,6 @@
 import {
   Inter,
+  Poppins
 } from 'next/font/google';
 import { cn } from '@/lib/utils/cn';
 
@@ -8,6 +9,13 @@ const fontInter = Inter({
   variable: '--font-inter'
 });
 
+const fontPoppins = Poppins({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-poppins'
+});
+
 export const fontVariables = cn(
-    fontInter.variable,
+  fontInter.variable,
+  fontPoppins.variable
 );
