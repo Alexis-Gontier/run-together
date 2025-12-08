@@ -15,7 +15,7 @@ export async function proxy(request: NextRequest) {
     }
 
     if (routeType === 'auth') {
-        if (!user) {
+        if (user) {
             return NextResponse.redirect(new URL('/dashboard', request.url))
         }
         return NextResponse.next()
