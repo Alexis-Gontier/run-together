@@ -16,7 +16,7 @@ export default function RootLayout({
           {children}
           <Toaster
             position="bottom-right"
-            richColors
+            // richColors
             // closeButton
           />
         </Providers>

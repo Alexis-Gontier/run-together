@@ -13,6 +13,7 @@ import {
     FormMessage,
 } from "@/components/shadcn-ui/form"
 import { Input } from "@/components/shadcn-ui/input"
+import { PasswordInput } from "@/components/ui/password-input"
 
 import { useTransition } from "react"
 import { useRouter } from "next/navigation"
@@ -37,6 +38,7 @@ export function SignupForm() {
             name: "",
             email: "",
             password: "",
+            confirmPassword: "",
         },
     })
 
@@ -114,10 +116,28 @@ export function SignupForm() {
                         <FormItem>
                             <FormLabel>Password</FormLabel>
                             <FormControl>
-                                <Input
-                                    type="password"
+                                <PasswordInput
+                                    value={field.value}
+                                    onChange={field.onChange}
                                     placeholder="••••••••••"
-                                    {...field}
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                <FormField
+                    control={form.control}
+                    name="confirmPassword"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Confirm Password</FormLabel>
+                            <FormControl>
+                                <PasswordInput
+                                    value={field.value}
+                                    onChange={field.onChange}
+                                    placeholder="••••••••••"
                                 />
                             </FormControl>
                             <FormMessage />
@@ -128,8 +148,9 @@ export function SignupForm() {
                 <Button
                     type="submit"
                     className="w-full cursor-pointer"
+                    disabled={isPending}
                 >
-                    Sign Up
+                    {isPending ? "Creating account..." : "Sign Up"}
                 </Button>
             </form>
         </Form>
