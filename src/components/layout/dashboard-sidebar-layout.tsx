@@ -2,16 +2,17 @@ import {
   Sidebar,
   SidebarHeader,
   SidebarContent,
-  SidebarGroup,
-  SidebarGroupLabel,
-  SidebarGroupContent,
-  SidebarMenu,
-  SidebarMenuItem,
+  // SidebarGroup,
+  // SidebarGroupLabel,
+  // SidebarGroupContent,
+  // SidebarMenu,
+  // SidebarMenuItem,
   SidebarFooter,
-  SidebarMenuButton,
+  // SidebarMenuButton,
 } from "@/components/shadcn-ui/sidebar"
 import Link from "next/link"
-import { LogoutButton } from "@/components/auth/logout-button"
+import { UserNavigation } from "@/components/navigation/user-navigation"
+// import { LogoutButton } from "@/components/auth/logout-button"
 
 
 export async function AppSidebar() {
@@ -27,8 +28,8 @@ export async function AppSidebar() {
       <SidebarContent>
 
       </SidebarContent>
-      <SidebarFooter className="min-h-16 border-sidebar-border border-t p-4">
-        <LogoutButton />
+      <SidebarFooter className="min-h-16 border-sidebar-border border-t p-2">
+        <UserNavigation />
       </SidebarFooter>
     </Sidebar>
   )

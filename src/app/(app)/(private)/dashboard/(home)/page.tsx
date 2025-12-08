@@ -1,7 +1,12 @@
-import React from 'react'
+import { DashboardTextHeading } from '@/components/ui/dashboard-text-heading'
 
 export default function page() {
     return (
-        <div>page</div>
+        <>
+            <DashboardTextHeading
+                title="Dashboard"
+                description="Welcome to your dashboard"
+            />
+        </>
     )
 }

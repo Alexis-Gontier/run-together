@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { Button } from "@/components/shadcn-ui/button";
 import { GitHubStar } from "@/components/github/github-star";
+import { getUser } from "@/lib/auth/auth-session";
 
-export function PublicHeader() {
+export async function PublicHeader() {
+    const user = await getUser();
 
     const NAVLINK = [
         {
@@ -32,7 +34,7 @@ export function PublicHeader() {
                                 key={link.href}
                                 variant="ghost"
                                 size="sm"
-                                className="text-sm cursor-pointer"
+                                className="cursor-pointer"
                                 asChild
                             >
                                 <Link href={link.href}>
@@ -46,18 +48,43 @@ export function PublicHeader() {
                     <GitHubStar
                         owner="Alexis-Gontier"
                         repo="run-together"
-                        className="text-xs text-muted-foreground"
+                        className="text-muted-foreground"
                     />
-                    <Button
-                        variant="default"
-                        size="sm"
-                        className="text-xs cursor-pointer"
-                        asChild
-                    >
-                        <Link href="/signin">
-                            Sign in
-                        </Link>
-                    </Button>
+                    {user ? (
+                        <Button
+                            variant="secondary"
+                            size="sm"
+                            className="cursor-pointer"
+                            asChild
+                        >
+                            <Link href="/dashboard">
+                                Dashboard
+                            </Link>
+                        </Button>
+                    ) : (
+                        <>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="cursor-pointer"
+                                asChild
+                            >
+                                <Link href="/signin">
+                                    Sign in
+                                </Link>
+                            </Button>
+                            <Button
+                                variant="default"
+                                size="sm"
+                                className="cursor-pointer"
+                                asChild
+                            >
+                                <Link href="/signup">
+                                    Get Started
+                                </Link>
+                            </Button>
+                        </>
+                    )}
                 </div>
             </nav>
         </header>

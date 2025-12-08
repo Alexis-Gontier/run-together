@@ -1,6 +1,5 @@
 import Link from "next/link"
 import Image from "next/image";
-import { getCurrentYear } from "@/lib/utils/date";
 
 type AuthLayoutProps = {
     children: React.ReactNode
@@ -15,10 +14,10 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
                         RunTogether
                     </Link>
                 </div>
-                <div className="relative w-full max-w-sm px-6 lg:px-0 space-y-8">
+                <div className="relative w-full max-w-md px-6 lg:px-8 space-y-8">
                     {children}
                 </div>
-                <p className="absolute bottom-4 max-w-sm text-center text-xs text-muted-foreground">
+                <p className="absolute bottom-4 max-w-md px-6 lg:px-8 text-center text-xs text-muted-foreground">
                     By clicking continue, you agree to our <Link href="/terms" className="underline">Terms of Service</Link> and <Link href="/privacy" className="underline">Privacy Policy</Link>.
                 </p>
             </main>
