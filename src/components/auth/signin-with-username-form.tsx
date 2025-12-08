@@ -13,6 +13,7 @@ import {
     FormMessage,
 } from "@/components/shadcn-ui/form"
 import { Input } from "@/components/shadcn-ui/input"
+import { PasswordInput } from "@/components/ui/password-input"
 
 import { useTransition } from "react"
 import { useRouter } from "next/navigation"
@@ -62,7 +63,7 @@ export function SigninWithUsernameForm() {
                             <FormLabel>Username</FormLabel>
                             <FormControl>
                                 <Input
-                                    placeholder="Enter your username"
+                                    placeholder="jhondoe"
                                     disabled={isPending}
                                     {...field}
                                 />
@@ -79,11 +80,10 @@ export function SigninWithUsernameForm() {
                         <FormItem>
                             <FormLabel>Password</FormLabel>
                             <FormControl>
-                                <Input
-                                    type="password"
-                                    placeholder="Enter your password"
-                                    disabled={isPending}
-                                    {...field}
+                                <PasswordInput
+                                    value={field.value}
+                                    onChange={field.onChange}
+                                    placeholder="••••••••••"
                                 />
                             </FormControl>
                             <FormMessage />
