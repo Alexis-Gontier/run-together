@@ -26,6 +26,8 @@ import {
 import { signInAction } from "@/lib/actions/auth"
 import { toast } from "sonner"
 
+import Link from "next/link"
+
 export function SigninWithUsernameForm() {
 
     const router = useRouter()
@@ -78,7 +80,15 @@ export function SigninWithUsernameForm() {
                     name="password"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Password</FormLabel>
+                            <div className="flex justify-between items-center">
+                                <FormLabel>Password</FormLabel>
+                                <Link
+                                    href="/forgot-password"
+                                    className="text-sm text-muted-foreground"
+                                >
+                                    Forgot password?
+                                </Link>
+                            </div>
                             <FormControl>
                                 <PasswordInput
                                     value={field.value}

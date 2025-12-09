@@ -7,13 +7,14 @@ import {
     username,
     admin,
 } from "better-auth/plugins"
+import { sendResetPasswordEmail } from "@/lib/email/send-reset-password";
 
 export const auth = betterAuth({
     trustedOrigins: [env.NEXT_PUBLIC_APP_URL],
     allowedDevOrigins: [env.NEXT_PUBLIC_APP_URL],
     cookieCache: {
         enabled: true,
-        maxAge: 5 * 60, // 5 minutes
+        maxAge: 5 * 60, // 5m
     },
     database: prismaAdapter(prisma, {
         provider: "postgresql",
@@ -25,7 +26,15 @@ export const auth = betterAuth({
         autoSignInAfterSignUp: true,
         minPasswordLength: 8,
         maxPasswordLength: 128,
+        sendResetPassword: async ({ user, url }) => {
+            await sendResetPasswordEmail({
+                email: user.email,
+                username: user.name || user.email,
+                resetUrl: url,
+            })
+        },
     },
+    resetPasswordTokenExpiresIn: 3600, // 1h
     plugins: [
         username(),
         admin(),
