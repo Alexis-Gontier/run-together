@@ -22,7 +22,7 @@ export const auth = betterAuth({
     emailAndPassword: {
         enabled: true,
         requireEmailVerification: false,
-        disableSignUp: false,
+        disableSignUp: env.NODE_ENV === "production",
         autoSignInAfterSignUp: true,
         minPasswordLength: 8,
         maxPasswordLength: 128,
