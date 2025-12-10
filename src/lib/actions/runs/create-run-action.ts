@@ -19,8 +19,8 @@ export const createRunAction = authActionClient
                     distance: parsedInput.distance,
                     duration: parsedInput.duration * 60, // Convertir minutes en secondes
                     pace: pace,
-                    elevationGain: parsedInput.elevationGain || 0,
-                    notes: parsedInput.notes || null,
+                    elevationGain: parsedInput.elevationGain ?? 0,
+                    notes: parsedInput.notes ?? null,
                 },
             })
 
