@@ -14,16 +14,6 @@ datasource db {
 }
 
 // ========================================================================
-// Test Model
-// ========================================================================
-
-model Test {
-  id        Int      @id @default(autoincrement())
-  name      String
-  createdAt DateTime @default(now())
-}
-
-// ========================================================================
 // Better Auth Models
 // ========================================================================
 
@@ -52,9 +42,15 @@ model User {
   banReason  String?
   banExpires DateTime?
 
+  // ======================================================================
+  // Relations
+  // ======================================================================
+  runs Run[]
+  healthMetrics HealthMetrics[]
+
   @@unique([email])
-  @@map("user")
   @@unique([username])
+  @@map("user")
 }
 
 model Session {
@@ -105,4 +101,47 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+}
+
+// ===================================================
+// Runs Model
+// ===================================================
+
+model Run {
+  id            String   @id @default(cuid())
+  userId        String
+  stravaId      BigInt?  @unique
+  date          DateTime @default(now())
+  distance      Float
+  duration      Int
+  pace          Float
+  elevationGain Float
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, date])
+  @@map("run")
+}
+
+// ===================================================
+// Health Metrics Model
+// ===================================================
+
+model HealthMetrics {
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  id     String   @id @default(cuid())
+  weight Float?   // Poids en kg
+  height Float?   // Taille en cm
+  date   DateTime @default(now())
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@map("health_metrics")
 }

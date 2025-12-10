@@ -79,24 +79,24 @@ export function SigninWithUsernameForm() {
                     control={form.control}
                     name="password"
                     render={({ field }) => (
-                        <FormItem>
-                            <div className="flex justify-between items-center">
+                        <FormItem className="relative">
+                            <div className="flex flex-col gap-2">
                                 <FormLabel>Password</FormLabel>
-                                <Link
-                                    href="/forgot-password"
-                                    className="text-sm text-muted-foreground"
-                                >
-                                    Forgot password?
-                                </Link>
+                                <FormControl>
+                                    <PasswordInput
+                                        value={field.value}
+                                        onChange={field.onChange}
+                                        placeholder="••••••••••"
+                                        />
+                                </FormControl>
+                                <FormMessage />
                             </div>
-                            <FormControl>
-                                <PasswordInput
-                                    value={field.value}
-                                    onChange={field.onChange}
-                                    placeholder="••••••••••"
-                                />
-                            </FormControl>
-                            <FormMessage />
+                            <Link
+                                href="/forgot-password"
+                                className="text-sm text-muted-foreground absolute right-0 -top-1"
+                            >
+                                Forgot password?
+                            </Link>
                         </FormItem>
                     )}
                 />
