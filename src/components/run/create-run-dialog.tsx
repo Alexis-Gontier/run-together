@@ -48,13 +48,14 @@ export function CreateRunDialog() {
 
     function onSubmit(values: CreateRunType) {
         startTransition(async () => {
+            const toastId = toast.loading("Creating run...")
             try {
                 await createRunAction(values)
-                toast.success("Run created successfully!")
+                toast.success("Run created successfully!", { id: toastId })
                 form.reset()
                 setOpen(false)
             } catch (error) {
-                toast.error("Failed to create run. Please try again.")
+                toast.error("Failed to create run. Please try again.", { id: toastId })
             }
         })
     }

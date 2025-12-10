@@ -13,7 +13,7 @@ type StatCardProps = {
   icon?: React.ReactNode
 }
 
-export default function StatCard({
+export function StatCard({
     title = "title",
     value = "N/A",
     description = "description",

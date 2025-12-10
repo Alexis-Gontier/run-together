@@ -62,7 +62,7 @@ export const DASHBOARD_NAV_ITEMS: NavGroup[] = [
     items: [
       {
         title: "BMI",
-        href: "/dashboard/imc",
+        href: "/dashboard/bmi",
         icon: Calendar,
       },
       {

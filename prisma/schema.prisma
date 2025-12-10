@@ -46,7 +46,7 @@ model User {
   // Relations
   // ======================================================================
   runs Run[]
-  healthMetrics HealthMetrics[]
+  bmis bmi[]
 
   @@unique([email])
   @@unique([username])
@@ -130,7 +130,7 @@ model Run {
 // Health Metrics Model
 // ===================================================
 
-model HealthMetrics {
+model bmi {
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -143,5 +143,5 @@ model HealthMetrics {
   updatedAt DateTime @updatedAt
 
   @@index([userId])
-  @@map("health_metrics")
+  @@map("bmi")
 }
