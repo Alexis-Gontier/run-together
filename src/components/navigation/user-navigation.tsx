@@ -48,7 +48,7 @@ export function UserNavigation() {
             fetchOptions: {
                 onSuccess: () => {
                     toast.success("Signed out successfully.", { id: toastId })
-                    router.replace("/")
+                    router.replace("/signin")
                 },
                 onError: () => {
                     toast.error("There was an error signing out. Please try again.", { id: toastId })

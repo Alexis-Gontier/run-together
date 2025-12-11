@@ -1,7 +1,7 @@
 "use server"
 
 import { authActionClient } from "@/lib/actions/clients"
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { prisma } from "@/lib/db/prisma";
 import {
     bmiCreateSchema,
@@ -20,6 +20,7 @@ export const healthMetricsCreateAction = authActionClient
                 }
             });
             revalidatePath("/dashboard/bmi");
+            revalidateTag(`bmi-${ctx.user.id}`, 'default');
             return {
                 success: true,
                 data: bmi,

@@ -46,7 +46,7 @@ type BMIEvolutionChartProps = {
   metrics: bmi[]
 }
 
-export default function BMIEvolutionChart({ metrics }: BMIEvolutionChartProps) {
+export function BMIEvolutionChart({ metrics }: BMIEvolutionChartProps) {
   if (metrics.length === 0) {
     return (
       <Card>

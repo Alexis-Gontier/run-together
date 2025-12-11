@@ -2,7 +2,7 @@
 
 import { authActionClient } from "@/lib/actions/clients"
 import { prisma } from "@/lib/db/prisma"
-import { revalidatePath } from "next/cache"
+import { revalidatePath, revalidateTag } from "next/cache"
 import {
     bmiDeleteSchema,
 } from "@/lib/schemas/bmi-schema"
@@ -18,6 +18,7 @@ export const deleteBmiAction = authActionClient
                 },
             })
             revalidatePath('/dashboard/bmi')
+            revalidateTag(`bmi-${ctx.user.id}`, 'default')
             return {
                 success: true,
                 data: bmi,

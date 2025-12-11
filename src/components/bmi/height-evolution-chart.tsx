@@ -45,7 +45,7 @@ type HeightEvolutionChartProps = {
   metrics: bmi[]
 }
 
-export default function HeightEvolutionChart({ metrics }: HeightEvolutionChartProps) {
+export function HeightEvolutionChart({ metrics }: HeightEvolutionChartProps) {
   if (metrics.length === 0) {
     return (
       <Card>

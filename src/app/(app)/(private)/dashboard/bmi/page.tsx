@@ -5,9 +5,9 @@ import { getBmisAction } from "@/lib/actions/bmi";
 import { Activity, Ruler, Weight } from "lucide-react";
 import { calculateBMI, getBMICategory } from "@/lib/utils/bmi";
 import { BmiHistory } from "@/components/bmi/bmi-history";
-import BMIEvolutionChartClient from "@/components/bmi/bmi-evolution-chart-client";
-import HeightEvolutionChartClient from "@/components/bmi/height-evolution-chart-client";
-import WeightEvolutionChartClient from "@/components/bmi/weight-evolution-chart-client";
+import { BMIEvolutionChart } from "@/components/bmi/bmi-evolution-chart";
+import { HeightEvolutionChart } from "@/components/bmi/height-evolution-chart";
+import { WeightEvolutionChart } from "@/components/bmi/weight-evolution-chart";
 
 export default async function BmiPage() {
 
@@ -47,10 +47,10 @@ export default async function BmiPage() {
                     icon={<Ruler size={16} />}
                 />
             </div>
-            <BMIEvolutionChartClient metrics={result.data?.success && result.data.data ? result.data.data : []} />
+            <BMIEvolutionChart metrics={result.data?.success && result.data.data ? result.data.data : []} />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <HeightEvolutionChartClient metrics={result.data?.success && result.data.data ? result.data.data : []} />
-                <WeightEvolutionChartClient metrics={result.data?.success && result.data.data ? result.data.data : []} />
+                <HeightEvolutionChart metrics={result.data?.success && result.data.data ? result.data.data : []} />
+                <WeightEvolutionChart metrics={result.data?.success && result.data.data ? result.data.data : []} />
             </div>
         </>
     )

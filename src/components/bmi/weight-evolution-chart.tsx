@@ -45,7 +45,7 @@ type WeightEvolutionChartProps = {
   metrics: bmi[]
 }
 
-export default function WeightEvolutionChart({ metrics }: WeightEvolutionChartProps) {
+export function WeightEvolutionChart({ metrics }: WeightEvolutionChartProps) {
   if (metrics.length === 0) {
     return (
       <Card>

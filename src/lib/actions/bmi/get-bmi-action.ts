@@ -2,18 +2,31 @@
 
 import { authActionClient } from "@/lib/actions/clients"
 import { prisma } from "@/lib/db/prisma";
+import { unstable_cache } from "next/cache";
 
-export const getBmisAction = authActionClient
-    .action(async ({ ctx }) => {
-        try {
-            const bmis = await prisma.bmi.findMany({
+const getCachedBmis = (userId: string) =>
+    unstable_cache(
+        async (userId: string) => {
+            return prisma.bmi.findMany({
                 where: {
-                    userId: ctx.user.id,
+                    userId,
                 },
                 orderBy: {
                     date: 'desc',
                 },
             })
+        },
+        [`bmi-list`],
+        {
+            tags: [`bmi-${userId}`],
+            revalidate: 600, // 10 minutes
+        }
+    )(userId);
+
+export const getBmisAction = authActionClient
+    .action(async ({ ctx }) => {
+        try {
+            const bmis = await getCachedBmis(ctx.user.id);
             return {
                 success: true,
                 data: bmis,
