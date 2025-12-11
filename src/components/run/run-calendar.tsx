@@ -23,15 +23,6 @@ function formatDuration(seconds: number): string {
     return `${minutes}min`
 }
 
-// Calculer le niveau d'activité basé sur le nombre de courses
-function getActivityLevel(activityCount: number): number {
-    if (activityCount === 0) return 0
-    if (activityCount === 1) return 1
-    if (activityCount === 2) return 2
-    if (activityCount <= 3) return 3
-    return 4 // 4+ courses
-}
-
 export function RunCalendar() {
     const currentYear = new Date().getFullYear()
     const { data, isLoading, isError } = useRunsCalendar(currentYear)
@@ -46,14 +37,10 @@ export function RunCalendar() {
             const [year, month, day] = dateString.split("-").map(Number)
             const date = new Date(year, month - 1, day)
 
-            // Calculer le niveau d'activité basé sur le nombre de courses
-            const activityLevel = getActivityLevel(dayData.runs.length)
-
             transformedData[dateString] = {
                 date,
                 dateString,
                 hasActivity: dayData.hasActivity,
-                activityLevel,
                 tooltipContent: (
                     <div className="text-xs">
                         <p className="font-medium">
