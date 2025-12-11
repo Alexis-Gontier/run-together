@@ -5,7 +5,8 @@ import {
   TrendingUp,
   User,
   Apple,
-  Route
+  Route,
+  Target
 } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 
@@ -70,6 +71,16 @@ export const DASHBOARD_NAV_ITEMS: NavGroup[] = [
         href: "/dashboard/caloric-needs",
         icon: Apple,
       }
+    ]
+  },
+  {
+    title: "Other",
+    items: [
+      {
+        title: "Challenges",
+        href: "/dashboard/challenges",
+        icon: Target,
+      },
     ]
   },
 ]

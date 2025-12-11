@@ -23,7 +23,7 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
             </main>
             <aside className="relative hidden lg:block bg-muted">
                 <Image
-                    src="/placeholder.svg"
+                    src="/images/placeholder.svg"
                     alt="Image"
                     fill
                     className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"

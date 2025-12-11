@@ -11,11 +11,12 @@ import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
+    DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/shadcn-ui/dropdown-menu"
 import { EllipsisVertical, LogOut, Settings } from "lucide-react"
-import { SidebarMenuButton } from "@/components/shadcn-ui/sidebar"
+import { SidebarMenuButton, useSidebar } from "@/components/shadcn-ui/sidebar"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
@@ -24,6 +25,8 @@ export function UserNavigation() {
 
     const router = useRouter()
     const { data: session, isPending } = authClient.useSession()
+
+    const { isMobile } = useSidebar()
 
     if (isPending) {
         return (
@@ -81,10 +84,28 @@ export function UserNavigation() {
             </DropdownMenuTrigger>
             <DropdownMenuContent
                 // side="right"
+                side={isMobile ? "bottom" : "right"}
                 className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
                 align="end"
                 sideOffset={4}
             >
+                <DropdownMenuLabel className="p-0">
+                    <div className="px-1 py-1.5 text-left text-sm flex items-center gap-2">
+                        <Avatar className="h-8 w-8 rounded-sm">
+                            <AvatarImage src={session.user.image || undefined} />
+                            <AvatarFallback className="rounded-sm">{initials}</AvatarFallback>
+                        </Avatar>
+                        <div className="grid flex-1 text-left text-sm leading-tight">
+                            <span className="truncate font-medium">
+                                {session.user.displayUsername}
+                            </span>
+                            <span className="truncate text-muted-foreground text-xs">
+                                {session.user.email}
+                            </span>
+                        </div>
+                    </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
                 <DropdownMenuItem
                     className="cursor-pointer"
                     asChild

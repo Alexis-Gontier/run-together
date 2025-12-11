@@ -7,10 +7,12 @@ import {
     InputGroupAddon,
     InputGroupInput,
 } from "@/components/shadcn-ui/input-group"
-import { Filter, LayoutGrid, List, Search } from 'lucide-react'
 import { Card, CardContent, CardHeader } from '@/components/shadcn-ui/card'
+import { CreateRunDialog } from '@/components/run/create-run-dialog'
+import { Filter, LayoutGrid, List, Search } from 'lucide-react'
+import { parseAsString, useQueryState } from 'nuqs'
 import { useState } from 'react'
-import { CreateRunDialog } from './create-run-dialog'
+
 
 export function RunToolbar() {
 
@@ -24,12 +26,25 @@ export function RunToolbar() {
         setViewMode(mode);
     }
 
+    const [search, setSearch] = useQueryState(
+        "search",
+        parseAsString.withDefault("").withOptions({
+            shallow: false,
+            throttleMs: 500,
+        })
+    )
+
     return (
         <>
             <div className="flex justify-between">
                 <div className="flex gap-2">
                     <InputGroup className="w-64">
-                        <InputGroupInput placeholder="Search for a run" />
+                        <InputGroupInput
+                            placeholder="Search for a run"
+                            type="search"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                        />
                         <InputGroupAddon>
                             <Search />
                         </InputGroupAddon>
