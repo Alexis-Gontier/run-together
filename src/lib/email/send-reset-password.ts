@@ -1,4 +1,5 @@
 import { resend } from "./resend"
+import { ResetPasswordEmailTemplate } from "./templates/reset-password-template"
 
 type SendResetPasswordEmailProps = {
     email: string
@@ -15,15 +16,8 @@ export async function sendResetPasswordEmail({
         const { data, error } = await resend.emails.send({
             from: "Run Together <onboarding@resend.dev>",
             to: email,
-            subject: "Réinitialisation de votre mot de passe",
-            html: `
-                <h1>Réinitialisation de mot de passe</h1>
-                <p>Bonjour ${username},</p>
-                <p>Cliquez sur le lien ci-dessous pour réinitialiser votre mot de passe :</p>
-                <a href="${resetUrl}">Réinitialiser mon mot de passe</a>
-                <p>Ce lien expire dans 1 heure.</p>
-                <p>Si vous n'avez pas demandé cette réinitialisation, ignorez cet email.</p>
-            `,
+            subject: "Réinitialisation de votre mot de passe - Run Together",
+            html: ResetPasswordEmailTemplate({ username, resetUrl }),
         })
 
         if (error) {
