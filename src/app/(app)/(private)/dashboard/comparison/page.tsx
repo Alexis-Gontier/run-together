@@ -1,64 +1,32 @@
 import { DashboardTextHeading } from "@/components/ui/dashboard-text-heading";
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "@/components/shadcn-ui/card"
+import { UserSelector } from "@/components/comparison/user-selector";
+import { ComparisonResults } from "@/components/comparison/comparison-results";
+import { PeriodSelector } from "@/components/comparison/period-selector";
+import { RefreshButton } from "@/components/comparison/refresh-button";
+import { ComparisonCharts } from "@/components/comparison/comparison-charts";
+import { ComparisonTable } from "@/components/comparison/comparison-table";
 
-export default function page() {
+export default function ComparisonPage() {
     return (
         <>
-            <DashboardTextHeading
-                title="Comparison"
-                description="Compare different runs and analyze their performance"
-            />
-            <Card>
-                <CardHeader>
-                    <CardTitle>Sélectionner des amis à comparer</CardTitle>
-                    <CardDescription>
-                        Liste des amis (4 membres)
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-
-                </CardContent>
-            </Card>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Distance</CardTitle>
-                    </CardHeader>
-                </Card>
-                <Card>
-                    <CardHeader>
-                        <CardTitle></CardTitle>
-                    </CardHeader>
-                </Card>
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Allure Moyenne</CardTitle>
-                    </CardHeader>
-                </Card>
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Fréquence d&apos;Activité</CardTitle>
-                    </CardHeader>
-                </Card>
+            <div className="flex justify-between items-end">
+                <DashboardTextHeading
+                    title="Comparaison"
+                    description="Comparez vos performances avec d'autres membres de la communauté"
+                />
+                <RefreshButton />
             </div>
-            <Card>
-                <CardHeader>
-                    <CardTitle>Tableau Comparatif</CardTitle>
-                    <CardDescription>
-                        Analyse comparative des membres sélectionnés
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                
-                </CardContent>
-            </Card>
+
+            <div className="grid grid-cols-1 gap-6">
+                <UserSelector />
+                <PeriodSelector />
+            </div>
+
+            <ComparisonResults />
+
+            <ComparisonCharts />
+
+            <ComparisonTable />
         </>
     )
 }
