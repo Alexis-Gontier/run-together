@@ -13,6 +13,7 @@ import {
     DialogTrigger,
 } from "@/components/shadcn-ui/dialog"
 import { Button } from "@/components/shadcn-ui/button"
+import { LoadingButton } from "@/components/ui/loading-button"
 import {
     Form,
     FormControl,
@@ -214,13 +215,13 @@ export function CreateRunDialog() {
                             >
                                 Annuler
                             </Button>
-                            <Button
+                            <LoadingButton
                                 type="submit"
                                 className="cursor-pointer"
-                                disabled={isPending}
+                                isPending={isPending}
                             >
-                                {isPending ? "Création en cours..." : "Ajouter la course"}
-                            </Button>
+                                Ajouter la course
+                            </LoadingButton>
                         </div>
                     </form>
                 </Form>

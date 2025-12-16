@@ -12,6 +12,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/shadcn-ui/alert-dialog"
+import { LoadingButton } from "@/components/ui/loading-button"
 import { deleteRunAction } from "@/lib/actions/runs"
 import { toast } from "sonner"
 import { Run } from "@/lib/api/schemas/runs.schema"
@@ -64,13 +65,13 @@ export function DeleteRunDialog({ run, open, onOpenChange }: DeleteRunDialogProp
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
-                    <AlertDialogAction
+                    <LoadingButton
                         onClick={handleDelete}
-                        disabled={isPending}
-                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        isPending={isPending}
+                        variant="destructive"
                     >
-                        {isPending ? "Deleting..." : "Delete"}
-                    </AlertDialogAction>
+                        Delete
+                    </LoadingButton>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>

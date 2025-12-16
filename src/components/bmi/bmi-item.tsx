@@ -3,6 +3,7 @@
 import { format } from "date-fns"
 import { fr } from "date-fns/locale"
 import { Button } from "@/components/shadcn-ui/button"
+import { LoadingButton } from "@/components/ui/loading-button"
 import { Activity, Calendar, Ruler, Trash2, Weight } from "lucide-react"
 import { deleteBmiAction } from "@/lib/actions/bmi"
 import { useState, useTransition } from "react"
@@ -115,14 +116,14 @@ export default function BmiItem({ data }: BmiItemProps) {
                         >
                             Annuler
                         </Button>
-                        <Button
+                        <LoadingButton
                             variant="destructive"
                             onClick={handleDelete}
-                            disabled={isPending}
+                            isPending={isPending}
                             className="cursor-pointer"
                         >
-                            {isPending ? "Suppression..." : "Supprimer"}
-                        </Button>
+                            Supprimer
+                        </LoadingButton>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

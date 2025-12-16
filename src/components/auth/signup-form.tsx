@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 
 import { Button } from "@/components/shadcn-ui/button"
+import { LoadingButton } from "@/components/ui/loading-button"
 import {
     Form,
     FormControl,
@@ -145,13 +146,13 @@ export function SignupForm() {
                     )}
                 />
 
-                <Button
+                <LoadingButton
                     type="submit"
                     className="w-full cursor-pointer"
-                    disabled={isPending}
+                    isPending={isPending}
                 >
-                    {isPending ? "Création du compte..." : "S'inscrire"}
-                </Button>
+                    S'inscrire
+                </LoadingButton>
             </form>
         </Form>
     )

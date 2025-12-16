@@ -17,7 +17,7 @@ import {
     FormDescription,
 } from "@/components/shadcn-ui/form";
 import { Input } from "@/components/shadcn-ui/input";
-import { Button } from "@/components/shadcn-ui/button";
+import { LoadingButton } from "@/components/ui/loading-button";
 import {
     Card,
     CardContent,
@@ -166,9 +166,9 @@ export function UpdatePasswordForm() {
                             )}
                         />
 
-                        <Button type="submit" disabled={isPending}>
-                            {isPending ? "Mise à jour..." : "Changer le mot de passe"}
-                        </Button>
+                        <LoadingButton type="submit" isPending={isPending}>
+                            Changer le mot de passe
+                        </LoadingButton>
                     </form>
                 </Form>
             </CardContent>

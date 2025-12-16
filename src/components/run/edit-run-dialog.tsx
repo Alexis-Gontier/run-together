@@ -12,6 +12,7 @@ import {
     DialogTitle,
 } from "@/components/shadcn-ui/dialog"
 import { Button } from "@/components/shadcn-ui/button"
+import { LoadingButton } from "@/components/ui/loading-button"
 import {
     Form,
     FormControl,
@@ -222,13 +223,13 @@ export function EditRunDialog({ run, open, onOpenChange }: EditRunDialogProps) {
                             >
                                 Annuler
                             </Button>
-                            <Button
+                            <LoadingButton
                                 type="submit"
                                 className="cursor-pointer"
-                                disabled={isPending}
+                                isPending={isPending}
                             >
-                                {isPending ? "Mise à jour en cours..." : "Mettre à jour la course"}
-                            </Button>
+                                Mettre à jour la course
+                            </LoadingButton>
                         </div>
                     </form>
                 </Form>

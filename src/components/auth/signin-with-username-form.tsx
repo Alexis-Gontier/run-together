@@ -102,11 +102,8 @@ export function SigninWithUsernameForm() {
                     )}
                 />
 
-                <LoadingButton
-                    type="submit"
-                    isPending={isPending}
-                >
-                    {isPending ? "Connexion en cours..." : "Se connecter"}
+                <LoadingButton type="submit" isPending={isPending}>
+                    Se connecter
                 </LoadingButton>
             </form>
         </Form>

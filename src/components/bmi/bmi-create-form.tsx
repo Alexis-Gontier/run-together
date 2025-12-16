@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 
-import { Button } from "@/components/shadcn-ui/button"
+import { LoadingButton } from "@/components/ui/loading-button"
 import {
     Form,
     FormControl,
@@ -163,13 +163,13 @@ export function BmiForm() {
                                         </FormItem>
                                     )}
                                 />
-                                <Button
+                                <LoadingButton
                                     type="submit"
-                                    disabled={isPending}
+                                    isPending={isPending}
                                     className="w-full cursor-pointer"
                                 >
-                                    {isPending ? "Enregistrement..." : "Enregistrer"}
-                                </Button>
+                                    Enregistrer
+                                </LoadingButton>
                             </div>
                         </div>
                     </form>

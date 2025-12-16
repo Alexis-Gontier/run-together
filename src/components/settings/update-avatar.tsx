@@ -3,6 +3,7 @@
 import { useState, useRef, useTransition } from "react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/shadcn-ui/avatar"
 import { Button } from "@/components/shadcn-ui/button"
+import { LoadingButton } from "@/components/ui/loading-button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/shadcn-ui/card"
 import { ImageCrop, ImageCropContent, ImageCropApply, ImageCropReset } from "@/components/ui/image-crop"
 import { authClient } from "@/lib/auth/auth-client"
@@ -186,23 +187,15 @@ export function UpdateAvatar() {
                 </Button>
 
                 {user.image && (
-                  <Button
+                  <LoadingButton
                     onClick={handleDelete}
-                    disabled={isUploading || isPending}
+                    disabled={isUploading}
+                    isPending={isPending}
                     variant="outline"
                   >
-                    {isPending ? (
-                      <>
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                        Suppression...
-                      </>
-                    ) : (
-                      <>
-                        <Trash2 className="h-4 w-4" />
-                        Supprimer
-                      </>
-                    )}
-                  </Button>
+                    <Trash2 className="h-4 w-4" />
+                    Supprimer
+                  </LoadingButton>
                 )}
               </div>
             </div>
@@ -217,8 +210,6 @@ export function UpdateAvatar() {
           <div className="space-y-4">
             <ImageCrop
               file={selectedFile}
-              aspect={1}
-              maxImageSize={1024 * 1024}
               onCrop={handleUploadCroppedImage}
             >
               <ImageCropContent className="max-w-md" />

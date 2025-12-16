@@ -11,7 +11,7 @@ interface ImageCropContextValue {
   setCrop: (crop: Crop) => void
   completedCrop: PixelCrop | undefined
   setCompletedCrop: (crop: PixelCrop | undefined) => void
-  imgRef: React.RefObject<HTMLImageElement>
+  imgRef: React.RefObject<HTMLImageElement | null>
   aspect: number
   file: File
   onCrop: (croppedImage: string) => void
@@ -31,43 +31,26 @@ function useImageCrop() {
 interface ImageCropProps {
   children: ReactNode
   file: File
-  aspect?: number
-  maxImageSize?: number
-  onChange?: (crop: Crop) => void
-  onComplete?: (crop: PixelCrop) => void
   onCrop: (croppedImage: string) => void
 }
 
 export function ImageCrop({
   children,
   file,
-  aspect = 1,
-  maxImageSize,
-  onChange,
-  onComplete,
   onCrop,
 }: ImageCropProps) {
+  const aspect = 1 // Always square for avatars
+
   // Initialize with a square crop
   const getInitialCrop = useCallback((): Crop => {
-    if (aspect === 1) {
-      // For square aspect ratio, use equal width and height
-      return {
-        unit: "%",
-        width: 80,
-        height: 80,
-        x: 10,
-        y: 10,
-      }
-    }
-    // For other aspect ratios
     return {
       unit: "%",
       width: 80,
-      height: 80 / aspect,
+      height: 80,
       x: 10,
       y: 10,
     }
-  }, [aspect])
+  }, [])
 
   const [crop, setCrop] = useState<Crop>(getInitialCrop())
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>()
