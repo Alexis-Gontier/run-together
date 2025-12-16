@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { useState, useTransition } from "react"
+import { useState } from "react"
 
 import {
     Dialog,
@@ -27,13 +27,13 @@ import { Textarea } from "@/components/shadcn-ui/textarea"
 import { DatePicker } from "@/components/ui/date-picker"
 
 import { createRunSchema, type CreateRunType } from "@/lib/schemas/run-schema"
-import { createRunAction } from "@/lib/actions/runs"
+import { useCreateRun } from "@/lib/api/mutations/use-create-run"
 import { toast } from "sonner"
 import { Plus } from "lucide-react"
 
 export function CreateRunDialog() {
     const [open, setOpen] = useState(false)
-    const [isPending, startTransition] = useTransition()
+    const { mutateAsync, isPending } = useCreateRun()
 
     const form = useForm<CreateRunType>({
         resolver: zodResolver(createRunSchema),
@@ -46,18 +46,20 @@ export function CreateRunDialog() {
         },
     })
 
-    function onSubmit(values: CreateRunType) {
-        startTransition(async () => {
-            const toastId = toast.loading("Creating run...")
-            try {
-                await createRunAction(values)
-                toast.success("Run created successfully!", { id: toastId })
+    async function onSubmit(values: CreateRunType) {
+        const toastId = toast.loading("Creating run...")
+        try {
+            const result = await mutateAsync(values)
+            if (result?.success) {
+                toast.success(result.message || "Run created successfully!", { id: toastId })
                 form.reset()
                 setOpen(false)
-            } catch (error) {
+            } else {
                 toast.error("Failed to create run. Please try again.", { id: toastId })
             }
-        })
+        } catch (error) {
+            toast.error("Failed to create run. Please try again.", { id: toastId })
+        }
     }
 
     return (
@@ -124,24 +126,35 @@ export function CreateRunDialog() {
                             <FormField
                                 control={form.control}
                                 name="duration"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Duration (minutes)</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                type="number"
-                                                placeholder="30"
-                                                disabled={isPending}
-                                                value={field.value || ''}
-                                                onChange={(e) => {
-                                                    const value = e.target.value
-                                                    field.onChange(value === '' ? 0 : parseFloat(value))
-                                                }}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
+                                render={({ field }) => {
+                                    const totalSeconds = (field.value || 0) * 60
+                                    const hours = Math.floor(totalSeconds / 3600)
+                                    const minutes = Math.floor((totalSeconds % 3600) / 60)
+                                    const seconds = totalSeconds % 60
+                                    const timeValue = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`
+
+                                    return (
+                                        <FormItem className="flex flex-col">
+                                            <FormLabel>Duration</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type="time"
+                                                    step="1"
+                                                    value={timeValue}
+                                                    onChange={(e) => {
+                                                        const [h, m, s] = e.target.value.split(":")
+                                                        const totalSeconds = parseInt(h || "0") * 3600 + parseInt(m || "0") * 60 + parseInt(s || "0")
+                                                        const totalMinutes = totalSeconds / 60
+                                                        field.onChange(totalMinutes)
+                                                    }}
+                                                    disabled={isPending}
+                                                    className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )
+                                }}
                             />
                         </div>
 

@@ -121,8 +121,8 @@ export function PeriodSelector() {
           Filtrez les statistiques par période
         </CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col gap-4">
-        <div className="flex-1 min-w-[200px]">
+      <CardContent className="flex flex-col justify-start gap-4">
+        <div>
           <Select value={period} onValueChange={handlePeriodChange}>
             <SelectTrigger>
               <SelectValue placeholder="Sélectionner une période" />

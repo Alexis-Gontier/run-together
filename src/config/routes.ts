@@ -91,11 +91,12 @@ export const ROUTES = {
   ],
   auth: [
     "/signin",
-    "/signup"
+    "/signup",
+    "/forgot-password",
+    "/reset-password"
   ],
   protected: [
     "/dashboard",
-    "/dashboard/runs",
   ],
 } as const;
 

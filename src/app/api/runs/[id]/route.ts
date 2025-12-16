@@ -45,7 +45,15 @@ export const GET = authRoute
  */
 export const PATCH = authRoute
   .params(paramsSchema)
-  .body(createRunSchema.partial()) // All fields are optional for update
+  .body(
+    z.object({
+      date: z.coerce.date().optional(),
+      distance: z.number().positive("Distance must be positive").optional(),
+      duration: z.number().positive("Duration must be positive").optional(),
+      elevationGain: z.number().nonnegative().optional(),
+      notes: z.string().optional(),
+    })
+  )
   .handler(async (request, context) => {
     const { user } = context.ctx;
     const { id } = context.params;

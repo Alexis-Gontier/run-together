@@ -6,23 +6,25 @@ import { z } from "zod";
 /**
  * GET /api/runs
  * Fetch all runs for the authenticated user
- * Optional query params: limit, offset
+ * Optional query params: limit, offset, sortBy, sortOrder
  */
 export const GET = authRoute
   .query(
     z.object({
       limit: z.coerce.number().positive().optional(),
       offset: z.coerce.number().nonnegative().optional(),
+      sortBy: z.enum(['date', 'distance', 'duration', 'pace', 'elevationGain']).optional(),
+      sortOrder: z.enum(['asc', 'desc']).optional(),
     })
   )
   .handler(async (request, context) => {
     const { user } = context.ctx;
-    const { limit = 50, offset = 0 } = context.query;
+    const { limit = 50, offset = 0, sortBy = 'date', sortOrder = 'desc' } = context.query;
 
     // Fetch runs from database
     const runs = await prisma.run.findMany({
       where: { userId: user.id },
-      orderBy: { date: "desc" },
+      orderBy: { [sortBy]: sortOrder },
       take: limit,
       skip: offset,
     });
@@ -49,7 +51,15 @@ export const GET = authRoute
  * Body: { date, distance, duration, elevationGain?, notes? }
  */
 export const POST = authRoute
-  .body(createRunSchema)
+  .body(
+    z.object({
+      date: z.coerce.date(),
+      distance: z.number().positive("Distance must be positive"),
+      duration: z.number().positive("Duration must be positive"),
+      elevationGain: z.number().nonnegative().optional(),
+      notes: z.string().optional(),
+    })
+  )
   .handler(async (request, context) => {
     const { user } = context.ctx;
     const { date, distance, duration, elevationGain, notes } = context.body;

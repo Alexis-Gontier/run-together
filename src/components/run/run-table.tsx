@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from 'react'
+import { useState } from 'react'
 import {
     Card,
     CardContent,
@@ -37,6 +37,7 @@ import { Run } from '@/generated/prisma/client'
 import { EditRunDialog } from './edit-run-dialog'
 import { DeleteRunDialog } from './delete-run-dialog'
 import { cn } from '@/lib/utils/cn'
+import { parseAsString, useQueryState } from 'nuqs'
 
 type RunTableProps = {
     runs: Run[]
@@ -49,8 +50,8 @@ export function RunTable({ runs }: RunTableProps) {
     const [selectedRun, setSelectedRun] = useState<Run | null>(null)
     const [editDialogOpen, setEditDialogOpen] = useState(false)
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-    const [sortField, setSortField] = useState<SortField>('date')
-    const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
+    const [sortBy, setSortBy] = useQueryState('sortBy', parseAsString.withDefault('date'))
+    const [sortOrder, setSortOrder] = useQueryState('sortOrder', parseAsString.withDefault('desc'))
 
     const handleEdit = (run: Run) => {
         setSelectedRun(run)
@@ -63,64 +64,26 @@ export function RunTable({ runs }: RunTableProps) {
     }
 
     const handleSort = (field: SortField) => {
-        if (sortField === field) {
-            if (sortDirection === 'desc') {
-                setSortDirection('asc')
-            } else if (sortDirection === 'asc') {
-                setSortDirection(null)
-                setSortField('date')
+        if (sortBy === field) {
+            if (sortOrder === 'desc') {
+                setSortOrder('asc')
+            } else if (sortOrder === 'asc') {
+                setSortOrder('desc')
+                setSortBy('date')
             } else {
-                setSortDirection('desc')
+                setSortOrder('desc')
             }
         } else {
-            setSortField(field)
-            setSortDirection('desc')
+            setSortBy(field)
+            setSortOrder('desc')
         }
     }
 
-    const sortedRuns = useMemo(() => {
-        if (!sortDirection) return runs
-
-        return [...runs].sort((a, b) => {
-            let aValue: number | Date
-            let bValue: number | Date
-
-            switch (sortField) {
-                case 'date':
-                    aValue = new Date(a.date)
-                    bValue = new Date(b.date)
-                    break
-                case 'distance':
-                    aValue = a.distance
-                    bValue = b.distance
-                    break
-                case 'duration':
-                    aValue = a.duration
-                    bValue = b.duration
-                    break
-                case 'pace':
-                    aValue = a.pace
-                    bValue = b.pace
-                    break
-                case 'elevationGain':
-                    aValue = a.elevationGain
-                    bValue = b.elevationGain
-                    break
-                default:
-                    return 0
-            }
-
-            if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1
-            if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1
-            return 0
-        })
-    }, [runs, sortField, sortDirection])
-
     const SortIcon = ({ field }: { field: SortField }) => {
-        if (sortField !== field || !sortDirection) {
+        if (sortBy !== field) {
             return <ArrowUpDown className="ml-2 h-4 w-4 opacity-50" />
         }
-        return sortDirection === 'asc' ? (
+        return sortOrder === 'asc' ? (
             <ArrowUp className="ml-2 h-4 w-4" />
         ) : (
             <ArrowDown className="ml-2 h-4 w-4" />
@@ -190,7 +153,7 @@ export function RunTable({ runs }: RunTableProps) {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {sortedRuns.length === 0 ? (
+                                {runs.length === 0 ? (
                                     <TableRow>
                                         <TableCell colSpan={7} className="h-32">
                                             <div className="flex flex-col items-center justify-center text-center text-muted-foreground">
@@ -201,7 +164,7 @@ export function RunTable({ runs }: RunTableProps) {
                                         </TableCell>
                                     </TableRow>
                                 ) : (
-                                    sortedRuns.map((run) => (
+                                    runs.map((run) => (
                                         <TableRow key={run.id} className="group hover:bg-muted/50 transition-colors">
                                             <TableCell className="font-medium">
                                                 {formatDateShort(run.date)}

@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useTransition } from "react"
+import { useQueryClient } from "@tanstack/react-query"
 import {
     AlertDialog,
     AlertDialogAction,
@@ -25,6 +26,7 @@ type DeleteRunDialogProps = {
 
 export function DeleteRunDialog({ run, open, onOpenChange }: DeleteRunDialogProps) {
     const [isPending, startTransition] = useTransition()
+    const queryClient = useQueryClient()
 
     function handleDelete() {
         startTransition(async () => {
@@ -33,6 +35,13 @@ export function DeleteRunDialog({ run, open, onOpenChange }: DeleteRunDialogProp
                 const result = await deleteRunAction({ id: run.id })
                 if (result?.data?.success) {
                     toast.success("Run deleted successfully!", { id: toastId })
+
+                    // Invalidate all run-related queries
+                    queryClient.invalidateQueries({ queryKey: ["runs"] })
+                    queryClient.invalidateQueries({ queryKey: ["runs-calendar"] })
+                    queryClient.invalidateQueries({ queryKey: ["leaderboard"] })
+                    queryClient.invalidateQueries({ queryKey: ["recent-runs"] })
+
                     onOpenChange(false)
                 } else {
                     toast.error(result?.data?.error || "Failed to delete run", { id: toastId })

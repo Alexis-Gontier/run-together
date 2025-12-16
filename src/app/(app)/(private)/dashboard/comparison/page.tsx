@@ -17,14 +17,16 @@ export default function ComparisonPage() {
                 <RefreshButton />
             </div>
 
-            <div className="grid grid-cols-1 gap-6">
-                <UserSelector />
+            <div className="grid grid-cols-4 gap-6">
+                <div className="col-span-3">
+                    <UserSelector />
+                </div>
                 <PeriodSelector />
             </div>
 
-            <ComparisonResults />
+            {/* <ComparisonResults /> */}
 
-            <ComparisonCharts />
+            {/* <ComparisonCharts /> */}
 
             <ComparisonTable />
         </>

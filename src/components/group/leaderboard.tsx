@@ -6,13 +6,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/shadcn-ui/avat
 import { Skeleton } from "@/components/shadcn-ui/skeleton";
 import { useLeaderboard } from "@/lib/api/queries";
 import { useLeaderboardStore } from "@/lib/stores/leaderboard-store";
-import { Trophy, Medal, Award, TrendingUp, Users } from "lucide-react";
+import { Trophy, Medal, Award } from "lucide-react";
 
 const PERIOD_OPTIONS = [
-  { value: "7", label: "7 jours" },
-  { value: "30", label: "30 jours" },
-  { value: "90", label: "3 mois" },
-  { value: "365", label: "1 an" },
+  { value: "7", label: "7j" },
+  { value: "30", label: "30j" },
+  { value: "90", label: "3m" },
+  { value: "365", label: "1an" },
   { value: "all", label: "Tout" },
 ];
 
@@ -44,62 +44,34 @@ export function LeaderBoard() {
 
   if (isLoading) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="h-5 w-5" />
-            Classement du Groupe
-          </CardTitle>
-          <CardDescription>Chargement...</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {[...Array(5)].map((_, i) => (
-            <div key={i} className="flex items-center gap-3">
-              <Skeleton className="h-8 w-8 rounded-full" />
-              <div className="flex-1 space-y-2">
-                <Skeleton className="h-4 w-32" />
-                <Skeleton className="h-3 w-24" />
-              </div>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
+      <p>
+        Loading...
+      </p>
     );
   }
 
   if (isError || !data) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="h-5 w-5" />
-            Classement du Groupe
-          </CardTitle>
-          <CardDescription className="text-destructive">
-            Erreur lors du chargement du classement
-          </CardDescription>
-        </CardHeader>
-      </Card>
+      <p>
+        Erreur
+      </p>
     );
   }
 
-  const { leaderboard, currentUser, totalUsers } = data.data;
+  const { leaderboard, currentUser } = data.data;
   const currentUserInTop = leaderboard.find((u) => u.isCurrentUser);
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <TrendingUp className="h-5 w-5" />
-          Classement du Groupe
-        </CardTitle>
-        <CardDescription className="flex items-center gap-2">
-          <Users className="h-4 w-4" />
-          {totalUsers} membre{totalUsers > 1 ? "s" : ""}
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {/* Period selector */}
+      <CardHeader className="flex items-end justify-between">
+        <div className="space-y-1">
+          <CardTitle>
+            Classement du groupe
+          </CardTitle>
+          <CardDescription>
+            Basé sur la distance totale
+          </CardDescription>
+        </div>
         <Select value={period} onValueChange={setPeriod}>
           <SelectTrigger>
             <SelectValue placeholder="Période" />
@@ -112,9 +84,11 @@ export function LeaderBoard() {
             ))}
           </SelectContent>
         </Select>
+      </CardHeader>
+      <CardContent className="space-y-2">
 
         {/* Leaderboard list */}
-        <div className="space-y-3">
+        <div className="space-y-2">
           {leaderboard.map((user) => (
             <div
               key={user.id}

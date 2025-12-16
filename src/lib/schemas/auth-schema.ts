@@ -39,8 +39,10 @@ export const signInSchema = z.object({
 });
 
 export const changePasswordSchema = z.object({
+    currentPassword: z.string().min(1, "Le mot de passe actuel est requis"),
     newPassword: passwordSchema,
-    confirmPassword: z.string()
+    confirmPassword: z.string(),
+    revokeOtherSessions: z.boolean().optional().default(false),
 }).refine((data) => data.newPassword === data.confirmPassword, {
     message: "Les mots de passe ne correspondent pas",
     path: ["confirmPassword"],
@@ -58,8 +60,13 @@ export const resetPasswordSchema = z.object({
     path: ["confirmPassword"],
 });
 
+export const updateEmailSchema = z.object({
+    newEmail: emailSchema,
+});
+
 export type SignUpType = z.infer<typeof signUpSchema>;
 export type SignInType = z.infer<typeof signInSchema>;
 export type ChangePasswordType = z.infer<typeof changePasswordSchema>;
 export type ForgotPasswordType = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordType = z.infer<typeof resetPasswordSchema>;
+export type UpdateEmailType = z.infer<typeof updateEmailSchema>;
