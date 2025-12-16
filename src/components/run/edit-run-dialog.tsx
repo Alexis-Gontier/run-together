@@ -28,7 +28,7 @@ import { DatePicker } from "@/components/ui/date-picker"
 import { createRunSchema, type CreateRunType } from "@/lib/schemas/run-schema"
 import { useUpdateRun } from "@/lib/api/mutations/use-update-run"
 import { toast } from "sonner"
-import { Run } from "@/generated/prisma/client"
+import { Run } from "@/lib/api/schemas/runs.schema"
 
 type EditRunDialogProps = {
     run: Run

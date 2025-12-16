@@ -14,7 +14,7 @@ import {
 } from "@/components/shadcn-ui/alert-dialog"
 import { deleteRunAction } from "@/lib/actions/runs"
 import { toast } from "sonner"
-import { Run } from "@/generated/prisma/client"
+import { Run } from "@/lib/api/schemas/runs.schema"
 import { formatDateShort } from "@/lib/utils/date"
 import { formatDistance } from "@/lib/utils/run"
 

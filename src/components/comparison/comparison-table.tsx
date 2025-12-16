@@ -165,6 +165,7 @@ export function ComparisonTable() {
   }
 
   const comparisons = data.data.comparisons;
+  const currentUserId = data.data.comparedBy.id;
 
   return (
     <Card>
@@ -177,13 +178,16 @@ export function ComparisonTable() {
             <TableHeader>
               <TableRow>
                 <TableHead className="w-[200px] font-semibold">Métrique</TableHead>
-                {comparisons.map((comparison, index) => (
-                  <TableHead key={comparison.user.id} className="text-center font-semibold">
-                    {comparison.user.isCurrentUser && "Vous "}
-                    {!comparison.user.isCurrentUser && comparison.user.name}{" "}
-                    {COLORS[index % COLORS.length].dot}
-                  </TableHead>
-                ))}
+                {comparisons.map((comparison, index) => {
+                  const isCurrentUser = comparison.user.id === currentUserId;
+                  return (
+                    <TableHead key={comparison.user.id} className="text-center font-semibold">
+                      {isCurrentUser && "Vous "}
+                      {!isCurrentUser && comparison.user.name}{" "}
+                      {COLORS[index % COLORS.length].dot}
+                    </TableHead>
+                  );
+                })}
                 <TableHead className="text-center font-semibold">Meilleur</TableHead>
               </TableRow>
             </TableHeader>
@@ -210,7 +214,7 @@ export function ComparisonTable() {
                     })}
                     <TableCell className="text-center font-medium">
                       {bestIndex !== -1 && comparisons[bestIndex] ? (
-                        comparisons[bestIndex].user.isCurrentUser
+                        comparisons[bestIndex].user.id === currentUserId
                           ? "Vous"
                           : comparisons[bestIndex].user.name
                       ) : (

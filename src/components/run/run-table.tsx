@@ -33,7 +33,7 @@ import {
 import { EllipsisVertical, Pencil, Trash2, ArrowUpDown, ArrowUp, ArrowDown, Activity } from "lucide-react"
 import { formatDistance, formatDuration, formatPace } from '@/lib/utils/run'
 import { formatDateShort } from '@/lib/utils/date'
-import { Run } from '@/generated/prisma/client'
+import { Run } from '@/lib/api/schemas/runs.schema'
 import { EditRunDialog } from './edit-run-dialog'
 import { DeleteRunDialog } from './delete-run-dialog'
 import { cn } from '@/lib/utils/cn'

@@ -42,7 +42,7 @@ export const changePasswordSchema = z.object({
     currentPassword: z.string().min(1, "Le mot de passe actuel est requis"),
     newPassword: passwordSchema,
     confirmPassword: z.string(),
-    revokeOtherSessions: z.boolean().optional().default(false),
+    revokeOtherSessions: z.boolean().catch(false),
 }).refine((data) => data.newPassword === data.confirmPassword, {
     message: "Les mots de passe ne correspondent pas",
     path: ["confirmPassword"],

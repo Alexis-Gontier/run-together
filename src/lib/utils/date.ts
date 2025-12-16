@@ -4,12 +4,14 @@ import {
 } from 'date-fns';
 import { fr } from "date-fns/locale"
 
-export function formatDate(date: Date, dateFormat: string = 'PPP'): string {
-  return format(date, dateFormat, { locale: fr });
+export function formatDate(date: Date | string, dateFormat: string = 'PPP'): string {
+  const dateObj = typeof date === 'string' ? new Date(date) : date;
+  return format(dateObj, dateFormat, { locale: fr });
 }
 
-export function formatDateShort(date: Date): string {
-  return format(date, 'dd/MM/yyyy', { locale: fr });
+export function formatDateShort(date: Date | string): string {
+  const dateObj = typeof date === 'string' ? new Date(date) : date;
+  return format(dateObj, 'dd/MM/yyyy', { locale: fr });
 }
 
 export function getCurrentYear(): number {
