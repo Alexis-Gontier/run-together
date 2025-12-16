@@ -96,7 +96,7 @@ export function LeaderBoard() {
               className={`flex items-center gap-3 rounded-lg p-3 transition-colors ${
                 user.isCurrentUser
                   ? "border border-primary bg-primary/5"
-                  : "border border-transparent hover:bg-accent"
+                  : "border hover:bg-accent"
               }`}
             >
               <div className="flex h-8 w-8 items-center justify-center">

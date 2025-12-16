@@ -7,8 +7,12 @@ type SettingsLayoutProps = {
 
 const SETTINGS_NAV_ITEMS = [
     {
-        title: "General",
+        title: "Général",
         href: "/dashboard/settings",
+    },
+    {
+        title: "Objectifs",
+        href: "/dashboard/settings/goals",
     },
 ]
 

@@ -1,7 +1,7 @@
 import { UpdateEmailForm, UpdatePasswordForm, UpdateAvatar } from "@/components/settings";
 import { getRequireUser } from "@/lib/auth/auth-session";
 
-export default async function page() {
+export default async function SettingsPage() {
     const user = await getRequireUser();
 
     return (

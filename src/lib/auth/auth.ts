@@ -40,6 +40,13 @@ export const auth = betterAuth({
             enabled: true,
             updateEmailWithoutVerification: true,
         },
+        additionalFields: {
+            monthObjectif: {
+                type: "number",
+                required: false,
+                input: false
+            },
+        }
     },
     plugins: [
         username(),
