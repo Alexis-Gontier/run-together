@@ -35,6 +35,19 @@ export const auth = betterAuth({
         },
     },
     resetPasswordTokenExpiresIn: 3600, // 1h
+    user: {
+        changeEmail: {
+            enabled: true,
+            updateEmailWithoutVerification: true,
+        },
+        additionalFields: {
+            monthObjectif: {
+                type: "number",
+                required: false,
+                input: false
+            },
+        }
+    },
     plugins: [
         username(),
         admin(),

@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 
 import { Button } from "@/components/shadcn-ui/button"
+import { LoadingButton } from "@/components/ui/loading-button"
 import {
     Form,
     FormControl,
@@ -44,7 +45,7 @@ export function SignupForm() {
 
     function onSubmit(values: SignUpType) {
         startTransition(async () => {
-            const toastId = toast.loading("Creating account...")
+            const toastId = toast.loading("Création du compte...")
             const result = await signUpAction(values)
             if (result.data?.success) {
                 toast.success(result.data.message, { id: toastId })
@@ -63,7 +64,7 @@ export function SignupForm() {
                     name="username"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Username</FormLabel>
+                            <FormLabel>Pseudo</FormLabel>
                             <FormControl>
                                 <Input
                                     placeholder="jhondoe"
@@ -80,7 +81,7 @@ export function SignupForm() {
                     name="name"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Name</FormLabel>
+                            <FormLabel>Nom</FormLabel>
                             <FormControl>
                                 <Input
                                     placeholder="John Doe"
@@ -114,7 +115,7 @@ export function SignupForm() {
                     name="password"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Password</FormLabel>
+                            <FormLabel>Mot de passe</FormLabel>
                             <FormControl>
                                 <PasswordInput
                                     value={field.value}
@@ -132,7 +133,7 @@ export function SignupForm() {
                     name="confirmPassword"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Confirm Password</FormLabel>
+                            <FormLabel>Confirmer le mot de passe</FormLabel>
                             <FormControl>
                                 <PasswordInput
                                     value={field.value}
@@ -145,13 +146,13 @@ export function SignupForm() {
                     )}
                 />
 
-                <Button
+                <LoadingButton
                     type="submit"
                     className="w-full cursor-pointer"
-                    disabled={isPending}
+                    isPending={isPending}
                 >
-                    {isPending ? "Creating account..." : "Sign Up"}
-                </Button>
+                    S'inscrire
+                </LoadingButton>
             </form>
         </Form>
     )

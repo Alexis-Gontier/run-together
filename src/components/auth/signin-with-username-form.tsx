@@ -27,6 +27,7 @@ import { signInAction } from "@/lib/actions/auth"
 import { toast } from "sonner"
 
 import Link from "next/link"
+import { LoadingButton } from "@/components/ui/loading-button"
 
 export function SigninWithUsernameForm() {
 
@@ -43,7 +44,7 @@ export function SigninWithUsernameForm() {
 
     function onSubmit(values: SignInType) {
         startTransition(async () => {
-            const toastId = toast.loading("Signing in...")
+            const toastId = toast.loading("Connexion en cours...")
             const result = await signInAction(values)
             if (result.data?.success) {
                 toast.success(result.data.message, { id: toastId })
@@ -62,7 +63,7 @@ export function SigninWithUsernameForm() {
                     name="username"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Username</FormLabel>
+                            <FormLabel>Pseudo</FormLabel>
                             <FormControl>
                                 <Input
                                     placeholder="jhondoe"
@@ -79,35 +80,35 @@ export function SigninWithUsernameForm() {
                     control={form.control}
                     name="password"
                     render={({ field }) => (
-                        <FormItem>
-                            <div className="flex justify-between items-center">
-                                <FormLabel>Password</FormLabel>
-                                <Link
-                                    href="/forgot-password"
-                                    className="text-sm text-muted-foreground"
-                                >
-                                    Forgot password?
-                                </Link>
+                        <FormItem className="relative">
+                            <div className="flex flex-col gap-2">
+                                <FormLabel>Mot de passe</FormLabel>
+                                <FormControl>
+                                    <PasswordInput
+                                        value={field.value}
+                                        onChange={field.onChange}
+                                        placeholder="••••••••••"
+                                        />
+                                </FormControl>
+                                <FormMessage />
                             </div>
-                            <FormControl>
-                                <PasswordInput
-                                    value={field.value}
-                                    onChange={field.onChange}
-                                    placeholder="••••••••••"
-                                />
-                            </FormControl>
-                            <FormMessage />
+                            <Link
+                                href="/forgot-password"
+                                className="text-sm text-muted-foreground absolute right-0 -top-1"
+                            >
+                                Mot de passe oublié ?
+                            </Link>
                         </FormItem>
                     )}
                 />
 
-                <Button
+                <LoadingButton
                     type="submit"
+                    isPending={isPending}
                     className="w-full cursor-pointer"
-                    disabled={isPending}
                 >
-                    {isPending ? "Signing in..." : "Sign In"}
-                </Button>
+                    Se connecter
+                </LoadingButton>
             </form>
         </Form>
     )

@@ -22,19 +22,19 @@ export const signUpAction = actionClient
             if (!result) {
                 return {
                     success: false,
-                    error: "Failed to create account",
+                    error: "Échec de la création du compte",
                 };
             }
 
             return {
                 success: true,
-                message: "Account created successfully",
+                message: "Compte créé avec succès",
                 redirectTo: "/signin",
             };
         } catch (error) {
             return {
                 success: false,
-                error: error instanceof Error ? error.message : "An error occurred during signup",
+                error: error instanceof Error ? error.message : "Une erreur est survenue lors de la création du compte",
             };
         }
     });

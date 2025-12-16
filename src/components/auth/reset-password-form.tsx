@@ -103,7 +103,11 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
               </div>
             )}
 
-            <Button type="submit" className="w-full cursor-pointer" disabled={loading}>
+            <Button
+              type="submit"
+              className="w-full cursor-pointer"
+              disabled={loading}
+            >
               {loading ? "Réinitialisation..." : "Réinitialiser le mot de passe"}
             </Button>
           </form>

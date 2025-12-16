@@ -1,0 +1,35 @@
+"use server"
+
+import { authActionClient } from "@/lib/actions/clients"
+import { prisma } from "@/lib/db/prisma"
+import { revalidatePath, revalidateTag } from "next/cache"
+import {
+    bmiDeleteSchema,
+} from "@/lib/schemas/bmi-schema"
+
+export const deleteBmiAction = authActionClient
+    .inputSchema(bmiDeleteSchema)
+    .action(async ({ parsedInput, ctx }) => {
+        try {
+            const bmi = await prisma.bmi.deleteMany({
+                where: {
+                    id: parsedInput.id,
+                    userId: ctx.user.id,
+                },
+            })
+            revalidatePath('/dashboard/bmi')
+            revalidateTag(`bmi-${ctx.user.id}`, 'default')
+            return {
+                success: true,
+                data: bmi,
+                message: "IMC supprimé avec succès",
+            }
+        } catch (error) {
+            console.error("Error deleting bmi:", error)
+            return {
+                success: false,
+                error: error instanceof Error ? error.message : "Échec de la suppression de l'IMC",
+                data: null,
+            }
+        }
+    })

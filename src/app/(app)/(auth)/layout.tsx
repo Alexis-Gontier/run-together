@@ -18,15 +18,15 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
                     {children}
                 </div>
                 <p className="absolute bottom-4 max-w-md px-6 lg:px-8 text-center text-xs text-muted-foreground">
-                    By clicking continue, you agree to our <Link href="/terms" className="underline">Terms of Service</Link> and <Link href="/privacy" className="underline">Privacy Policy</Link>.
+                    En cliquant sur continuer, vous acceptez nos <Link href="/terms" className="underline">Conditions d&apos;utilisation</Link> et notre <Link href="/privacy" className="underline">Politique de confidentialité</Link>.
                 </p>
             </main>
             <aside className="relative hidden lg:block bg-muted">
                 <Image
-                    src="/placeholder.svg"
+                    src="/images/l6.png"
                     alt="Image"
                     fill
-                    className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+                    className="absolute inset-0 h-full w-full object-cover"
                 />
             </aside>
         </div>
