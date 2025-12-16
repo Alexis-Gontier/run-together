@@ -117,10 +117,9 @@ export function UserSelector() {
                     </Avatar>
                     <div className="flex-1">
                       <p className="font-medium leading-none">
-                        {user.name} {isCurrentUser && <span className="text-primary">(Moi)</span>}
+                        {user.username || user.name} {isCurrentUser && <span className="text-primary">(Moi)</span>}
                       </p>
                       <p className="text-sm text-muted-foreground mt-1">
-                        {user.username && `@${user.username} • `}
                         {user.totalRuns} course{user.totalRuns !== 1 ? "s" : ""}
                       </p>
                     </div>
