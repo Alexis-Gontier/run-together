@@ -4,6 +4,7 @@ export const recentRunUserSchema = z.object({
   id: z.string(),
   name: z.string(),
   username: z.string().nullable(),
+  displayUsername: z.string().nullable(),
   image: z.string().nullable(),
 });
 

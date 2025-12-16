@@ -7,6 +7,7 @@ import { Skeleton } from "@/components/shadcn-ui/skeleton";
 import { useLeaderboard } from "@/lib/api/queries";
 import { useLeaderboardStore } from "@/lib/stores/leaderboard-store";
 import { Trophy, Medal, Award } from "lucide-react";
+import { Badge } from "../shadcn-ui/badge";
 
 const PERIOD_OPTIONS = [
   { value: "7", label: "7j" },
@@ -94,7 +95,7 @@ export function LeaderBoard() {
               key={user.id}
               className={`flex items-center gap-3 rounded-lg p-3 transition-colors ${
                 user.isCurrentUser
-                  ? "border-2 border-primary bg-primary/5"
+                  ? "border border-primary bg-primary/5"
                   : "border border-transparent hover:bg-accent"
               }`}
             >
@@ -102,14 +103,14 @@ export function LeaderBoard() {
                 {getRankIcon(user.rank)}
               </div>
               <Avatar className="h-10 w-10">
-                <AvatarImage src={user.image || undefined} alt={user.name} />
-                <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
+                <AvatarImage src={user.image || undefined} alt={user.displayUsername || user.name} />
+                <AvatarFallback>{getInitials(user.displayUsername || user.name)}</AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
                 <p className="font-medium leading-none truncate">
-                  {user.name}
+                  {user.displayUsername || user.name}
                   {user.isCurrentUser && (
-                    <span className="ml-2 text-xs text-primary">(Vous)</span>
+                    <Badge variant="outline" className="text-xs">Vous</Badge>
                   )}
                 </p>
                 <p className="text-sm text-muted-foreground mt-1">
@@ -117,7 +118,7 @@ export function LeaderBoard() {
                     <span className="italic opacity-60">Aucune activité</span>
                   ) : (
                     <>
-                      {user.totalDistance} km • {user.totalRuns} course{user.totalRuns > 1 ? "s" : ""}
+                      {user.totalDistance} km en {user.totalRuns} course{user.totalRuns > 1 ? "s" : ""}
                     </>
                   )}
                 </p>
@@ -137,12 +138,12 @@ export function LeaderBoard() {
                 </span>
               </div>
               <Avatar className="h-10 w-10">
-                <AvatarImage src={currentUser.image || undefined} alt={currentUser.name} />
-                <AvatarFallback>{getInitials(currentUser.name)}</AvatarFallback>
+                <AvatarImage src={currentUser.image || undefined} alt={currentUser.displayUsername || currentUser.name} />
+                <AvatarFallback>{getInitials(currentUser.displayUsername || currentUser.name)}</AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
                 <p className="font-medium leading-none truncate">
-                  {currentUser.name}
+                  {currentUser.displayUsername || currentUser.name}
                   <span className="ml-2 text-xs text-primary">(Vous)</span>
                 </p>
                 <p className="text-sm text-muted-foreground mt-1">

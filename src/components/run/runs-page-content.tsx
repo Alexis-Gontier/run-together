@@ -24,27 +24,17 @@ export function RunsPageContent() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
-        <RunToolbar />
-        <div className="space-y-4">
-          {[...Array(5)].map((_, i) => (
-            <Skeleton key={i} className="h-16 w-full" />
-          ))}
-        </div>
-      </div>
+      <p>
+        Loading...
+      </p>
     );
   }
 
   if (isError) {
     return (
-      <div className="space-y-6">
-        <RunToolbar />
-        <div className="rounded-lg border border-destructive/50 p-8 text-center">
-          <p className="text-sm text-destructive">
-            Erreur lors du chargement des courses
-          </p>
-        </div>
-      </div>
+      <p>
+        Erreur
+      </p>
     );
   }
 

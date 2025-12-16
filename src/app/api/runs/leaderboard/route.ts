@@ -20,7 +20,7 @@ export const GET = authRoute
     const { period, metric, limit } = context.query;
 
     // Calculate date filter based on period
-    const dateFilter: any = {};
+    const dateFilter: { gte?: Date } = {};
     if (period !== "all") {
       const days = parseInt(period);
       const startDate = new Date();
@@ -57,7 +57,8 @@ export const GET = authRoute
         return {
           id: user.id,
           name: user.name,
-          username: user.username || user.displayUsername,
+          username: user.username,
+          displayUsername: user.displayUsername,
           image: user.image,
           totalRuns: 0,
           totalDistance: 0,
@@ -76,7 +77,8 @@ export const GET = authRoute
       return {
         id: user.id,
         name: user.name,
-        username: user.username || user.displayUsername,
+        username: user.username,
+        displayUsername: user.displayUsername,
         image: user.image,
         totalRuns,
         totalDistance: Math.round(totalDistance * 100) / 100,
@@ -86,7 +88,7 @@ export const GET = authRoute
     });
 
     // Sort by the selected metric
-    let sortedUsers = [...usersWithStats];
+    const sortedUsers = [...usersWithStats];
     switch (metric) {
       case "distance":
         sortedUsers.sort((a, b) => b.totalDistance - a.totalDistance);

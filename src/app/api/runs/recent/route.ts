@@ -14,6 +14,7 @@ export const GET = authRoute
     })
   )
   .handler(async (request, context) => {
+    const { user: currentUser } = context.ctx;
     const { limit } = context.query;
 
     // Fetch recent runs with user information
@@ -56,7 +57,8 @@ export const GET = authRoute
       user: {
         id: run.user.id,
         name: run.user.name,
-        username: run.user.username || run.user.displayUsername,
+        username: run.user.username,
+        displayUsername: run.user.displayUsername,
         image: run.user.image,
       },
     }));

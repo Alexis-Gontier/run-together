@@ -114,9 +114,6 @@ export function UpdatePasswordForm() {
                                             {...field}
                                         />
                                     </FormControl>
-                                    <FormDescription>
-                                        Minimum 6 caractères avec majuscule, minuscule, chiffre et caractère spécial
-                                    </FormDescription>
                                     <FormMessage />
                                 </FormItem>
                             )}
@@ -142,7 +139,7 @@ export function UpdatePasswordForm() {
                             )}
                         />
 
-                        <FormField
+                        {/* <FormField
                             control={form.control}
                             name="revokeOtherSessions"
                             render={({ field }) => (
@@ -164,7 +161,7 @@ export function UpdatePasswordForm() {
                                     </div>
                                 </FormItem>
                             )}
-                        />
+                        /> */}
 
                         <LoadingButton type="submit" isPending={isPending}>
                             Changer le mot de passe

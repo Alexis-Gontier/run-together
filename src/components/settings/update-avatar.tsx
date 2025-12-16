@@ -181,8 +181,9 @@ export function UpdateAvatar() {
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isUploading || isPending}
                   variant="outline"
+                  className="cursor-pointer"
                 >
-                  <Upload className="h-4 w-4" />
+                  <Upload />
                   Télécharger une photo
                 </Button>
 
@@ -191,9 +192,10 @@ export function UpdateAvatar() {
                     onClick={handleDelete}
                     disabled={isUploading}
                     isPending={isPending}
-                    variant="outline"
+                    variant="destructive"
+                    className="cursor-pointer"
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 />
                     Supprimer
                   </LoadingButton>
                 )}
