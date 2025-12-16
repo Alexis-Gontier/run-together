@@ -18,7 +18,7 @@ import { Button } from "@/components/shadcn-ui/button";
 import { toast } from "sonner";
 
 const forgotPasswordSchema = z.object({
-    email: z.email({ message: "Please enter a valid email" }),
+    email: z.string().email({ message: "Veuillez entrer un email valide" }),
 });
 
 type ForgotPasswordValues = z.infer<typeof forgotPasswordSchema>;
@@ -42,11 +42,11 @@ export function ForgotPasswordForm() {
         });
 
         if (error) {
-            setError(error.message || "Something went wrong");
+            setError(error.message || "Une erreur est survenue");
             toast.error("Une erreur est survenue lors de l'envoi du lien de réinitialisation");
         } else {
             setSuccess(
-                "If an account exists for this email, we've sent a password reset link.",
+                "Si un compte existe pour cet email, nous avons envoyé un lien de réinitialisation.",
             );
             toast.success("Lien de réinitialisation du mot de passe envoyé à votre email");
             form.reset();
@@ -89,7 +89,7 @@ export function ForgotPasswordForm() {
 
                 <Button
                     type="submit"
-                    className="w-full"
+                    className="w-full cursor-pointer"
                     disabled={loading}
                 >
                     Envoyer le lien de réinitialisation

@@ -63,17 +63,17 @@ export function EditRunDialog({ run, open, onOpenChange }: EditRunDialogProps) {
     }, [run, form])
 
     async function onSubmit(values: CreateRunType) {
-        const toastId = toast.loading("Updating run...")
+        const toastId = toast.loading("Mise à jour de la course...")
         try {
             const result = await mutateAsync({ ...values, id: run.id })
             if (result?.success) {
-                toast.success(result.message || "Run updated successfully!", { id: toastId })
+                toast.success(result.message || "Course mise à jour avec succès !", { id: toastId })
                 onOpenChange(false)
             } else {
-                toast.error("Failed to update run. Please try again.", { id: toastId })
+                toast.error("Échec de la mise à jour. Veuillez réessayer.", { id: toastId })
             }
         } catch (error) {
-            toast.error("Failed to update run. Please try again.", { id: toastId })
+            toast.error("Échec de la mise à jour. Veuillez réessayer.", { id: toastId })
         }
     }
 

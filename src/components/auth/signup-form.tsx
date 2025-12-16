@@ -45,7 +45,7 @@ export function SignupForm() {
 
     function onSubmit(values: SignUpType) {
         startTransition(async () => {
-            const toastId = toast.loading("Creating account...")
+            const toastId = toast.loading("Création du compte...")
             const result = await signUpAction(values)
             if (result.data?.success) {
                 toast.success(result.data.message, { id: toastId })

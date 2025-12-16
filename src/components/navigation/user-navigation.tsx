@@ -46,15 +46,15 @@ export function UserNavigation() {
         .slice(0, 2)
 
     const hanfleSignOut = () => {
-        const toastId = toast.loading("Signing out...")
+        const toastId = toast.loading("Déconnexion en cours...")
         authClient.signOut({
             fetchOptions: {
                 onSuccess: () => {
-                    toast.success("Signed out successfully.", { id: toastId })
+                    toast.success("Déconnecté avec succès.", { id: toastId })
                     router.replace("/signin")
                 },
                 onError: () => {
-                    toast.error("There was an error signing out. Please try again.", { id: toastId })
+                    toast.error("Une erreur est survenue lors de la déconnexion. Veuillez réessayer.", { id: toastId })
                 }
             }
         })
@@ -112,7 +112,7 @@ export function UserNavigation() {
                 >
                     <Link href="/dashboard/settings">
                         <Settings />
-                        Settings
+                        Paramètres
                     </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -122,7 +122,7 @@ export function UserNavigation() {
                     onSelect={hanfleSignOut}
                 >
                     <LogOut />
-                    Sign Out
+                    Déconnexion
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>

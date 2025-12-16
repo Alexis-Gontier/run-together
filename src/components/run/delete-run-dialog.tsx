@@ -31,11 +31,11 @@ export function DeleteRunDialog({ run, open, onOpenChange }: DeleteRunDialogProp
 
     function handleDelete() {
         startTransition(async () => {
-            const toastId = toast.loading("Deleting run...")
+            const toastId = toast.loading("Suppression de la course...")
             try {
                 const result = await deleteRunAction({ id: run.id })
                 if (result?.data?.success) {
-                    toast.success("Run deleted successfully!", { id: toastId })
+                    toast.success("Course supprimée avec succès !", { id: toastId })
 
                     // Invalidate all run-related queries
                     queryClient.invalidateQueries({ queryKey: ["runs"] })
@@ -45,10 +45,10 @@ export function DeleteRunDialog({ run, open, onOpenChange }: DeleteRunDialogProp
 
                     onOpenChange(false)
                 } else {
-                    toast.error(result?.data?.error || "Failed to delete run", { id: toastId })
+                    toast.error(result?.data?.error || "Échec de la suppression", { id: toastId })
                 }
             } catch (error) {
-                toast.error("Failed to delete run. Please try again.", { id: toastId })
+                toast.error("Échec de la suppression. Veuillez réessayer.", { id: toastId })
             }
         })
     }
@@ -57,20 +57,20 @@ export function DeleteRunDialog({ run, open, onOpenChange }: DeleteRunDialogProp
         <AlertDialog open={open} onOpenChange={onOpenChange}>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                    <AlertDialogTitle>Êtes-vous sûr ?</AlertDialogTitle>
                     <AlertDialogDescription>
-                        This will permanently delete your run from {formatDateShort(run.date)} ({formatDistance(run.distance)}).
-                        This action cannot be undone.
+                        Cela supprimera définitivement votre course du {formatDateShort(run.date)} ({formatDistance(run.distance)}).
+                        Cette action est irréversible.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel disabled={isPending}>Annuler</AlertDialogCancel>
                     <LoadingButton
                         onClick={handleDelete}
                         isPending={isPending}
                         variant="destructive"
                     >
-                        Delete
+                        Supprimer
                     </LoadingButton>
                 </AlertDialogFooter>
             </AlertDialogContent>

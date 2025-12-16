@@ -44,7 +44,7 @@ export function SigninWithUsernameForm() {
 
     function onSubmit(values: SignInType) {
         startTransition(async () => {
-            const toastId = toast.loading("Signing in...")
+            const toastId = toast.loading("Connexion en cours...")
             const result = await signInAction(values)
             if (result.data?.success) {
                 toast.success(result.data.message, { id: toastId })
@@ -102,7 +102,11 @@ export function SigninWithUsernameForm() {
                     )}
                 />
 
-                <LoadingButton type="submit" isPending={isPending}>
+                <LoadingButton
+                    type="submit"
+                    isPending={isPending}
+                    className="w-full cursor-pointer"
+                >
                     Se connecter
                 </LoadingButton>
             </form>

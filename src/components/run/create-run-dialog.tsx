@@ -48,18 +48,18 @@ export function CreateRunDialog() {
     })
 
     async function onSubmit(values: CreateRunType) {
-        const toastId = toast.loading("Creating run...")
+        const toastId = toast.loading("Création de la course...")
         try {
             const result = await mutateAsync(values)
             if (result?.success) {
-                toast.success(result.message || "Run created successfully!", { id: toastId })
+                toast.success(result.message || "Course créée avec succès !", { id: toastId })
                 form.reset()
                 setOpen(false)
             } else {
-                toast.error("Failed to create run. Please try again.", { id: toastId })
+                toast.error("Échec de la création. Veuillez réessayer.", { id: toastId })
             }
         } catch (error) {
-            toast.error("Failed to create run. Please try again.", { id: toastId })
+            toast.error("Échec de la création. Veuillez réessayer.", { id: toastId })
         }
     }
 
