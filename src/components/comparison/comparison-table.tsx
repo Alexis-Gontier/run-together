@@ -21,7 +21,7 @@ interface MetricRow {
   label: string;
   getValue: (comparison: UserComparison) => number;
   formatValue: (value: number) => string;
-  isBestHigher: boolean; // true si la valeur la plus haute est la meilleure
+  isBestHigher: boolean;
 }
 
 const METRICS: MetricRow[] = [
