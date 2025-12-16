@@ -15,6 +15,9 @@ export const env = createEnv({
         RESEND_API_KEY: z
             .string()
             .min(1, "RESEND_API_KEY is required"),
+        BLOB_READ_WRITE_TOKEN: z
+            .string()
+            .min(1, "BLOB_READ_WRITE_TOKEN is required"),
     },
     client: {
         NEXT_PUBLIC_APP_URL: z

@@ -13,7 +13,6 @@ export const deleteRunAction = authActionClient
     .inputSchema(deleteRunSchema)
     .action(async ({ parsedInput, ctx }) => {
         try {
-            // Verify the run belongs to the user before deleting
             const run = await prisma.run.findFirst({
                 where: {
                     id: parsedInput.id,
@@ -24,7 +23,7 @@ export const deleteRunAction = authActionClient
             if (!run) {
                 return {
                     success: false,
-                    error: "Run not found or you don't have permission to delete it",
+                    error: "Run non trouvé ou vous n'avez pas la permission de le supprimer",
                     data: null,
                 }
             }
@@ -35,19 +34,18 @@ export const deleteRunAction = authActionClient
                 },
             })
 
-            // Revalidate the runs page to reflect the deletion
             revalidatePath('/dashboard/runs')
 
             return {
                 success: true,
                 data: null,
-                message: "Run deleted successfully!",
+                message: "Run supprimé avec succès",
             }
         } catch (error) {
             console.error("Error deleting run:", error)
             return {
                 success: false,
-                error: error instanceof Error ? error.message : "Failed to delete run",
+                error: error instanceof Error ? error.message : "Échec de la suppression du run",
                 data: null,
             }
         }

@@ -20,19 +20,19 @@ export const signInAction = actionClient
             if (!result) {
                 return {
                     success: false,
-                    error: "Failed to sign in",
+                    error: "Échec de la connexion",
                 };
             }
 
             return {
                 success: true,
-                message: "Signed in successfully",
+                message: "Connexion réussie",
                 redirectTo: "/dashboard",
             };
         } catch (error) {
             return {
                 success: false,
-                error: error instanceof Error ? error.message : "An error occurred during signin",
+                error: error instanceof Error ? error.message : "Une erreur est survenue lors de la connexion",
             };
         }
     });

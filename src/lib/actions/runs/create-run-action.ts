@@ -24,7 +24,6 @@ export const createRunAction = authActionClient
                 },
             })
 
-            // Revalider la page runs pour afficher le nouveau run
             revalidatePath('/dashboard/runs')
 
             return {

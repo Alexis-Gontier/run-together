@@ -7,8 +7,8 @@ export default function page() {
     return (
         <>
             <DashboardTextHeading
-                title="Dashboard"
-                description="Welcome to your dashboard"
+                title="Tableau de bord"
+                description="Bienvenue sur votre tableau de bord."
             />
             <div className="grid grid-cols-3 gap-6">
                 <div className="col-span-2 space-y-6">

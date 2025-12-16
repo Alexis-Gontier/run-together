@@ -35,7 +35,7 @@ export const getBmisAction = authActionClient
             console.error(error);
             return {
                 success: false,
-                error: error instanceof Error ? error.message : "Failed to fetch bmis",
+                error: error instanceof Error ? error.message : "Échec de la récupération des IMC",
                 data: null,
             };
         }

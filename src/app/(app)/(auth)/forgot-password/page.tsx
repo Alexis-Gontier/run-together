@@ -6,20 +6,20 @@ export default function page() {
         <>
             <div className="space-y-2">
                 <h2 className="text-3xl">
-                    Forgot your password?
+                    Mot de passe oublié ?
                 </h2>
                 <h3 className="text-sm text-muted-foreground">
-                    Enter your email and we&lsquo;ll send you a reset link.
+                    Entrez votre email et nous vous enverrons un lien de réinitialisation.
                 </h3>
             </div>
             <ForgotPasswordForm />
             <p className="text-center text-sm text-muted-foreground">
-                Already have an account?{" "}
+                Vous avez déjà un compte ?{" "}
                 <Link
                     href="/signin"
                     className="text-foreground underline hover:text-muted-foreground"
                 >
-                    Sign in
+                    Se connecter
                 </Link>
             </p>
         </>

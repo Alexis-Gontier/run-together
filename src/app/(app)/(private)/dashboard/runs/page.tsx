@@ -5,8 +5,8 @@ export default function RunsPage() {
   return (
     <>
       <DashboardTextHeading
-        title="Runs"
-        description="Manage and monitor your runs"
+        title="Courses"
+        description="Gérez et suivez vos courses"
       />
       <RunsPageContent />
     </>

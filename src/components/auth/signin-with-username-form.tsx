@@ -27,6 +27,7 @@ import { signInAction } from "@/lib/actions/auth"
 import { toast } from "sonner"
 
 import Link from "next/link"
+import { LoadingButton } from "@/components/ui/loading-button"
 
 export function SigninWithUsernameForm() {
 
@@ -62,7 +63,7 @@ export function SigninWithUsernameForm() {
                     name="username"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Username</FormLabel>
+                            <FormLabel>Pseudo</FormLabel>
                             <FormControl>
                                 <Input
                                     placeholder="jhondoe"
@@ -81,7 +82,7 @@ export function SigninWithUsernameForm() {
                     render={({ field }) => (
                         <FormItem className="relative">
                             <div className="flex flex-col gap-2">
-                                <FormLabel>Password</FormLabel>
+                                <FormLabel>Mot de passe</FormLabel>
                                 <FormControl>
                                     <PasswordInput
                                         value={field.value}
@@ -95,19 +96,18 @@ export function SigninWithUsernameForm() {
                                 href="/forgot-password"
                                 className="text-sm text-muted-foreground absolute right-0 -top-1"
                             >
-                                Forgot password?
+                                Mot de passe oublié ?
                             </Link>
                         </FormItem>
                     )}
                 />
 
-                <Button
+                <LoadingButton
                     type="submit"
-                    className="w-full cursor-pointer"
-                    disabled={isPending}
+                    isPending={isPending}
                 >
-                    {isPending ? "Signing in..." : "Sign In"}
-                </Button>
+                    {isPending ? "Connexion en cours..." : "Se connecter"}
+                </LoadingButton>
             </form>
         </Form>
     )

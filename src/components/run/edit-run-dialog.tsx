@@ -80,9 +80,9 @@ export function EditRunDialog({ run, open, onOpenChange }: EditRunDialogProps) {
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-[500px]">
                 <DialogHeader>
-                    <DialogTitle>Edit Run</DialogTitle>
+                    <DialogTitle>Modifier une course</DialogTitle>
                     <DialogDescription>
-                        Update your run details
+                        Mettez à jour les détails de votre course
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -143,7 +143,7 @@ export function EditRunDialog({ run, open, onOpenChange }: EditRunDialogProps) {
 
                                     return (
                                         <FormItem className="flex flex-col">
-                                            <FormLabel>Duration</FormLabel>
+                                            <FormLabel>Durée</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type="time"
@@ -171,7 +171,7 @@ export function EditRunDialog({ run, open, onOpenChange }: EditRunDialogProps) {
                             name="elevationGain"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Elevation Gain (m)</FormLabel>
+                                    <FormLabel>Dénivelé (m)</FormLabel>
                                     <FormControl>
                                         <Input
                                             type="number"
@@ -185,7 +185,7 @@ export function EditRunDialog({ run, open, onOpenChange }: EditRunDialogProps) {
                                         />
                                     </FormControl>
                                     <FormDescription>
-                                        Optional - Total elevation gained during the run
+                                        Optionnel - Dénivelé total gagné pendant la course
                                     </FormDescription>
                                     <FormMessage />
                                 </FormItem>
@@ -206,7 +206,7 @@ export function EditRunDialog({ run, open, onOpenChange }: EditRunDialogProps) {
                                         />
                                     </FormControl>
                                     <FormDescription>
-                                        Optional - Add any notes about the run
+                                        Optionnel - Ajoutez des notes sur la course
                                     </FormDescription>
                                     <FormMessage />
                                 </FormItem>
@@ -220,14 +220,14 @@ export function EditRunDialog({ run, open, onOpenChange }: EditRunDialogProps) {
                                 onClick={() => onOpenChange(false)}
                                 disabled={isPending}
                             >
-                                Cancel
+                                Annuler
                             </Button>
                             <Button
                                 type="submit"
                                 className="cursor-pointer"
                                 disabled={isPending}
                             >
-                                {isPending ? "Updating..." : "Update Run"}
+                                {isPending ? "Mise à jour en cours..." : "Mettre à jour la course"}
                             </Button>
                         </div>
                     </form>

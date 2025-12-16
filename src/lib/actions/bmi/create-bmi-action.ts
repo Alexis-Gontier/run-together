@@ -24,13 +24,13 @@ export const healthMetricsCreateAction = authActionClient
             return {
                 success: true,
                 data: bmi,
-                message: "Bmi created successfully!",
+                message: "IMC créé avec succès",
             };
         } catch (error) {
             console.error(error);
             return {
                 success: false,
-                error: error instanceof Error ? error.message : "Failed to create bmi",
+                error: error instanceof Error ? error.message : "Échec de la création de l'IMC",
                 data: null,
             };
         }

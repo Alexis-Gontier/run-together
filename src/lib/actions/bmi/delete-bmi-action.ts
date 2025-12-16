@@ -22,13 +22,13 @@ export const deleteBmiAction = authActionClient
             return {
                 success: true,
                 data: bmi,
-                message: "Bmi deleted successfully!",
+                message: "IMC supprimé avec succès",
             }
         } catch (error) {
             console.error("Error deleting bmi:", error)
             return {
                 success: false,
-                error: error instanceof Error ? error.message : "Failed to delete bmi",
+                error: error instanceof Error ? error.message : "Échec de la suppression de l'IMC",
                 data: null,
             }
         }

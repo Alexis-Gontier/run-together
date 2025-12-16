@@ -38,7 +38,7 @@ export function RunToolbar() {
         <>
             <div className="flex justify-between">
                 <div className="flex gap-2">
-                    <InputGroup className="w-64">
+                    {/* <InputGroup className="w-64">
                         <InputGroupInput
                             placeholder="Search for a run"
                             type="search"
@@ -56,10 +56,10 @@ export function RunToolbar() {
                         onClick={toggleDropdown}
                     >
                         <Filter />
-                    </Button>
+                    </Button> */}
                 </div>
                 <div className="flex gap-2">
-                    <ButtonGroup>
+                    {/* <ButtonGroup>
                         <Button
                             variant={viewMode === 'grid' ? 'outline' : 'ghost'}
                             size="icon"
@@ -76,7 +76,7 @@ export function RunToolbar() {
                         >
                             <List />
                         </Button>
-                    </ButtonGroup>
+                    </ButtonGroup> */}
                     <CreateRunDialog />
                 </div>
             </div>

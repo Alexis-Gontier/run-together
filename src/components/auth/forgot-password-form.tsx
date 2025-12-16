@@ -15,6 +15,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/shadcn-ui/button";
+import { toast } from "sonner";
 
 const forgotPasswordSchema = z.object({
     email: z.email({ message: "Please enter a valid email" }),
@@ -42,10 +43,12 @@ export function ForgotPasswordForm() {
 
         if (error) {
             setError(error.message || "Something went wrong");
+            toast.error("Une erreur est survenue lors de l'envoi du lien de réinitialisation");
         } else {
             setSuccess(
                 "If an account exists for this email, we've sent a password reset link.",
             );
+            toast.success("Lien de réinitialisation du mot de passe envoyé à votre email");
             form.reset();
         }
     }
@@ -60,32 +63,36 @@ export function ForgotPasswordForm() {
                 name="email"
                 render={({ field }) => (
                     <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                        <Input
-                        type="email"
-                        placeholder="your@email.com"
-                        {...field}
-                        />
-                    </FormControl>
-                    <FormMessage />
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                            <Input
+                            type="email"
+                            placeholder="your@email.com"
+                            {...field}
+                            />
+                        </FormControl>
+                        <FormMessage />
                     </FormItem>
                 )}
                 />
 
                 {success && (
-                <div role="status" className="text-sm text-green-600">
-                    {success}
-                </div>
+                    <div role="status" className="text-sm text-green-600">
+                        {success}
+                    </div>
                 )}
                 {error && (
-                <div role="alert" className="text-sm text-red-600">
-                    {error}
-                </div>
+                    <div role="alert" className="text-sm text-red-600">
+                        {error}
+                    </div>
                 )}
 
-                <Button type="submit" className="w-full" disabled={loading}>
-                Send reset link
+                <Button
+                    type="submit"
+                    className="w-full"
+                    disabled={loading}
+                >
+                    Envoyer le lien de réinitialisation
                 </Button>
             </form>
         </Form>

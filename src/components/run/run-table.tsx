@@ -102,7 +102,7 @@ export function RunTable({ runs }: RunTableProps) {
                                         <Button
                                             variant="ghost"
                                             onClick={() => handleSort('date')}
-                                            className="h-8 px-2 hover:bg-transparent"
+                                            className="h-8 px-2 hover:bg-transparent cursor-pointer"
                                         >
                                             Date
                                             <SortIcon field="date" />
@@ -112,7 +112,7 @@ export function RunTable({ runs }: RunTableProps) {
                                         <Button
                                             variant="ghost"
                                             onClick={() => handleSort('distance')}
-                                            className="h-8 px-2 hover:bg-transparent"
+                                            className="h-8 px-2 hover:bg-transparent cursor-pointer"
                                         >
                                             Distance
                                             <SortIcon field="distance" />
@@ -122,7 +122,7 @@ export function RunTable({ runs }: RunTableProps) {
                                         <Button
                                             variant="ghost"
                                             onClick={() => handleSort('duration')}
-                                            className="h-8 px-2 hover:bg-transparent"
+                                            className="h-8 px-2 hover:bg-transparent cursor-pointer"
                                         >
                                             Durée
                                             <SortIcon field="duration" />
@@ -132,7 +132,7 @@ export function RunTable({ runs }: RunTableProps) {
                                         <Button
                                             variant="ghost"
                                             onClick={() => handleSort('pace')}
-                                            className="h-8 px-2 hover:bg-transparent"
+                                            className="h-8 px-2 hover:bg-transparent cursor-pointer"
                                         >
                                             Allure
                                             <SortIcon field="pace" />
@@ -142,14 +142,14 @@ export function RunTable({ runs }: RunTableProps) {
                                         <Button
                                             variant="ghost"
                                             onClick={() => handleSort('elevationGain')}
-                                            className="h-8 px-2 hover:bg-transparent"
+                                            className="h-8 px-2 hover:bg-transparent cursor-pointer"
                                         >
                                             Dénivelé
                                             <SortIcon field="elevationGain" />
                                         </Button>
                                     </TableHead>
                                     <TableHead>Notes</TableHead>
-                                    <TableHead className="text-right w-[50px]">Actions</TableHead>
+                                    <TableHead className="text-right w-[50px]"></TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -169,7 +169,7 @@ export function RunTable({ runs }: RunTableProps) {
                                             <TableCell className="font-medium">
                                                 {formatDateShort(run.date)}
                                             </TableCell>
-                                            <TableCell className="font-semibold text-primary">
+                                            <TableCell className="font-semibold text-primary px-4">
                                                 {formatDistance(run.distance)}
                                             </TableCell>
                                             <TableCell>{formatDuration(run.duration)}</TableCell>
@@ -212,16 +212,16 @@ export function RunTable({ runs }: RunTableProps) {
                                                             onClick={() => handleEdit(run)}
                                                             className="cursor-pointer"
                                                         >
-                                                            <Pencil className="mr-2 h-4 w-4" />
-                                                            Edit
+                                                            <Pencil />
+                                                            Modifier
                                                         </DropdownMenuItem>
                                                         <DropdownMenuSeparator />
                                                         <DropdownMenuItem
                                                             onClick={() => handleDelete(run)}
                                                             className="cursor-pointer text-destructive focus:text-destructive"
                                                         >
-                                                            <Trash2 className="mr-2 h-4 w-4" />
-                                                            Delete
+                                                            <Trash2 />
+                                                            Supprimer
                                                         </DropdownMenuItem>
                                                     </DropdownMenuContent>
                                                 </DropdownMenu>

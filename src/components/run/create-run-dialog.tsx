@@ -67,14 +67,14 @@ export function CreateRunDialog() {
             <DialogTrigger asChild>
                 <Button className="cursor-pointer">
                     <Plus />
-                    Create New Run
+                    Ajouter une course
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[500px]">
                 <DialogHeader>
-                    <DialogTitle>Create New Run</DialogTitle>
+                    <DialogTitle>Ajouter une course</DialogTitle>
                     <DialogDescription>
-                        Add a new run to your activity log
+                        Ajouter une nouvelle course à votre journal d&apos;activités
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -135,7 +135,7 @@ export function CreateRunDialog() {
 
                                     return (
                                         <FormItem className="flex flex-col">
-                                            <FormLabel>Duration</FormLabel>
+                                            <FormLabel>Durée</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type="time"
@@ -163,7 +163,7 @@ export function CreateRunDialog() {
                             name="elevationGain"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Elevation Gain (m)</FormLabel>
+                                    <FormLabel>Dénivelé (m)</FormLabel>
                                     <FormControl>
                                         <Input
                                             type="number"
@@ -177,7 +177,7 @@ export function CreateRunDialog() {
                                         />
                                     </FormControl>
                                     <FormDescription>
-                                        Optional - Total elevation gained during the run
+                                        Optionnel - Dénivelé total gagné pendant la course
                                     </FormDescription>
                                     <FormMessage />
                                 </FormItem>
@@ -198,7 +198,7 @@ export function CreateRunDialog() {
                                         />
                                     </FormControl>
                                     <FormDescription>
-                                        Optional - Add any notes about the run
+                                        Optionnel - Ajoutez des notes sur la course
                                     </FormDescription>
                                     <FormMessage />
                                 </FormItem>
@@ -212,14 +212,14 @@ export function CreateRunDialog() {
                                 onClick={() => setOpen(false)}
                                 disabled={isPending}
                             >
-                                Cancel
+                                Annuler
                             </Button>
                             <Button
                                 type="submit"
                                 className="cursor-pointer"
                                 disabled={isPending}
                             >
-                                {isPending ? "Creating..." : "Create Run"}
+                                {isPending ? "Création en cours..." : "Ajouter la course"}
                             </Button>
                         </div>
                     </form>

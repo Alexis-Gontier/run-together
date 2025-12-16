@@ -15,10 +15,10 @@ export default async function ResetPasswordPage({ searchParams }: ResetPasswordP
             <>
                 <div className="space-y-2">
                     <h2 className="text-3xl">
-                        Invalid link
+                        Lien invalide
                     </h2>
                     <h3 className="text-sm text-muted-foreground">
-                        The reset link is invalid or has expired
+                        Le lien de réinitialisation est invalide ou a expiré
                     </h3>
                 </div>
                 <p className="text-center text-sm text-muted-foreground">
@@ -26,7 +26,7 @@ export default async function ResetPasswordPage({ searchParams }: ResetPasswordP
                         href="/forgot-password"
                         className="text-foreground underline hover:text-muted-foreground"
                     >
-                        Request a new link
+                        Demander un nouveau lien
                     </Link>
                 </p>
             </>
@@ -38,10 +38,10 @@ export default async function ResetPasswordPage({ searchParams }: ResetPasswordP
             <>
                 <div className="space-y-2">
                     <h2 className="text-3xl">
-                        Missing token
+                        Aucun jeton
                     </h2>
                     <h3 className="text-sm text-muted-foreground">
-                        No reset token was provided
+                        Aucun jeton de réinitialisation n&apos;a été fourni
                     </h3>
                 </div>
                 <p className="text-center text-sm text-muted-foreground">
@@ -49,7 +49,7 @@ export default async function ResetPasswordPage({ searchParams }: ResetPasswordP
                         href="/forgot-password"
                         className="text-foreground underline hover:text-muted-foreground"
                     >
-                        Request a reset link
+                        Demander un nouveau lien
                     </Link>
                 </p>
             </>
@@ -60,20 +60,20 @@ export default async function ResetPasswordPage({ searchParams }: ResetPasswordP
         <>
             <div className="space-y-2">
                 <h2 className="text-3xl">
-                    Reset your password
+                    Réinitialiser le mot de passe
                 </h2>
                 <h3 className="text-sm text-muted-foreground">
-                    Enter your new password below
+                    Entrez votre nouveau mot de passe ci-dessous
                 </h3>
             </div>
             <ResetPasswordForm token={token} />
             <p className="text-center text-sm text-muted-foreground">
-                Remember your password?{" "}
+                Vous vous souvenez de votre mot de passe ?{" "}
                 <Link
                     href="/signin"
                     className="text-foreground underline hover:text-muted-foreground"
                 >
-                    Sign in
+                    Se connecter
                 </Link>
             </p>
         </>

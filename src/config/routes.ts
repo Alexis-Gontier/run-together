@@ -27,54 +27,54 @@ export const DASHBOARD_NAV_ITEMS: NavGroup[] = [
     title: "Overview",
     items: [
       {
-        title: "Dashboard",
+        title: "Tableau de bord",
         href: "/dashboard",
         icon: Home,
       },
     ]
   },
   {
-    title: "Activities",
+    title: "Activités",
     items: [
       {
-        title: "Runs",
+        title: "Courses",
         href: "/dashboard/runs",
         icon: Route,
       },
+      // {
+      //   title: "Profile",
+      //   href: "/dashboard/profile",
+      //   icon: User,
+      // },
       {
-        title: "Profile",
-        href: "/dashboard/profile",
-        icon: User,
-      },
-      {
-        title: "Comparison",
+        title: "Comparaison",
         href: "/dashboard/comparison",
         icon: Users,
       },
-      {
-        title: "Progress",
-        href: "/dashboard/progress",
-        icon: TrendingUp,
-      }
+      // {
+      //   title: "Progress",
+      //   href: "/dashboard/progress",
+      //   icon: TrendingUp,
+      // }
     ]
   },
   {
-    title: "Health",
+    title: "Santé",
     items: [
       {
-        title: "BMI",
+        title: "IMC",
         href: "/dashboard/bmi",
         icon: Calendar,
       },
-      {
-        title: "Caloric Needs",
-        href: "/dashboard/caloric-needs",
-        icon: Apple,
-      }
+      // {
+      //   title: "Caloric Needs",
+      //   href: "/dashboard/caloric-needs",
+      //   icon: Apple,
+      // }
     ]
   },
   {
-    title: "Other",
+    title: "Autre",
     items: [
       {
         title: "Challenges",

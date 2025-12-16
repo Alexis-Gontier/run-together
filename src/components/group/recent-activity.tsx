@@ -25,7 +25,7 @@ export function RecentActivity() {
 
   const formatRelativeTime = (dateString: string) => {
     return formatDistanceToNow(new Date(dateString), {
-      addSuffix: true,
+      addSuffix: false,
       locale: fr,
     });
   };
@@ -68,9 +68,9 @@ export function RecentActivity() {
             {recentRuns.map((run) => (
               <div
                 key={run.id}
-                className="flex items-start gap-3 rounded-lg border p-3 transition-colors hover:bg-accent"
+                className="flex justify-between items-center gap-3 rounded-lg border p-3 transition-colors hover:bg-accent"
               >
-                <Avatar className="h-10 w-10">
+                <Avatar className="size-8">
                   <AvatarImage src={run.user.image || undefined} alt={run.user.name} />
                   <AvatarFallback>{getInitials(run.user.name)}</AvatarFallback>
                 </Avatar>
@@ -78,17 +78,16 @@ export function RecentActivity() {
                   <p className="font-medium leading-none">
                     {run.user.name}
                   </p>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <span className="font-medium text-foreground">
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <span>
                       {formatDistance(run.distance)}
                     </span>
-                    <span>•</span>
+                    <span>en</span>
                     <span>{formatDuration(run.duration)}</span>
                   </div>
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <Calendar className="h-3 w-3" />
-                    <span>{formatRelativeTime(run.createdAt)}</span>
-                  </div>
+                </div>
+                <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                  <span>{formatRelativeTime(run.createdAt)}</span>
                 </div>
               </div>
             ))}

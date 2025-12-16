@@ -40,7 +40,7 @@ export function RunPagination({ totalItems }: RunPaginationProps) {
             value={pageSize.toString()}
             onValueChange={(value) => handlePageSizeChange(Number(value))}
           >
-            <SelectTrigger className="h-8 w-[70px]">
+            <SelectTrigger className="w-[70px] cursor-pointer">
               <SelectValue placeholder={pageSize} />
             </SelectTrigger>
             <SelectContent side="top">
@@ -65,8 +65,9 @@ export function RunPagination({ totalItems }: RunPaginationProps) {
             size="sm"
             onClick={() => setPage(page - 1)}
             disabled={!canGoPrevious}
+            className="cursor-pointer"
           >
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft />
             Précédent
           </Button>
 
@@ -75,9 +76,10 @@ export function RunPagination({ totalItems }: RunPaginationProps) {
             size="sm"
             onClick={() => setPage(page + 1)}
             disabled={!canGoNext}
+            className="cursor-pointer"
           >
             Suivant
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight />
           </Button>
         </div>
       </div>

@@ -63,7 +63,7 @@ export function SignupForm() {
                     name="username"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Username</FormLabel>
+                            <FormLabel>Pseudo</FormLabel>
                             <FormControl>
                                 <Input
                                     placeholder="jhondoe"
@@ -80,7 +80,7 @@ export function SignupForm() {
                     name="name"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Name</FormLabel>
+                            <FormLabel>Nom</FormLabel>
                             <FormControl>
                                 <Input
                                     placeholder="John Doe"
@@ -114,7 +114,7 @@ export function SignupForm() {
                     name="password"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Password</FormLabel>
+                            <FormLabel>Mot de passe</FormLabel>
                             <FormControl>
                                 <PasswordInput
                                     value={field.value}
@@ -132,7 +132,7 @@ export function SignupForm() {
                     name="confirmPassword"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Confirm Password</FormLabel>
+                            <FormLabel>Confirmer le mot de passe</FormLabel>
                             <FormControl>
                                 <PasswordInput
                                     value={field.value}
@@ -150,7 +150,7 @@ export function SignupForm() {
                     className="w-full cursor-pointer"
                     disabled={isPending}
                 >
-                    {isPending ? "Creating account..." : "Sign Up"}
+                    {isPending ? "Création du compte..." : "S'inscrire"}
                 </Button>
             </form>
         </Form>

@@ -26,7 +26,6 @@ export const changePasswordAction = actionClient
                 };
             }
 
-            // Revalider le layout du dashboard pour mettre à jour toutes les pages
             revalidatePath("/dashboard", "layout");
 
             return {

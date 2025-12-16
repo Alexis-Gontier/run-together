@@ -20,8 +20,8 @@ export default async function BmiPage() {
     return (
         <>
             <DashboardTextHeading
-                title="BMI"
-                description="Monitor your Body Mass Index"
+                title="IMC"
+                description="Surveillez votre indice de masse corporelle"
             />
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                 <BmiForm />
@@ -29,21 +29,21 @@ export default async function BmiPage() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <StatCard
-                    title="Current BMI"
+                    title="IMC actuel"
                     value={bmi ? bmi.toFixed(1) : "N/A"}
                     description={getBMICategory(bmi)}
                     icon={<Activity size={16} />}
                 />
                 <StatCard
-                    title="Current Weight"
+                    title="Poids actuel"
                     value={latestMetric ? `${latestMetric.weight} kg` : "N/A"}
-                    description="Your current weight"
+                    description="Votre poids actuel"
                     icon={<Weight size={16} />}
                 />
                 <StatCard
-                    title="Current Height"
+                    title="Taille actuelle"
                     value={latestMetric ? `${latestMetric.height} cm` : "N/A"}
-                    description="Your current height"
+                    description="Votre taille actuelle"
                     icon={<Ruler size={16} />}
                 />
             </div>

@@ -14,7 +14,6 @@ export const updateRunAction = authActionClient
     .inputSchema(updateRunSchema)
     .action(async ({ parsedInput, ctx }) => {
         try {
-            // Verify the run belongs to the user before updating
             const existingRun = await prisma.run.findFirst({
                 where: {
                     id: parsedInput.id,
@@ -25,7 +24,7 @@ export const updateRunAction = authActionClient
             if (!existingRun) {
                 return {
                     success: false,
-                    error: "Run not found or you don't have permission to update it",
+                    error: "Run non trouvé ou vous n'avez pas la permission de le mettre à jour",
                     data: null,
                 }
             }
@@ -53,13 +52,13 @@ export const updateRunAction = authActionClient
             return {
                 success: true,
                 data: run,
-                message: "Run updated successfully!",
+                message: "Run mis à jour avec succès!",
             }
         } catch (error) {
             console.error("Error updating run:", error)
             return {
                 success: false,
-                error: error instanceof Error ? error.message : "Failed to update run",
+                error: error instanceof Error ? error.message : "Échec de la mise à jour du run",
                 data: null,
             }
         }
