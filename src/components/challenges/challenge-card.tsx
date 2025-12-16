@@ -100,18 +100,20 @@ export default function ChallengeCard({ user }: ChallengeCardProps) {
                 {/* Défis complétés */}
                 {completedChallenges.length > 0 && (
                     <div className="space-y-2">
-                        <h4 className="text-sm font-semibold flex items-center gap-2 text-green-600">
-                            <CheckCircle2 className="size-4" />
+                        <h4 className="text-sm font-semibold flex items-center gap-2">
+                            <CheckCircle2 className="size-4 text-green-500" />
                             Défis complétés
                         </h4>
-                        <div className="space-y-1">
+                        <div className="space-y-2">
                             {completedChallenges.map((challenge) => (
                                 <div
                                     key={challenge.id}
-                                    className="flex items-center gap-2 text-sm text-muted-foreground"
+                                    className="border border-green-500 bg-green-5 rounded-lg p-3 space-y-1"
                                 >
-                                    <CheckCircle2 className="size-3 text-green-600" />
-                                    <span className="line-through">{challenge.title}</span>
+                                    <p className="font-medium text-sm">{challenge.title}</p>
+                                    <p className="text-xs text-muted-foreground">
+                                        {challenge.description}
+                                    </p>
                                 </div>
                             ))}
                         </div>
