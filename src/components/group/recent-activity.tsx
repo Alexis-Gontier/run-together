@@ -27,10 +27,23 @@ export function RecentActivity() {
   };
 
   const formatRelativeTime = (dateString: string) => {
-    return formatDistanceToNow(new Date(dateString), {
+    const date = new Date(dateString);
+    const today = new Date();
+
+    // Check if it's today
+    if (
+      date.getDate() === today.getDate() &&
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear()
+    ) {
+      return "aujourd'hui";
+    }
+
+    // Otherwise, return relative time with "il y a" prefix
+    return `il y a ${formatDistanceToNow(date, {
       addSuffix: false,
       locale: fr,
-    });
+    })}`;
   };
 
   if (isLoading) {
@@ -101,7 +114,7 @@ export function RecentActivity() {
                   </div>
                 </div>
                 <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <span>{formatRelativeTime(run.createdAt)}</span>
+                  <span>{formatRelativeTime(run.date)}</span>
                 </div>
               </div>
               );

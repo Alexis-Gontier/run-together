@@ -10,11 +10,11 @@ import { Check } from "lucide-react";
 import { UserComparison } from "@/lib/api/schemas";
 
 const COLORS = [
-  { bg: "bg-amber-700", text: "text-amber-700", dot: "🟤" },
-  { bg: "bg-red-500", text: "text-red-500", dot: "🔴" },
-  { bg: "bg-blue-500", text: "text-blue-500", dot: "🔵" },
-  { bg: "bg-green-500", text: "text-green-500", dot: "🟢" },
-  { bg: "bg-purple-500", text: "text-purple-500", dot: "🟣" },
+  { bg: "bg-amber-700", text: "text-amber-700", dot: "" },
+  { bg: "bg-red-500", text: "text-red-500", dot: "" },
+  { bg: "bg-blue-500", text: "text-blue-500", dot: "" },
+  { bg: "bg-green-500", text: "text-green-500", dot: "" },
+  { bg: "bg-purple-500", text: "text-purple-500", dot: "" },
 ];
 
 interface MetricRow {
@@ -81,7 +81,7 @@ const METRICS: MetricRow[] = [
     label: "Durée moyenne",
     getValue: (c) => c.stats.averageDuration,
     formatValue: (v) => `${Math.round(v / 60)}min`,
-    isBestHigher: false, // Plus court peut être meilleur pour certains
+    isBestHigher: true, // Plus long = meilleure endurance
   },
   {
     label: "Régularité",
@@ -183,7 +183,7 @@ export function ComparisonTable() {
                   return (
                     <TableHead key={comparison.user.id} className="text-center font-semibold">
                       {isCurrentUser && "Vous "}
-                      {!isCurrentUser && comparison.user.name}{" "}
+                      {!isCurrentUser && comparison.user.username}{" "}
                       {COLORS[index % COLORS.length].dot}
                     </TableHead>
                   );
@@ -216,7 +216,7 @@ export function ComparisonTable() {
                       {bestIndex !== -1 && comparisons[bestIndex] ? (
                         comparisons[bestIndex].user.id === currentUserId
                           ? "Vous"
-                          : comparisons[bestIndex].user.name
+                          : comparisons[bestIndex].user.username || comparisons[bestIndex].user.name
                       ) : (
                         "-"
                       )}

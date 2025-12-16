@@ -12,7 +12,7 @@ export async function AppSidebar() {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="h-16 border-sidebar-border border-b p-0 flex items-center justify-center">
-        <Link href="/" className="w-full h-full px-6 flex items-center justify-start gap-2 font-semibold text-xl">
+        <Link href="/dashboard" className="w-full h-full px-6 flex items-center justify-start gap-2 font-semibold text-xl">
           RunTogether
         </Link>
       </SidebarHeader>

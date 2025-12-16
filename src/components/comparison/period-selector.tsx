@@ -88,10 +88,23 @@ export function PeriodSelector() {
   const handlePeriodChange = (value: string) => {
     setPeriod(value);
     if (value !== "custom") {
-      // Clear custom dates when selecting a preset
-      setStartDate(null);
-      setEndDate(null);
+      // Clear local date range state
       setDateRange(undefined);
+
+      // Set dates based on selected period
+      if (value === "all") {
+        // For "all", clear the date filters
+        setStartDate(null);
+        setEndDate(null);
+      } else {
+        // For preset periods, calculate and set the date range
+        const option = PERIOD_OPTIONS.find(opt => opt.value === value);
+        if (option) {
+          const { start, end } = option.getDateRange();
+          setStartDate(format(start, "yyyy-MM-dd"));
+          setEndDate(format(end, "yyyy-MM-dd"));
+        }
+      }
     }
   };
 
