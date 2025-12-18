@@ -30,7 +30,7 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/shadcn-ui/tooltip"
-import { EllipsisVertical, Pencil, Trash2, ArrowUpDown, ArrowUp, ArrowDown, Activity } from "lucide-react"
+import { EllipsisVertical, Pencil, Trash2, ArrowUpDown, ArrowUp, ArrowDown, Activity, Eye } from "lucide-react"
 import { formatDistance, formatDuration, formatPace } from '@/lib/utils/run'
 import { formatDateShort } from '@/lib/utils/date'
 import { Run } from '@/lib/api/schemas/runs.schema'
@@ -38,6 +38,7 @@ import { EditRunDialog } from './edit-run-dialog'
 import { DeleteRunDialog } from './delete-run-dialog'
 import { cn } from '@/lib/utils/cn'
 import { parseAsString, useQueryState } from 'nuqs'
+import { useRouter } from 'next/navigation'
 
 type RunTableProps = {
     runs: Run[]
@@ -47,11 +48,16 @@ type SortField = 'date' | 'distance' | 'duration' | 'pace' | 'elevationGain'
 type SortDirection = 'asc' | 'desc' | null
 
 export function RunTable({ runs }: RunTableProps) {
+    const router = useRouter()
     const [selectedRun, setSelectedRun] = useState<Run | null>(null)
     const [editDialogOpen, setEditDialogOpen] = useState(false)
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
     const [sortBy, setSortBy] = useQueryState('sortBy', parseAsString.withDefault('date'))
     const [sortOrder, setSortOrder] = useQueryState('sortOrder', parseAsString.withDefault('desc'))
+
+    const handleViewDetails = (run: Run) => {
+        router.push(`/dashboard/runs/${run.id}`)
+    }
 
     const handleEdit = (run: Run) => {
         setSelectedRun(run)
@@ -165,7 +171,11 @@ export function RunTable({ runs }: RunTableProps) {
                                     </TableRow>
                                 ) : (
                                     runs.map((run) => (
-                                        <TableRow key={run.id} className="group hover:bg-muted/50 transition-colors">
+                                        <TableRow
+                                            key={run.id}
+                                            className="group hover:bg-muted/50 transition-colors cursor-pointer"
+                                            onClick={() => handleViewDetails(run)}
+                                        >
                                             <TableCell className="font-medium">
                                                 {formatDateShort(run.date)}
                                             </TableCell>
@@ -195,7 +205,7 @@ export function RunTable({ runs }: RunTableProps) {
                                                     <span className="text-muted-foreground">-</span>
                                                 )}
                                             </TableCell>
-                                            <TableCell className="text-right">
+                                            <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
                                                 <DropdownMenu>
                                                     <DropdownMenuTrigger asChild>
                                                         <Button
@@ -208,6 +218,13 @@ export function RunTable({ runs }: RunTableProps) {
                                                         </Button>
                                                     </DropdownMenuTrigger>
                                                     <DropdownMenuContent align="end">
+                                                        <DropdownMenuItem
+                                                            onClick={() => handleViewDetails(run)}
+                                                            className="cursor-pointer"
+                                                        >
+                                                            <Eye />
+                                                            Voir les détails
+                                                        </DropdownMenuItem>
                                                         <DropdownMenuItem
                                                             onClick={() => handleEdit(run)}
                                                             className="cursor-pointer"

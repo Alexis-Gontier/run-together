@@ -10,6 +10,7 @@ export const userStatsSchema = z.object({
   fastestPace: z.number(),
   currentMonthRuns: z.number(),
   currentMonthDistance: z.number(),
+  lastMonthDistance: z.number(),
 });
 
 export const userProfileSchema = z.object({

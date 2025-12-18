@@ -10,26 +10,33 @@ const paramsSchema = z.object({
 
 /**
  * GET /api/runs/[id]
- * Fetch a specific run by ID
- * Ensures the run belongs to the authenticated user
+ * Fetch a specific run by ID with user information
  */
 export const GET = authRoute
   .params(paramsSchema)
   .handler(async (request, context) => {
-    const { user } = context.ctx;
+    const { user: currentUser } = context.ctx;
     const { id } = context.params;
 
-    // Find run and verify ownership
+    // Find run with user information
     const run = await prisma.run.findUnique({
       where: { id },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            username: true,
+            displayUsername: true,
+            email: true,
+            image: true,
+          },
+        },
+      },
     });
 
     if (!run) {
       throw new RouteError("Run not found", 404);
-    }
-
-    if (run.userId !== user.id) {
-      throw new RouteError("Forbidden - You don't own this run", 403);
     }
 
     return {

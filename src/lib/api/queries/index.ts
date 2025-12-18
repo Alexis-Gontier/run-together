@@ -1,6 +1,7 @@
 export * from './use-github-repo';
 export * from './use-runs-calendar';
 export * from './use-runs-compare';
+export * from './use-run-detail';
 export * from './use-users';
 export * from './use-user-profile';
 export * from './use-user-calendar';

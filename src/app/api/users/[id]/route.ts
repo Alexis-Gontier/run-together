@@ -34,9 +34,11 @@ export const GET = authRoute
       throw new RouteError("User not found", 404);
     }
 
-    // Get current month start
+    // Get current month start and last month boundaries
     const now = new Date();
     const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59);
 
     // Get all runs for stats
     const runs = await prisma.run.findMany({
@@ -67,6 +69,15 @@ export const GET = authRoute
       0
     );
 
+    // Last month stats
+    const lastMonthRuns = runs.filter(
+      (run) => run.date >= lastMonthStart && run.date <= lastMonthEnd
+    );
+    const lastMonthDistance = lastMonthRuns.reduce(
+      (sum, run) => sum + run.distance,
+      0
+    );
+
     return {
       success: true,
       data: {
@@ -82,6 +93,7 @@ export const GET = authRoute
           fastestPace,
           currentMonthRuns: currentMonthRunsCount,
           currentMonthDistance,
+          lastMonthDistance,
         },
       },
     };

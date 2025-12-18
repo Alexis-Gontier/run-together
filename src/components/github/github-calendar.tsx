@@ -28,6 +28,7 @@ export type CalendarDayData = {
     dateString: string
     hasActivity: boolean
     tooltipContent?: ReactNode
+    onClick?: () => void
 }
 
 function generateCalendarDays(year: number = new Date().getFullYear()): string[] {
@@ -91,6 +92,7 @@ export function GithubCalendar({ data, year, isLoading = false, error = false }:
             date: new Date(year, month - 1, day),
             hasActivity: dayData?.hasActivity || false,
             tooltipContent: dayData?.tooltipContent,
+            onClick: dayData?.onClick,
         }
     })
 
@@ -152,7 +154,7 @@ export function GithubCalendar({ data, year, isLoading = false, error = false }:
                                 const isCurrentYear = day.date.getFullYear() === currentYear
 
                                 return (
-                                    <Tooltip key={dayIndex}>
+                                    <Tooltip key={dayIndex} delayDuration={200}>
                                         <TooltipTrigger asChild>
                                             <div
                                                 className={cn(
@@ -163,9 +165,19 @@ export function GithubCalendar({ data, year, isLoading = false, error = false }:
                                                         ? "bg-primary"
                                                         : "bg-muted"
                                                 )}
+                                                onClick={day.onClick}
                                             />
                                         </TooltipTrigger>
-                                        <TooltipContent>
+                                        <TooltipContent
+                                            className="pointer-events-auto"
+                                            onPointerDownOutside={(e) => {
+                                                // Empêcher la fermeture si on clique sur un lien à l'intérieur
+                                                const target = e.target as HTMLElement
+                                                if (target.tagName === 'A' || target.closest('a')) {
+                                                    e.preventDefault()
+                                                }
+                                            }}
+                                        >
                                             {day.tooltipContent || (
                                                 <div className="text-xs">
                                                     <p className="font-medium">

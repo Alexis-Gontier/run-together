@@ -11,9 +11,25 @@ type ProfileStatsProps = {
 }
 
 export function ProfileStats({ stats, monthObjectif }: ProfileStatsProps) {
-  const monthProgress = monthObjectif
-    ? Math.round((stats.currentMonthDistance / monthObjectif) * 100)
+  // Calculate improvement vs last month
+  const distanceDiff = stats.currentMonthDistance - stats.lastMonthDistance
+  const hasImprovement = distanceDiff !== 0
+  const improvementPercentage = stats.lastMonthDistance > 0
+    ? Math.round((distanceDiff / stats.lastMonthDistance) * 100)
     : null
+
+  const getImprovementText = () => {
+    if (!hasImprovement) return null
+    if (distanceDiff > 0) {
+      return improvementPercentage !== null ? `+${improvementPercentage}%` : null
+    }
+    return improvementPercentage !== null ? `${improvementPercentage}%` : null
+  }
+
+  const getImprovementColor = () => {
+    if (!hasImprovement) return ""
+    return distanceDiff > 0 ? "text-green-600 dark:text-green-500" : "text-red-600 dark:text-red-500"
+  }
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -70,14 +86,14 @@ export function ProfileStats({ stats, monthObjectif }: ProfileStatsProps) {
         title="Ce Mois-ci"
         value={`${stats.currentMonthRuns} courses`}
         description={
-          monthProgress !== null ? (
-            <div className="flex items-center gap-1">
-              <span>{formatDistance(stats.currentMonthDistance)}</span>
-              <span className="text-primary">({monthProgress}%)</span>
-            </div>
-          ) : (
-            formatDistance(stats.currentMonthDistance)
-          )
+          <div className="flex items-center gap-1">
+            <span>{formatDistance(stats.currentMonthDistance)}</span>
+            {getImprovementText() && (
+              <span className={getImprovementColor()}>
+                ({getImprovementText()})
+              </span>
+            )}
+          </div>
         }
         icon={<Target className="h-4 w-4" />}
       />

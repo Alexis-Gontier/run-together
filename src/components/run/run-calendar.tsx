@@ -13,6 +13,7 @@ import { useRunsCalendar } from "@/lib/api"
 import { useMemo } from "react"
 import { format } from "date-fns"
 import { fr } from "date-fns/locale"
+import Link from "next/link"
 
 function formatDuration(seconds: number): string {
     const hours = Math.floor(seconds / 3600)
@@ -41,6 +42,9 @@ export function RunCalendar() {
                 date,
                 dateString,
                 hasActivity: dayData.hasActivity,
+                onClick: dayData.runs.length === 1
+                    ? () => window.location.href = `/dashboard/runs/${dayData.runs[0].id}`
+                    : undefined,
                 tooltipContent: (
                     <div className="text-xs">
                         <p className="font-medium">
@@ -52,9 +56,13 @@ export function RunCalendar() {
                                     {dayData.runs.length} course{dayData.runs.length > 1 ? "s" : ""}
                                 </p>
                                 {dayData.runs.map((run) => (
-                                    <div key={run.id} className="text-muted-foreground text-[10px]">
+                                    <Link
+                                        key={run.id}
+                                        href={`/dashboard/runs/${run.id}`}
+                                        className="block text-muted-foreground hover:text-primary text-[10px] transition-colors"
+                                    >
                                         • {run.distance.toFixed(2)} km - {formatDuration(run.duration)}
-                                    </div>
+                                    </Link>
                                 ))}
                             </div>
                         )}

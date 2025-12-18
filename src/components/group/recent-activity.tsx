@@ -10,6 +10,7 @@ import { Calendar } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { authClient } from "@/lib/auth/auth-client";
+import Link from "next/link";
 
 export function RecentActivity() {
 
@@ -83,40 +84,49 @@ export function RecentActivity() {
           <div className="space-y-2">
             {recentRuns.map((run) => {
               const isCurrentUser = session?.user && run.user.id === session.user.id;
+              const content = (
+                <>
+                  <Avatar className="size-8">
+                    <AvatarImage src={run.user.image || undefined} alt={run.user.displayUsername || run.user.name} />
+                    <AvatarFallback>{getInitials(run.user.displayUsername || run.user.name)}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 min-w-0 space-y-1">
+                    <div className="flex items-center gap-2">
+                      <p className="font-medium leading-none">
+                        {run.user.displayUsername || run.user.name}
+                      </p>
+                      {isCurrentUser && (
+                        <Badge variant="outline" className="text-xs">Vous</Badge>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <span>
+                        {formatDistance(run.distance)}
+                      </span>
+                      <span>en</span>
+                      <span>{formatDuration(run.duration)}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <span>{formatRelativeTime(run.date)}</span>
+                  </div>
+                </>
+              );
+
+              const className = `flex justify-between items-center gap-3 rounded-lg p-3 transition-colors ${
+                isCurrentUser
+                  ? "border border-primary bg-primary/5"
+                  : "border hover:bg-accent"
+              }`;
+
               return (
-              <div
-                key={run.id}
-                className={`flex justify-between items-center gap-3 rounded-lg p-3 transition-colors ${
-                  isCurrentUser
-                    ? "border border-primary bg-primary/5"
-                    : "border hover:bg-accent"
-                }`}
-              >
-                <Avatar className="size-8">
-                  <AvatarImage src={run.user.image || undefined} alt={run.user.displayUsername || run.user.name} />
-                  <AvatarFallback>{getInitials(run.user.displayUsername || run.user.name)}</AvatarFallback>
-                </Avatar>
-                <div className="flex-1 min-w-0 space-y-1">
-                  <div className="flex items-center gap-2">
-                    <p className="font-medium leading-none">
-                      {run.user.displayUsername || run.user.name}
-                    </p>
-                    {isCurrentUser && (
-                      <Badge variant="outline" className="text-xs">Vous</Badge>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <span>
-                      {formatDistance(run.distance)}
-                    </span>
-                    <span>en</span>
-                    <span>{formatDuration(run.duration)}</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <span>{formatRelativeTime(run.date)}</span>
-                </div>
-              </div>
+                <Link
+                  key={run.id}
+                  href={`/dashboard/runs/${run.id}`}
+                  className={className}
+                >
+                  {content}
+                </Link>
               );
             })}
           </div>
