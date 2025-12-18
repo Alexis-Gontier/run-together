@@ -1,29 +1,17 @@
-import { Card, CardHeader, CardTitle } from '@/components/shadcn-ui/card'
 import { DashboardTextHeading } from '@/components/ui/dashboard-text-heading'
-import { StatCard } from '@/components/ui/stat-card'
+import { ProfileContent } from '@/components/profile'
+import { getRequireUser } from '@/lib/auth/auth-session'
 
-export default function page() {
+export default async function ProfilePage() {
+    const user = await getRequireUser()
+
     return (
         <>
             <DashboardTextHeading
-                title="Profile"
-                description="View and edit your profile information"
+                title="Mon Profil"
+                description="Consultez vos statistiques et vos performances"
             />
-            <div className="grid grid-cols-4 gap-6">
-                <StatCard />
-                <StatCard />
-                <StatCard />
-                <StatCard />
-            </div>
-            <div className="grid grid-cols-2 gap-6">
-                <Card>
-                    <CardHeader>
-                        <CardTitle>
-                            Records Personnels
-                        </CardTitle>
-                    </CardHeader>
-                </Card>
-            </div>
+            <ProfileContent userId={user.id} isCurrentUser={true} />
         </>
     )
 }

@@ -2,5 +2,7 @@ export * from './get-github-repo';
 export * from './get-runs-calendar';
 export * from './get-runs-compare';
 export * from './get-users';
+export * from './get-user-profile';
+export * from './get-user-calendar';
 export * from './get-leaderboard';
 export * from './get-recent-runs';

@@ -41,11 +41,11 @@ export const DASHBOARD_NAV_ITEMS: NavGroup[] = [
         href: "/dashboard/runs",
         icon: Route,
       },
-      // {
-      //   title: "Profile",
-      //   href: "/dashboard/profile",
-      //   icon: User,
-      // },
+      {
+        title: "Profil",
+        href: "/dashboard/profile",
+        icon: User,
+      },
       {
         title: "Comparaison",
         href: "/dashboard/comparison",

@@ -8,6 +8,7 @@ import { useLeaderboard } from "@/lib/api/queries";
 import { useLeaderboardStore } from "@/lib/stores/leaderboard-store";
 import { Trophy, Medal, Award } from "lucide-react";
 import { Badge } from "../shadcn-ui/badge";
+import Link from "next/link";
 
 const PERIOD_OPTIONS = [
   { value: "7", label: "7j" },
@@ -91,8 +92,9 @@ export function LeaderBoard() {
         {/* Leaderboard list */}
         <div className="space-y-2">
           {leaderboard.map((user) => (
-            <div
+            <Link
               key={user.id}
+              href={user.isCurrentUser ? "/dashboard/profile" : `/dashboard/profile/${user.id}`}
               className={`flex items-center gap-3 rounded-lg p-3 transition-colors ${
                 user.isCurrentUser
                   ? "border border-primary bg-primary/5"
@@ -110,7 +112,7 @@ export function LeaderBoard() {
                 <p className="font-medium leading-none truncate">
                   {user.displayUsername || user.name}
                   {user.isCurrentUser && (
-                    <Badge variant="outline" className="text-xs">Vous</Badge>
+                    <Badge variant="outline" className="text-xs ml-2">Vous</Badge>
                   )}
                 </p>
                 <p className="text-sm text-muted-foreground mt-1">
@@ -123,7 +125,7 @@ export function LeaderBoard() {
                   )}
                 </p>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
 
@@ -131,7 +133,10 @@ export function LeaderBoard() {
         {currentUser && !currentUserInTop && (
           <div className="border-t pt-4">
             <p className="text-xs text-muted-foreground mb-2">Votre position</p>
-            <div className="flex items-center gap-3 rounded-lg border-2 border-primary bg-primary/5 p-3">
+            <Link
+              href="/dashboard/profile"
+              className="flex items-center gap-3 rounded-lg border-2 border-primary bg-primary/5 p-3 hover:bg-primary/10 transition-colors"
+            >
               <div className="flex h-8 w-8 items-center justify-center">
                 <span className="text-sm font-medium text-muted-foreground">
                   #{currentUser.rank}
@@ -157,7 +162,7 @@ export function LeaderBoard() {
                   )}
                 </p>
               </div>
-            </div>
+            </Link>
           </div>
         )}
 
