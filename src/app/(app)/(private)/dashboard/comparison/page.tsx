@@ -9,7 +9,7 @@ import { ComparisonTable } from "@/components/comparison/comparison-table";
 export default function ComparisonPage() {
     return (
         <>
-            <div className="flex justify-between items-end">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
                 <DashboardTextHeading
                     title="Comparaison"
                     description="Comparez vos performances avec d'autres membres de la communauté"
@@ -17,8 +17,8 @@ export default function ComparisonPage() {
                 <RefreshButton />
             </div>
 
-            <div className="grid grid-cols-4 gap-6">
-                <div className="col-span-3">
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                <div className="lg:col-span-3">
                     <UserSelector />
                 </div>
                 <PeriodSelector />

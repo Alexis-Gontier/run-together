@@ -99,21 +99,21 @@ export function RecentActivity() {
                         <Badge variant="outline" className="text-xs">Vous</Badge>
                       )}
                     </div>
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <div className="flex flex-wrap items-center gap-1 sm:gap-2 text-xs text-muted-foreground">
                       <span>
                         {formatDistance(run.distance)}
                       </span>
                       <span>en</span>
                       <span>{formatDuration(run.duration)}</span>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <span>{formatRelativeTime(run.date)}</span>
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                      <span>{formatRelativeTime(run.date)}</span>
+                    </div>
                   </div>
                 </>
               );
 
-              const className = `flex justify-between items-center gap-3 rounded-lg p-3 transition-colors ${
+              const className = `flex items-start gap-3 rounded-lg p-3 transition-colors ${
                 isCurrentUser
                   ? "border border-primary bg-primary/5"
                   : "border hover:bg-accent"

@@ -79,9 +79,9 @@ export function UserSelector() {
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Users list */}
-        <div className="max-h-[400px] overflow-y-auto pr-2 grid grid-cols-3 gap-4">
+        <div className="max-h-[400px] overflow-y-auto pr-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {sortedUsers.length === 0 ? (
-            <p className="text-center text-sm text-muted-foreground py-8 col-span-4">
+            <p className="text-center text-sm text-muted-foreground py-8 col-span-1 sm:col-span-2 lg:col-span-3">
               Aucun utilisateur trouvé
             </p>
           ) : (

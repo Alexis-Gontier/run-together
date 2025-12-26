@@ -15,8 +15,8 @@ export default async function RunDetailPage({ params }: RunDetailPageProps) {
 
     return (
         <>
-            <div className="flex items-center gap-4">
-                <Button variant="ghost" size="icon" asChild>
+            <div className="flex items-start sm:items-center gap-4">
+                <Button variant="ghost" size="icon" asChild className="mt-1 sm:mt-0">
                     <Link href="/dashboard/runs">
                         <ArrowLeft className="h-4 w-4" />
                     </Link>
