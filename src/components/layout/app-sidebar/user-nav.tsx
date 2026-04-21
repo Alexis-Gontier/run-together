@@ -2,6 +2,7 @@
 
 import { ChevronsUpDown, LogOut, Settings, User } from "lucide-react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 
 import {
   Avatar,
@@ -15,7 +16,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/shadcn-ui/dropdown-menu"
-import { ROUTES, profileRoute } from "@/lib/constants/routes"
+import { authClient } from "@/lib/auth/auth-client"
+import { AUTH_ROUTES, ROUTES, profileRoute } from "@/lib/constants/routes"
 import { getInitials } from "@/lib/utils/get-initials"
 
 type UserInfo = {
@@ -28,19 +30,30 @@ type UserInfo = {
 function UserAvatar({ name, image }: Pick<UserInfo, "name" | "image">) {
   const initials = name ? getInitials(name) : "?"
   return (
-    <Avatar className="h-8 w-8 rounded-lg">
+    <Avatar className="size-8 rounded-lg">
       <AvatarImage src={image ?? undefined} />
       <AvatarFallback className="rounded-lg text-xs">{initials}</AvatarFallback>
     </Avatar>
   )
 }
 
-function UserNavTrigger({ name, username, email, image }: UserInfo) {
+function UserNavTrigger({
+  name,
+  username,
+  email,
+  image,
+  ref,
+  ...props
+}: UserInfo & { ref?: React.Ref<HTMLButtonElement> }) {
   const displayName = name ?? "—"
   const displaySub = username ? `@${username}` : (email ?? null)
 
   return (
-    <button className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg p-2 transition-colors outline-none hover:bg-accent lg:justify-start">
+    <button
+      ref={ref}
+      className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg p-2 transition-colors outline-none hover:bg-accent lg:justify-start"
+      {...props}
+    >
       <UserAvatar name={name} image={image} />
       <div className="hidden min-w-0 flex-1 text-left text-sm leading-tight lg:grid">
         <span className="truncate font-medium">{displayName}</span>
@@ -56,8 +69,22 @@ function UserNavTrigger({ name, username, email, image }: UserInfo) {
 }
 
 function UserNavLogout() {
+  const router = useRouter()
+
+  function handleLogout() {
+    authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => router.push(AUTH_ROUTES.LOGIN),
+      },
+    })
+  }
+
   return (
-    <DropdownMenuItem variant="destructive" className="cursor-pointer">
+    <DropdownMenuItem
+      variant="destructive"
+      className="cursor-pointer"
+      onClick={handleLogout}
+    >
       <LogOut />
       Se déconnecter
     </DropdownMenuItem>
