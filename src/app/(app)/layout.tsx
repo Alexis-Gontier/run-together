@@ -7,9 +7,10 @@ import { MobileNav } from "@/components/layout/app-sidebar/app-sidebar-nav"
 
 type AppLayoutProps = {
   children: React.ReactNode
+  rightPanel: React.ReactNode
 }
 
-export default function AppLayout({ children }: AppLayoutProps) {
+export default function AppLayout({ children, rightPanel }: AppLayoutProps) {
   const IS_PROD = process.env.NODE_ENV === "production"
 
   if (IS_PROD) {
@@ -23,10 +24,10 @@ export default function AppLayout({ children }: AppLayoutProps) {
   return (
     <div className="flex min-h-screen justify-center">
       <AppSidebar />
-      <main className="max-w-xl min-w-0 flex-1 border-x border-border pb-16 md:pb-0">
+      <main className="min-w-0 flex-1 border-x border-border pb-16 md:max-w-xl md:pb-0">
         {children}
       </main>
-      <AppRightPanel />
+      <AppRightPanel>{rightPanel}</AppRightPanel>
       <MobileNav />
     </div>
   )
