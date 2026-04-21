@@ -13,13 +13,17 @@ function getTimeLeft(target: Date) {
 }
 
 export function Countdown({ target }: CountdownProps) {
-  const targetDate = parseISO(target)
-  const [timeLeft, setTimeLeft] = useState(() => getTimeLeft(targetDate))
+  const [timeLeft, setTimeLeft] = useState(() => getTimeLeft(parseISO(target)))
 
   useEffect(() => {
-    const id = setInterval(() => setTimeLeft(getTimeLeft(targetDate)), 1000)
+    const targetDate = parseISO(target)
+    const id = setInterval(() => {
+      const next = getTimeLeft(targetDate)
+      setTimeLeft(next)
+      if (!next) clearInterval(id)
+    }, 1000)
     return () => clearInterval(id)
-  }, [targetDate])
+  }, [target])
 
   if (!timeLeft)
     return <p className="text-4xl font-bold">Le site est en ligne !</p>
@@ -35,7 +39,7 @@ export function Countdown({ target }: CountdownProps) {
     <div className="flex flex-col items-center gap-6 sm:flex-row sm:gap-10 md:gap-16">
       {units.map(({ id, label, value }) => (
         <div key={id} className="flex flex-col items-center gap-3 sm:gap-4">
-          <span className="text-6xl font-black tabular-nums sm:text-6xl md:text-7xl lg:text-8xl">
+          <span className="text-6xl font-black tabular-nums md:text-7xl lg:text-8xl">
             {String(value).padStart(2, "0")}
           </span>
           <span className="text-base font-semibold tracking-widest text-muted-foreground uppercase sm:text-lg md:text-xl">
