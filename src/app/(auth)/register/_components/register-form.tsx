@@ -1,6 +1,6 @@
 "use client"
 
-import { zodResolver } from "@hookform/resolvers/zod"
+import { standardSchemaResolver } from "@hookform/resolvers/standard-schema"
 import { useAction } from "next-safe-action/hooks"
 import { Controller, useForm } from "react-hook-form"
 import { toast } from "sonner"
@@ -14,7 +14,7 @@ import { registerAction } from "../_actions/register-action"
 
 export function RegisterForm() {
   const form = useForm<SignUpType>({
-    resolver: zodResolver(signUpSchema),
+    resolver: standardSchemaResolver(signUpSchema),
     defaultValues: {
       name: "",
       username: "",
