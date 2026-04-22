@@ -174,7 +174,6 @@ Always use `<LoadingButton />` from `@/components/ui/loading-button` for form su
 
 ```tsx
 import { LoadingButton } from "@/components/ui/loading-button"
-
 ;<LoadingButton type="submit" isLoading={form.formState.isSubmitting}>
   Submit
 </LoadingButton>
