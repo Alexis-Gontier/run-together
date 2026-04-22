@@ -6,6 +6,8 @@ export const env = createEnv({
     NODE_ENV: z.enum(["development", "test", "production"]),
     DATABASE_URL: z.url(),
     BETTER_AUTH_SECRET: z.string(),
+    STRAVA_CLIENT_ID: z.string(),
+    STRAVA_CLIENT_SECRET: z.string(),
   },
   client: {
     NEXT_PUBLIC_APP_URL: z.url(),

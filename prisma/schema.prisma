@@ -9,6 +9,15 @@ datasource db {
 }
 
 // =====================================================
+// Enums
+// =====================================================
+
+enum RunSource {
+  STRAVA
+  MANUAL
+}
+
+// =====================================================
 // Better-Auth Models
 // =====================================================
 
@@ -28,6 +37,8 @@ model User {
   // Relations
   sessions        Session[]
   accounts        Account[]
+  stravaAccount   StravaAccount?
+  runs            Run[]
 
   @@unique([email])
   @@unique([username])
@@ -80,4 +91,72 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+}
+
+// =====================================================
+// Strava Integration Models
+// =====================================================
+
+model StravaAccount {
+  id              String   @id @default(cuid())
+  createdAt       DateTime @default(now())
+  connectedAt     DateTime @default(now())
+
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  stravaAthleteId String   @unique
+
+  accessToken     String
+  refreshToken    String
+  tokenExpiry     DateTime
+
+  scope           String   @default("activity:read_all")
+
+  @@map("strava_account")
+}
+
+// =====================================================
+// Runs Models
+// =====================================================
+
+model Run {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Source
+  source   RunSource @default(STRAVA)
+  stravaId String?   @unique
+
+  // Données de base (disponibles via /athlete/activities)
+  name      String?
+  distance  Int              // mètres
+  duration  Int              // secondes (moving_time Strava)
+  pace      Int              // secondes/km, calculé : (duration / distance) * 1000
+  elevation Int    @default(0) // D+ mètres (total_elevation_gain arrondi)
+  date      DateTime
+
+  // Données riches — présentes si montre Garmin connectée à Strava
+  heartRateAvg Int?   // average_heartrate (has_heartrate: true)
+  heartRateMax Int?   // max_heartrate
+  cadenceAvg   Int?   // average_cadence — dispo via /activities/{id}
+  calories     Int?   // calories — dispo via /activities/{id}
+
+  // GPS
+  summaryPolyline String? // map.summary_polyline — léger, pour minimap dans le feed
+  polyline        String? // map.polyline — complet, chargé via /activities/{id}
+  startLat        Float?
+  startLng        Float?
+
+  // Métadonnées Strava
+  sportType  String? // "Run", "TrailRun", "VirtualRun"
+  deviceName String? // "Garmin Forerunner 265", "Strava App"
+
+  // Index composite — crucial pour feed et leaderboard
+  @@index([userId, date])
+  @@map("run")
 }

@@ -74,6 +74,9 @@ importers:
       tw-animate-css:
         specifier: ^1.4.0
         version: 1.4.0
+      up-fetch:
+        specifier: ^2.6.0
+        version: 2.6.0
       zod:
         specifier: ^4.3.6
         version: 4.3.6
@@ -4700,6 +4703,10 @@ packages:
 
   until-async@3.0.2:
     resolution: {integrity: sha512-IiSk4HlzAMqTUseHHe3VhIGyuFmN90zMTpD3Z3y8jeQbzLIq500MVM7Jq2vUAnTKAFPJrqwkzr6PoTcPhGcOiw==}
+
+  up-fetch@2.6.0:
+    resolution: {integrity: sha512-gWV2S83NlheUZRJq6a79EOc3ZkW1AfvU96HT7KiH1O3ZmmaqdkhkygFiHfeEsRi69lP0JDVpblyWkqib4NPw3Q==}
+    engines: {node: '>=18'}
 
   update-browserslist-db@1.2.3:
     resolution: {integrity: sha512-Js0m9cx+qOgDxo0eMiFGEueWztz+d4+M3rGlmKPT+T4IS/jP4ylw3Nwpu6cpTTP8R1MAC1kF4VbdLt3ARf209w==}
@@ -9602,6 +9609,8 @@ snapshots:
       '@unrs/resolver-binding-win32-x64-msvc': 1.11.1
 
   until-async@3.0.2: {}
+
+  up-fetch@2.6.0: {}
 
   update-browserslist-db@1.2.3(browserslist@4.28.2):
     dependencies:
