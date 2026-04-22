@@ -12,7 +12,7 @@ type AppLayoutProps = {
 }
 
 export default function AppLayout({ children, rightPanel }: AppLayoutProps) {
-  const IS_PROD = process.env.NODE_ENV === "production"
+  const IS_PROD = env.NODE_ENV === "production"
 
   if (IS_PROD) {
     return (
@@ -25,7 +25,7 @@ export default function AppLayout({ children, rightPanel }: AppLayoutProps) {
   return (
     <div className="flex min-h-screen justify-center">
       <AppSidebar />
-      <main className="min-w-0 flex-1 border-x border-border pb-16 md:max-w-xl md:pb-0">
+      <main className="min-w-0 flex-1 border-x border-border pb-16 md:max-w-2xl md:pb-0">
         {children}
       </main>
       <AppRightPanel>{rightPanel}</AppRightPanel>
