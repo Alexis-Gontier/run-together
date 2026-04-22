@@ -42,3 +42,16 @@ export const signInSchema = z.object({
 
 export type SignUpType = z.infer<typeof signUpSchema>
 export type SignInType = z.infer<typeof signInSchema>
+
+export const changePasswordSchema = z
+  .object({
+    currentPassword: z.string().min(1, "Mot de passe actuel requis"),
+    newPassword: passwordSchema,
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Les mots de passe ne correspondent pas",
+    path: ["confirmPassword"],
+  })
+
+export type ChangePasswordType = z.infer<typeof changePasswordSchema>
