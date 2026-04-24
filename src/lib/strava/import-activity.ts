@@ -97,7 +97,7 @@ export async function importStravaActivity(
     if (!options.silent) {
       sendRunNotification({
         userName: account.user.name ?? "Inconnu",
-        runName: run.name,
+        runName: run.name || "Course sans nom",
         distanceMeters: run.distance,
         durationSeconds: run.duration,
         paceSecondsPerKm: run.pace,
