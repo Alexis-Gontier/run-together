@@ -15,4 +15,5 @@ export const stravaEndpoints = {
   athlete: "/athlete",
   athleteActivities: "/athlete/activities",
   activityDetail: (id: number) => `/activities/${id}`,
+  pushSubscriptions: "/push_subscriptions",
 } as const

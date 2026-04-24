@@ -6,9 +6,10 @@ import { env } from "@/env"
 import { getUser } from "@/lib/auth/auth-session"
 import { prisma } from "@/lib/db/prisma"
 import { AUTH_ROUTES, ROUTES } from "@/lib/constants/routes"
-import { stravaOAuthFetch } from "@/lib/strava/client"
-import { stravaOAuthPaths } from "@/lib/strava/constants"
+import { stravaApiFetch, stravaOAuthFetch } from "@/lib/strava/client"
+import { stravaEndpoints, stravaOAuthPaths } from "@/lib/strava/constants"
 import { stravaTokenExchangeSchema } from "@/lib/strava/schemas"
+import { z } from "zod"
 
 function redirectTo(path: string) {
   return NextResponse.redirect(new URL(path, env.NEXT_PUBLIC_APP_URL))
@@ -89,5 +90,39 @@ export async function GET(request: NextRequest) {
     },
   })
 
+  await ensureWebhookSubscription()
+
   return redirectTo(ROUTES.SETTINGS)
+}
+
+async function ensureWebhookSubscription() {
+  try {
+    const existing = await stravaApiFetch(stravaEndpoints.pushSubscriptions, {
+      params: {
+        client_id: env.STRAVA_CLIENT_ID,
+        client_secret: env.STRAVA_CLIENT_SECRET,
+      },
+      schema: z.array(z.object({ id: z.number() })),
+    })
+
+    if (existing.length > 0) return
+
+    const body = new URLSearchParams({
+      client_id: env.STRAVA_CLIENT_ID,
+      client_secret: env.STRAVA_CLIENT_SECRET,
+      callback_url: `${env.NEXT_PUBLIC_APP_URL}/api/strava/webhook`,
+      verify_token: env.STRAVA_WEBHOOK_VERIFY_TOKEN,
+    })
+
+    await fetch(
+      `https://www.strava.com/api/v3${stravaEndpoints.pushSubscriptions}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: body.toString(),
+      },
+    )
+  } catch (err) {
+    console.error("[strava/callback] webhook subscription setup failed", err)
+  }
 }
