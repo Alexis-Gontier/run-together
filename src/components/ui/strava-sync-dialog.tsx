@@ -78,19 +78,16 @@ export function StravaSyncDialog() {
   }
 
   function handleImport() {
-    if (selected.size === 0 || !activities) return
+    if (selected.size === 0) return
     startTransition(async () => {
-      const toImport = activities
-        .filter((a) => selected.has(a.id))
-        .map((a) => ({ ...a, name: a.name ?? "Course" }))
-      const result = await importStravaRunsAction({ activities: toImport })
+      const result = await importStravaRunsAction({ ids: Array.from(selected) })
 
       if (result?.serverError) {
         toast.error("Erreur lors de l'import Strava")
         return
       }
 
-      const count = result?.data?.count ?? toImport.length
+      const count = result?.data?.count ?? selected.size
       toast.success(
         `${count} course${count > 1 ? "s" : ""} importée${count > 1 ? "s" : ""} depuis Strava`,
       )
@@ -138,7 +135,7 @@ export function StravaSyncDialog() {
 
         <ScrollArea
           className={cn(
-            activities && activities.length > 0 ? "h-[400px]" : "h-auto",
+            activities && activities.length > 0 ? "h-100" : "h-auto",
           )}
         >
           {loading && (

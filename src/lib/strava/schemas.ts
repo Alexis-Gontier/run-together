@@ -45,6 +45,8 @@ export const stravaActivitySchema = z.object({
   max_speed: z.number(),
   average_heartrate: z.number().optional(),
   max_heartrate: z.number().optional(),
+  average_cadence: z.number().optional(),
+  start_latlng: z.tuple([z.number(), z.number()]).optional(),
   map: z
     .object({
       id: z.string(),
@@ -53,3 +55,28 @@ export const stravaActivitySchema = z.object({
     .optional(),
 })
 export type StravaActivity = z.infer<typeof stravaActivitySchema>
+
+// --- Detailed Activity (GET /activities/{id}) ---
+
+const splitMetricSchema = z.object({
+  split: z.number(),
+  distance: z.number(),
+  moving_time: z.number(),
+  elevation_difference: z.number().optional(),
+  average_heartrate: z.number().optional(),
+  average_cadence: z.number().optional(),
+})
+
+export const stravaActivityDetailSchema = stravaActivitySchema.extend({
+  calories: z.number().optional(),
+  device_name: z.string().optional(),
+  splits_metric: z.array(splitMetricSchema).optional(),
+  map: z
+    .object({
+      id: z.string(),
+      summary_polyline: z.string().nullable(),
+      polyline: z.string().nullable(),
+    })
+    .optional(),
+})
+export type StravaActivityDetail = z.infer<typeof stravaActivityDetailSchema>

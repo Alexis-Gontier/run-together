@@ -1,4 +1,4 @@
-import { Download, KeyRound, LogOut } from "lucide-react"
+import { Download, KeyRound, LogOut, Mail } from "lucide-react"
 import { Button } from "@/components/shadcn-ui/button"
 import { ChangePasswordDialog } from "./change-password-dialog"
 import { SignOutButton } from "./sign-out-button"
@@ -47,6 +47,16 @@ export function AccountCard() {
         </CardDescription>
       </CardHeader>
       <CardContent className="divide-y divide-border">
+        <AccountRow
+          icon={Mail}
+          label="Adresse e-mail"
+          description="Modifiez votre adresse e-mail."
+          action={
+            <Button variant="outline" size="sm" disabled>
+              Modifier
+            </Button>
+          }
+        />
         <AccountRow
           icon={KeyRound}
           label="Mot de passe"

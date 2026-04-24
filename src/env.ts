@@ -8,11 +8,19 @@ export const env = createEnv({
     BETTER_AUTH_SECRET: z.string(),
     STRAVA_CLIENT_ID: z.string(),
     STRAVA_CLIENT_SECRET: z.string(),
+    STRAVA_WEBHOOK_VERIFY_TOKEN: z.string(),
+    DISCORD_WEBHOOK_URL: z.string(),
+    BYPASS_COUNTDOWN: z
+      .string()
+      .optional()
+      .transform((v) => v === "true"),
   },
   client: {
     NEXT_PUBLIC_APP_URL: z.url(),
+    NEXT_PUBLIC_MAPBOX_TOKEN: z.string(),
   },
   experimental__runtimeEnv: {
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+    NEXT_PUBLIC_MAPBOX_TOKEN: process.env.NEXT_PUBLIC_MAPBOX_TOKEN,
   },
 })

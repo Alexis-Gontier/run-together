@@ -6,6 +6,7 @@ import {
   CardTitle,
 } from "@/components/shadcn-ui/card"
 import { ThemeToggle } from "./theme-toggle"
+import { Switch } from "@/components/shadcn-ui/switch"
 
 function PreferenceRow({
   label,
@@ -53,6 +54,12 @@ export function PreferencesCard() {
           description="Kilomètres ou miles pour vos activités."
         >
           <span className="text-sm text-muted-foreground">Kilomètres</span>
+        </PreferenceRow>
+        <PreferenceRow
+          label="Notifications"
+          description="Recevez des alertes pour les nouvelles activités."
+        >
+          <Switch className="cursor-pointer" />
         </PreferenceRow>
       </CardContent>
     </Card>

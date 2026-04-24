@@ -156,7 +156,32 @@ model Run {
   sportType  String? // "Run", "TrailRun", "VirtualRun"
   deviceName String? // "Garmin Forerunner 265", "Strava App"
 
+  // Relations
+  splits Split[]
+
   // Index composite — crucial pour feed et leaderboard
   @@index([userId, date])
   @@map("run")
+}
+
+// =====================================================
+// Splits (temps intermédiaires par km)
+// Disponibles via GET /activities/{id} → splits_metric
+// =====================================================
+
+model Split {
+  id    String @id @default(cuid())
+
+  runId String
+  run   Run    @relation(fields: [runId], references: [id], onDelete: Cascade)
+
+  kilometer Int    // numéro du km (1, 2, 3…)
+  distance  Float  // distance réelle du split en mètres (dernier split souvent < 1000m)
+  duration  Int    // secondes
+  pace      Int    // secondes/km pour ce split
+  heartRate Int?   // average_heartrate sur ce split (si Garmin)
+  elevation Float? // elevation_difference sur ce split
+
+  @@index([runId])
+  @@map("split")
 }
