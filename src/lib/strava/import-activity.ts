@@ -1,4 +1,5 @@
 import { RunSource } from "@/generated/prisma/client"
+import { sendRunNotification } from "@/lib/discord"
 import { prisma } from "@/lib/db/prisma"
 import { stravaApiFetch } from "@/lib/strava/client"
 import { STRAVA_RUN_TYPES, stravaEndpoints } from "@/lib/strava/constants"
@@ -15,7 +16,10 @@ export async function importStravaActivity(
   activityId: number,
   options: ImportOptions = {},
 ): Promise<void> {
-  const account = await prisma.stravaAccount.findUnique({ where: { userId } })
+  const account = await prisma.stravaAccount.findUnique({
+    where: { userId },
+    include: { user: { select: { name: true } } },
+  })
   if (!account) throw new Error("Strava account not found")
 
   const accessToken = await getValidAccessToken(account)
@@ -88,6 +92,18 @@ export async function importStravaActivity(
           elevation: s.elevation_difference ?? null,
         })),
       })
+    }
+
+    if (!options.silent) {
+      sendRunNotification({
+        userName: account.user.name ?? "Inconnu",
+        runName: run.name,
+        distanceMeters: run.distance,
+        durationSeconds: run.duration,
+        paceSecondsPerKm: run.pace,
+        elevationMeters: run.elevation,
+        heartRateAvg: run.heartRateAvg,
+      }).catch((err) => console.error("[discord] run notification failed", err))
     }
   })
 }
