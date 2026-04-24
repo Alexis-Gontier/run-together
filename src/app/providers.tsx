@@ -2,6 +2,7 @@
 
 import { ThemeProvider } from "@/providers/theme-provider"
 import { Toaster } from "@/components/shadcn-ui/sonner"
+import { NuqsAdapter } from "nuqs/adapters/next/app"
 
 type ProvidersProps = {
   children: React.ReactNode
@@ -15,7 +16,7 @@ export function Providers({ children }: ProvidersProps) {
       enableSystem
       disableTransitionOnChange
     >
-      {children}
+      <NuqsAdapter>{children}</NuqsAdapter>
       <Toaster />
     </ThemeProvider>
   )

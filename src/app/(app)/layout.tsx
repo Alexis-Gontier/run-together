@@ -12,7 +12,7 @@ type AppLayoutProps = {
 }
 
 export default function AppLayout({ children, rightPanel }: AppLayoutProps) {
-  const IS_PROD = env.NODE_ENV === "production"
+  const IS_PROD = env.NODE_ENV === "production" && !env.BYPASS_COUNTDOWN
 
   if (IS_PROD) {
     return (
