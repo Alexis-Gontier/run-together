@@ -107,21 +107,15 @@ async function ensureWebhookSubscription() {
 
     if (existing.length > 0) return
 
-    const body = new URLSearchParams({
-      client_id: env.STRAVA_CLIENT_ID,
-      client_secret: env.STRAVA_CLIENT_SECRET,
-      callback_url: `${env.NEXT_PUBLIC_APP_URL}/api/strava/webhook`,
-      verify_token: env.STRAVA_WEBHOOK_VERIFY_TOKEN,
-    })
-
-    await fetch(
-      `https://www.strava.com/api/v3${stravaEndpoints.pushSubscriptions}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: body.toString(),
+    await stravaApiFetch(stravaEndpoints.pushSubscriptions, {
+      method: "POST",
+      body: {
+        client_id: env.STRAVA_CLIENT_ID,
+        client_secret: env.STRAVA_CLIENT_SECRET,
+        callback_url: `${env.NEXT_PUBLIC_APP_URL}/api/strava/webhook`,
+        verify_token: env.STRAVA_WEBHOOK_VERIFY_TOKEN,
       },
-    )
+    })
   } catch (err) {
     console.error("[strava/callback] webhook subscription setup failed", err)
   }
