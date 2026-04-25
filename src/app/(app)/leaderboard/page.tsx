@@ -1,5 +1,7 @@
-import { DebugJson } from "@/components/ui/debug-json"
+import { getRequiredUser } from "@/lib/auth/auth-session"
 import { getLeaderboardAction } from "./_actions/get-leaderboard-action"
+import { LeaderboardEntries } from "./_components/leaderboard-entries"
+import { LeaderboardFilters } from "./_components/leaderboard-filters"
 import type {
   LeaderboardMetric,
   LeaderboardPeriod,
@@ -34,10 +36,21 @@ export default async function LeaderboardPage({ searchParams }: Props) {
     ? (period as LeaderboardPeriod)
     : "month"
 
-  const result = await getLeaderboardAction({
-    metric: selectedMetric,
-    period: selectedPeriod,
-  })
+  const [user, result] = await Promise.all([
+    getRequiredUser(),
+    getLeaderboardAction({ metric: selectedMetric, period: selectedPeriod }),
+  ])
 
-  return <DebugJson data={result?.data} />
+  const entries = result?.data?.entries ?? []
+
+  return (
+    <>
+      <LeaderboardFilters metric={selectedMetric} period={selectedPeriod} />
+      <LeaderboardEntries
+        entries={entries}
+        metric={selectedMetric}
+        currentUserId={user.id}
+      />
+    </>
+  )
 }

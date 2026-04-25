@@ -27,7 +27,13 @@ export const getProgressAction = authActionClient
           date: { gte: prevStart ?? currentStart, lte: currentEnd },
         },
         orderBy: { date: "asc" },
-        select: { date: true, distance: true, pace: true, elevation: true },
+        select: {
+          date: true,
+          distance: true,
+          duration: true,
+          pace: true,
+          elevation: true,
+        },
       }),
       prisma.run.findMany({
         where: { userId: user.id },

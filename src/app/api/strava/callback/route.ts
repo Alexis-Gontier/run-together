@@ -92,7 +92,16 @@ export async function GET(request: NextRequest) {
 
   await ensureWebhookSubscription()
 
-  return redirectTo(ROUTES.SETTINGS)
+  const freshUser = await prisma.user.findUnique({
+    where: { id: user.id },
+    select: { onboardingCompleted: true },
+  })
+
+  return redirectTo(
+    freshUser?.onboardingCompleted
+      ? ROUTES.SETTINGS
+      : `${ROUTES.ONBOARDING}?step=2`,
+  )
 }
 
 async function ensureWebhookSubscription() {

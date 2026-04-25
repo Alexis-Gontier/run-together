@@ -23,7 +23,13 @@ export const getLeaderboardAction = authActionClient
       prisma.run.findMany({
         where: { date: { gte: prevStart ?? currentStart, lte: currentEnd } },
         orderBy: { date: "asc" },
-        select: { date: true, distance: true, pace: true, userId: true },
+        select: {
+          date: true,
+          distance: true,
+          duration: true,
+          pace: true,
+          userId: true,
+        },
       }),
     ])
 

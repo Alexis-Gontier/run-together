@@ -1,42 +1,14 @@
 import type { ProgressPeriod } from "../_schemas/progress-schema"
+import { getPeriodRange as sharedGetPeriodRange } from "@/lib/utils/date"
 
-export function getPeriodRange(period: ProgressPeriod): {
-  currentStart: Date
-  currentEnd: Date
-  prevStart: Date | null
-  prevEnd: Date | null
-} {
-  const now = new Date()
-  now.setUTCHours(23, 59, 59, 999)
+const PROGRESS_DAYS: Record<string, number> = {
+  "3m": 91,
+  "6m": 182,
+  "1y": 365,
+}
 
-  if (period === "all") {
-    return {
-      currentStart: new Date(0),
-      currentEnd: now,
-      prevStart: null,
-      prevEnd: null,
-    }
-  }
-
-  const days: Record<Exclude<ProgressPeriod, "all">, number> = {
-    "3m": 91,
-    "6m": 182,
-    "1y": 365,
-  }
-  const periodDays = days[period]
-
-  const currentStart = new Date(
-    now.getTime() - periodDays * 24 * 60 * 60 * 1000,
-  )
-  currentStart.setUTCHours(0, 0, 0, 0)
-
-  const prevEnd = new Date(currentStart.getTime() - 1)
-  const prevStart = new Date(
-    prevEnd.getTime() - periodDays * 24 * 60 * 60 * 1000,
-  )
-  prevStart.setUTCHours(0, 0, 0, 0)
-
-  return { currentStart, currentEnd: now, prevStart, prevEnd }
+export function getPeriodRange(period: ProgressPeriod) {
+  return sharedGetPeriodRange(period, PROGRESS_DAYS)
 }
 
 export function getWeekStart(date: Date): string {
@@ -56,9 +28,11 @@ export function sumDistanceKm(runs: { distance: number }[]) {
   return Math.round(runs.reduce((s, r) => s + r.distance, 0) / 100) / 10
 }
 
-export function avgPaceSec(runs: { pace: number }[]) {
-  return runs.length > 0
-    ? Math.round(runs.reduce((s, r) => s + r.pace, 0) / runs.length)
+export function avgPaceSec(runs: { duration: number; distance: number }[]) {
+  const totalDistance = runs.reduce((s, r) => s + r.distance, 0)
+  const totalDuration = runs.reduce((s, r) => s + r.duration, 0)
+  return totalDistance > 0
+    ? Math.round((totalDuration / totalDistance) * 1000)
     : null
 }
 

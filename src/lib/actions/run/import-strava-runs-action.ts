@@ -4,11 +4,11 @@ import { z } from "zod"
 
 import { authActionClient } from "@/lib/safe-action/auth-action-client"
 import { prisma } from "@/lib/db/prisma"
-import { RunSource } from "@/generated/prisma/client"
 import { stravaApiFetch } from "@/lib/strava/client"
 import { stravaEndpoints } from "@/lib/strava/constants"
 import { stravaActivityDetailSchema } from "@/lib/strava/schemas"
 import { getValidAccessToken } from "@/lib/strava/token"
+import { createRunFromActivity } from "@/lib/strava/create-run-from-activity"
 
 const importSchema = z.object({
   ids: z.array(z.number()),
@@ -55,52 +55,7 @@ export const importStravaRunsAction = authActionClient
 
     await prisma.$transaction(async (tx) => {
       for (const a of newActivities) {
-        const run = await tx.run.create({
-          data: {
-            userId: user.id,
-            source: RunSource.STRAVA,
-            stravaId: String(a.id),
-            name: a.name,
-            distance: Math.round(a.distance),
-            duration: a.moving_time,
-            pace:
-              a.distance > 0
-                ? Math.round((a.moving_time / a.distance) * 1000)
-                : 0,
-            elevation: Math.round(a.total_elevation_gain),
-            date: new Date(a.start_date),
-            heartRateAvg: a.average_heartrate ?? null,
-            heartRateMax: a.max_heartrate ?? null,
-            cadenceAvg: a.average_cadence ?? null,
-            calories: a.calories ?? null,
-            startLat: a.start_latlng?.[0] ?? null,
-            startLng: a.start_latlng?.[1] ?? null,
-            summaryPolyline: a.map?.summary_polyline ?? null,
-            polyline: a.map?.polyline ?? null,
-            sportType: a.sport_type,
-            deviceName: a.device_name ?? null,
-          },
-        })
-
-        if (a.splits_metric && a.splits_metric.length > 0) {
-          await tx.split.createMany({
-            data: a.splits_metric.map((s) => ({
-              runId: run.id,
-              kilometer: s.split,
-              distance: s.distance,
-              duration: s.moving_time,
-              pace:
-                s.distance > 0
-                  ? Math.round((s.moving_time / s.distance) * 1000)
-                  : 0,
-              heartRate:
-                s.average_heartrate != null
-                  ? Math.round(s.average_heartrate)
-                  : null,
-              elevation: s.elevation_difference ?? null,
-            })),
-          })
-        }
+        await createRunFromActivity(tx, user.id, a)
       }
     })
 

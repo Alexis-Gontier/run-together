@@ -22,11 +22,24 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next()
   }
 
+  if (routeType === "onboarding") {
+    if (!user) {
+      return NextResponse.redirect(new URL(AUTH_ROUTES.LOGIN, request.url))
+    }
+    if (user.onboardingCompleted) {
+      return NextResponse.redirect(new URL(ROUTES.HOME, request.url))
+    }
+    return NextResponse.next()
+  }
+
   if (routeType === "protected") {
     if (!user) {
       const loginUrl = new URL(AUTH_ROUTES.LOGIN, request.url)
       loginUrl.searchParams.set("callbackUrl", pathname)
       return NextResponse.redirect(loginUrl)
+    }
+    if (!user.onboardingCompleted) {
+      return NextResponse.redirect(new URL(ROUTES.ONBOARDING, request.url))
     }
   }
 

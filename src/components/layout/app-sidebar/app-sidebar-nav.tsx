@@ -2,15 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import {
-  Home,
-  Route,
-  TrendingUp,
-  Trophy,
-  Award,
-  GitCompare,
-  Settings,
-} from "lucide-react"
+import { Home, Route, TrendingUp, Trophy, Settings } from "lucide-react"
 
 import { Button } from "@/components/shadcn-ui/button"
 import { cn } from "@/lib/utils/cn"
@@ -26,9 +18,7 @@ const NAV_ITEMS = [
     mobile: true,
   },
   { label: "Classement", Icon: Trophy, href: ROUTES.LEADERBOARD, mobile: true },
-  { label: "Badges", Icon: Award, href: ROUTES.BADGES, mobile: true },
-  { label: "Comparer", Icon: GitCompare, href: ROUTES.COMPARE, mobile: false },
-  { label: "Paramètres", Icon: Settings, href: ROUTES.SETTINGS, mobile: false },
+  { label: "Paramètres", Icon: Settings, href: ROUTES.SETTINGS, mobile: true },
 ] as const
 
 export function AppSidebarNav() {

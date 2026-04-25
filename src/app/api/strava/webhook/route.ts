@@ -76,10 +76,10 @@ export async function POST(request: NextRequest) {
 
   if (event.aspect_type === "update") {
     try {
-      await prisma.run.deleteMany({
-        where: { stravaId: String(event.object_id), userId },
+      await importStravaActivity(userId, event.object_id, {
+        silent: true,
+        replaceExisting: true,
       })
-      await importStravaActivity(userId, event.object_id, { silent: true })
     } catch (err) {
       console.error("[strava/webhook] update failed", event.object_id, err)
     }
