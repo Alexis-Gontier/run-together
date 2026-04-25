@@ -17,7 +17,7 @@ export default function AppLayout({ children, rightPanel }: AppLayoutProps) {
   if (IS_PROD) {
     return (
       <CenteredLayout>
-        <Countdown target="2026-04-26T10:00:00Z" />
+        <Countdown target="2026-04-27T10:00:00Z" />
       </CenteredLayout>
     )
   }
