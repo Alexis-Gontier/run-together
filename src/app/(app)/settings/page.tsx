@@ -32,7 +32,7 @@ export default async function SettingsPage() {
       <PreferencesCard />
       <WeeklyGoalCard />
       <AccountCard />
-      <DangerZoneCard hasRuns={runsCount > 0} />
+      <DangerZoneCard />
     </div>
   )
 }
