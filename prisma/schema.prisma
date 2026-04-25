@@ -34,6 +34,9 @@ model User {
   username        String?
   displayUsername String?
 
+  // Onboarding
+  onboardingCompleted Boolean @default(false)
+
   // Relations
   sessions        Session[]
   accounts        Account[]

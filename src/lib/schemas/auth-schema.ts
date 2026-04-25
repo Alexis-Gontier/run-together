@@ -55,3 +55,20 @@ export const changePasswordSchema = z
   })
 
 export type ChangePasswordType = z.infer<typeof changePasswordSchema>
+
+export const onboardingDisplayNameSchema = z.object({
+  name: z
+    .string()
+    .min(2, "Le nom doit contenir au moins 2 caractères.")
+    .max(50, "Le nom ne peut pas dépasser 50 caractères."),
+})
+
+export type OnboardingDisplayNameType = z.infer<
+  typeof onboardingDisplayNameSchema
+>
+
+export const onboardingEmailSchema = z.object({
+  email: z.email("L'adresse e-mail est invalide."),
+})
+
+export type OnboardingEmailType = z.infer<typeof onboardingEmailSchema>

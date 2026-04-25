@@ -7,6 +7,7 @@ export const ROUTES = {
   COMPARE: "/compare",
   SETTINGS: "/settings",
   LANDING: "/",
+  ONBOARDING: "/onboarding",
 } as const
 
 export const AUTH_ROUTES = {

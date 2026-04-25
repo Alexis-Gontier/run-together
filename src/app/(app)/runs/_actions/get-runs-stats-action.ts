@@ -44,10 +44,13 @@ export const getRunsStatsAction = authActionClient
       return d.getFullYear() === prevMonthYear && d.getMonth() === prevMonth
     })
 
-    const avgPace = (runs: typeof allRuns) =>
-      runs.length > 0
-        ? Math.round(runs.reduce((s, r) => s + r.pace, 0) / runs.length)
+    const avgPace = (runs: typeof allRuns) => {
+      const totalDistance = runs.reduce((s, r) => s + r.distance, 0)
+      const totalDuration = runs.reduce((s, r) => s + r.duration, 0)
+      return totalDistance > 0
+        ? Math.round((totalDuration / totalDistance) * 1000)
         : 0
+    }
 
     const sumDistance = (runs: typeof allRuns) =>
       Math.round(runs.reduce((s, r) => s + r.distance, 0) / 100) / 10

@@ -32,6 +32,15 @@ export const auth = betterAuth({
     maxPasswordLength: 128,
     disableSignUp: env.NODE_ENV === "production",
   },
+  user: {
+    additionalFields: {
+      onboardingCompleted: {
+        type: "boolean",
+        required: false,
+        defaultValue: false,
+      },
+    },
+  },
   plugins: [
     username(),
     nextCookies(), // make sure this is the last plugin in the array
