@@ -10,6 +10,7 @@ import { unbanUserAction } from "../_actions/unban-user-action"
 import { deleteUserAction } from "../_actions/delete-user-action"
 import { setRoleAction } from "../_actions/set-role-action"
 import { impersonateUserAction } from "../_actions/impersonate-user-action"
+import { revokeSessionsAction } from "../_actions/revoke-sessions-action"
 
 import { Button } from "@/components/shadcn-ui/button"
 import { Badge } from "@/components/shadcn-ui/badge"
@@ -133,6 +134,12 @@ export function UsersTable({
     },
   )
 
+  const { execute: executeRevokeSessions } = useAction(revokeSessionsAction, {
+    onSuccess: () => toast.success("Sessions révoquées."),
+    onError: ({ error }) =>
+      toast.error(error.serverError ?? "Une erreur est survenue."),
+  })
+
   const filtered = search
     ? users.filter((u) => {
         const q = search.toLowerCase()
@@ -225,7 +232,7 @@ export function UsersTable({
                             <MoreHorizontal className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
+                        <DropdownMenuContent align="end" className="min-w-50">
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem
@@ -266,6 +273,13 @@ export function UsersTable({
                             disabled={isImpersonating}
                           >
                             Impersonifier
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() =>
+                              executeRevokeSessions({ userId: user.id })
+                            }
+                          >
+                            Révoquer les sessions
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem

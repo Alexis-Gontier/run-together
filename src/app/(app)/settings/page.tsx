@@ -9,7 +9,11 @@ import { ProfileCard } from "./_components/profile-card"
 import { StravaCard } from "./_components/strava-card"
 import { WeeklyGoalCard } from "./_components/weekly-goal-card"
 
-export default async function SettingsPage() {
+export default async function SettingsPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | undefined>>
+}) {
   const [user, stravaResult, runsCountResult] = await Promise.all([
     getRequiredUser(),
     getStravaConnectionAction(),
@@ -19,6 +23,7 @@ export default async function SettingsPage() {
   const stravaAccount = stravaResult?.data?.stravaAccount ?? null
   const webhookActive = stravaAccount ? await getWebhookStatus() : false
   const runsCount = runsCountResult?.data?.count ?? 0
+  const { strava_error } = await searchParams
 
   return (
     <div className="space-y-6 p-6">
@@ -28,7 +33,11 @@ export default async function SettingsPage() {
         username={user.username}
         image={user.image}
       />
-      <StravaCard connection={stravaAccount} webhookActive={webhookActive} />
+      <StravaCard
+        connection={stravaAccount}
+        webhookActive={webhookActive}
+        error={strava_error}
+      />
       <PreferencesCard />
       <WeeklyGoalCard />
       <AccountCard />
