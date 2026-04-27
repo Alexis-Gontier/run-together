@@ -27,7 +27,6 @@ async function main() {
     select: {
       id: true,
       name: true,
-      distance: true,
       user: { select: { name: true } },
     },
   })
@@ -37,22 +36,44 @@ async function main() {
     process.exit(1)
   }
 
-  const km = (run.distance / 1000).toFixed(2)
+  const userName = run.user.name ?? "Inconnu"
+  const runName = run.name || "Course sans nom"
   const runUrl = `${APP_URL}/runs/${run.id}`
 
   const embed = {
     color: 0xfc4c02,
-    author: { name: run.user.name ?? "Inconnu" },
-    title: run.name || "Course sans nom",
+    author: { name: userName },
+    title: runName,
     url: runUrl,
-    description: `**${run.user.name ?? "Inconnu"}** vient de terminer une course !`,
+    description: `**${userName}** vient de terminer une course !`,
     image: { url: `${APP_URL}/api/og/run/${run.id}` },
   }
 
+  // Fetch the OG image from the local server and attach it directly so
+  // Discord can display it even when APP_URL is localhost.
+  const ogUrl = `${APP_URL}/api/og/run/${run.id}`
+  const ogRes = await fetch(ogUrl)
+  if (!ogRes.ok) {
+    console.error(
+      `Impossible de générer l'OG image (${ogRes.status}): ${ogUrl}`,
+    )
+    console.error("Assure-toi que le serveur dev tourne (pnpm dev)")
+    process.exit(1)
+  }
+  const ogBuffer = await ogRes.arrayBuffer()
+
+  const form = new FormData()
+  form.append(
+    "payload_json",
+    JSON.stringify({
+      embeds: [{ ...embed, image: { url: "attachment://og.png" } }],
+    }),
+  )
+  form.append("files[0]", new Blob([ogBuffer], { type: "image/png" }), "og.png")
+
   const res = await fetch(DISCORD_WEBHOOK_URL as string, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ embeds: [embed] }),
+    body: form,
   })
 
   if (!res.ok) {
@@ -60,7 +81,9 @@ async function main() {
     process.exit(1)
   }
 
-  console.log(`Notification envoyée pour "${run.name}" (${km} km) → ${runUrl}`)
+  console.log(
+    `Notification envoyée pour "${runName}" par ${userName} → ${runUrl}`,
+  )
   await prisma.$disconnect()
 }
 

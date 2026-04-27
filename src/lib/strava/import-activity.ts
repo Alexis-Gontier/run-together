@@ -60,15 +60,14 @@ export async function importStravaActivity(
   })
 
   if (!options.silent) {
-    sendRunNotification({
-      runId: run.id,
-      userName: account.user.name ?? "Inconnu",
-      runName: run.name || "Course sans nom",
-      distanceMeters: run.distance,
-      durationSeconds: run.duration,
-      paceSecondsPerKm: run.pace,
-      elevationMeters: run.elevation,
-      heartRateAvg: run.heartRateAvg,
-    }).catch((err) => console.error("[discord] run notification failed", err))
+    try {
+      await sendRunNotification({
+        runId: run.id,
+        userName: account.user.name ?? "Inconnu",
+        runName: run.name || "Course sans nom",
+      })
+    } catch (err) {
+      console.error("[discord] run notification failed", err)
+    }
   }
 }
