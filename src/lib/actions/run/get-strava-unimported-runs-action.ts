@@ -19,13 +19,22 @@ export const getStravaUnimportedRunsAction = authActionClient.action(
 
     const accessToken = await getValidAccessToken(account)
 
-    const activities = await stravaApiFetch(stravaEndpoints.athleteActivities, {
-      headers: { Authorization: `Bearer ${accessToken}` },
-      params: { per_page: 200 },
-      schema: z.array(stravaActivitySchema),
-    })
+    const PER_PAGE = 200
+    const allActivities: z.infer<typeof stravaActivitySchema>[] = []
+    let page = 1
 
-    const runActivities = activities.filter((a) =>
+    while (true) {
+      const batch = await stravaApiFetch(stravaEndpoints.athleteActivities, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+        params: { per_page: PER_PAGE, page },
+        schema: z.array(stravaActivitySchema),
+      })
+      allActivities.push(...batch)
+      if (batch.length < PER_PAGE) break
+      page++
+    }
+
+    const runActivities = allActivities.filter((a) =>
       (STRAVA_RUN_TYPES as readonly string[]).includes(a.sport_type),
     )
 
