@@ -1,8 +1,20 @@
 import { ImageResponse } from "next/og"
 
+import { env } from "@/env"
 import { prisma } from "@/lib/db/prisma"
 
 export const runtime = "nodejs"
+
+const BG = "#09090b"
+const BORDER = "#27272a"
+const TEXT = "#fafafa"
+const MUTED = "#71717a"
+const ORANGE = "#FC4C02"
+
+// Heights
+const HEADER_H = 88
+const STATS_H = 120
+const MAP_H = 630 - HEADER_H - STATS_H // 422
 
 function formatDuration(seconds: number): string {
   const h = Math.floor(seconds / 3600)
@@ -16,7 +28,7 @@ function formatDuration(seconds: number): string {
 function formatPace(paceSecondsPerKm: number): string {
   const m = Math.floor(paceSecondsPerKm / 60)
   const s = paceSecondsPerKm % 60
-  return `${m}:${String(s).padStart(2, "0")}/km`
+  return `${m}:${String(s).padStart(2, "0")}`
 }
 
 export async function GET(
@@ -34,14 +46,15 @@ export async function GET(
       pace: true,
       elevation: true,
       heartRateAvg: true,
+      cadenceAvg: true,
+      calories: true,
       date: true,
+      summaryPolyline: true,
       user: { select: { name: true } },
     },
   })
 
-  if (!run) {
-    return new Response("Not found", { status: 404 })
-  }
+  if (!run) return new Response("Not found", { status: 404 })
 
   const km = (run.distance / 1000).toFixed(2)
   const duration = formatDuration(run.duration)
@@ -52,15 +65,20 @@ export async function GET(
     year: "numeric",
   }).format(new Date(run.date))
 
-  const stats: { label: string; value: string }[] = [
-    { label: "Distance", value: `${km} km` },
-    { label: "Durée", value: duration },
-    { label: "Allure", value: pace },
-    { label: "Dénivelé", value: `+${run.elevation} m` },
-    ...(run.heartRateAvg
-      ? [{ label: "FC moy.", value: `${run.heartRateAvg} bpm` }]
-      : []),
+  const stats = [
+    { value: km, unit: "km" },
+    { value: pace, unit: "/km" },
+    { value: duration, unit: "durée" },
+    { value: `+${run.elevation}m`, unit: "D+" },
   ]
+
+  const hasExtra = !!(run.heartRateAvg || run.cadenceAvg || run.calories)
+  const extraH = hasExtra ? 52 : 0
+  const mapH = MAP_H - extraH
+
+  const mapUrl = run.summaryPolyline
+    ? `https://api.mapbox.com/styles/v1/mapbox/dark-v11/static/path-3+FC4C02-0.8(${encodeURIComponent(run.summaryPolyline)})/auto/1200x${mapH}?padding=60&access_token=${env.NEXT_PUBLIC_MAPBOX_TOKEN}`
+    : null
 
   return new ImageResponse(
     <div
@@ -69,107 +87,173 @@ export async function GET(
         flexDirection: "column",
         width: "100%",
         height: "100%",
-        backgroundColor: "#111111",
-        padding: "56px 64px",
+        backgroundColor: BG,
         fontFamily: "sans-serif",
       }}
     >
-      {/* Header */}
+      {/* ── Header ─────────────────────────────────────────── */}
       <div
         style={{
           display: "flex",
-          justifyContent: "space-between",
           alignItems: "center",
+          justifyContent: "space-between",
+          height: `${HEADER_H}px`,
+          padding: "0 32px",
+          borderBottom: `1px solid ${BORDER}`,
+          flexShrink: 0,
         }}
       >
-        <span
+        {/* Left: user + run name */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+          <span style={{ color: TEXT, fontSize: "22px", fontWeight: 700 }}>
+            {run.user.name ?? "Inconnu"}
+          </span>
+          <span style={{ color: MUTED, fontSize: "16px" }}>
+            {run.name ?? "Course sans nom"}
+          </span>
+        </div>
+
+        {/* Right: date + brand */}
+        <div
           style={{
-            color: "#FC4C02",
-            fontSize: "18px",
-            fontWeight: 800,
-            letterSpacing: "4px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-end",
+            gap: "4px",
           }}
         >
-          RUN TOGETHER
-        </span>
-        <span style={{ color: "#444444", fontSize: "18px" }}>
-          {formattedDate}
-        </span>
+          <span
+            style={{
+              color: ORANGE,
+              fontSize: "13px",
+              fontWeight: 800,
+              letterSpacing: "3px",
+            }}
+          >
+            RUN TOGETHER
+          </span>
+          <span style={{ color: MUTED, fontSize: "15px" }}>
+            {formattedDate}
+          </span>
+        </div>
       </div>
 
-      {/* Spacer */}
-      <div style={{ flex: 1, display: "flex" }} />
+      {/* ── Map ────────────────────────────────────────────── */}
+      {mapUrl ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={mapUrl}
+          width={1200}
+          height={mapH}
+          style={{ objectFit: "cover", flexShrink: 0 }}
+          alt=""
+        />
+      ) : (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            height: `${mapH}px`,
+            flexShrink: 0,
+            backgroundColor: "#111113",
+          }}
+        />
+      )}
 
-      {/* User + Run name */}
+      {/* ── Extra stats (HR / cadence / calories) ──────────── */}
+      {hasExtra && (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "48px",
+            height: `${extraH}px`,
+            flexShrink: 0,
+            borderTop: `1px solid ${BORDER}`,
+          }}
+        >
+          {run.heartRateAvg && (
+            <span
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                color: MUTED,
+                fontSize: "16px",
+              }}
+            >
+              <span style={{ color: "#f43f5e", fontSize: "18px" }}>♥</span>
+              <span style={{ color: TEXT, fontWeight: 600 }}>
+                {run.heartRateAvg}
+              </span>{" "}
+              bpm
+            </span>
+          )}
+          {run.cadenceAvg && (
+            <span
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                color: MUTED,
+                fontSize: "16px",
+              }}
+            >
+              <span style={{ color: "#3b82f6", fontSize: "18px" }}>◎</span>
+              <span style={{ color: TEXT, fontWeight: 600 }}>
+                {run.cadenceAvg}
+              </span>{" "}
+              spm
+            </span>
+          )}
+          {run.calories && (
+            <span
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                color: MUTED,
+                fontSize: "16px",
+              }}
+            >
+              <span style={{ color: "#f97316", fontSize: "18px" }}>🔥</span>
+              <span style={{ color: TEXT, fontWeight: 600 }}>
+                {run.calories}
+              </span>{" "}
+              kcal
+            </span>
+          )}
+        </div>
+      )}
+
+      {/* ── Stats grid ─────────────────────────────────────── */}
       <div
         style={{
           display: "flex",
-          flexDirection: "column",
-          marginBottom: "44px",
+          height: `${STATS_H}px`,
+          flexShrink: 0,
+          borderTop: `1px solid ${BORDER}`,
         }}
       >
-        <span
-          style={{
-            color: "#666666",
-            fontSize: "22px",
-            marginBottom: "10px",
-          }}
-        >
-          {run.user.name ?? "Inconnu"}
-        </span>
-        <span
-          style={{
-            color: "#ffffff",
-            fontSize: "54px",
-            fontWeight: 700,
-            lineHeight: 1.1,
-            overflow: "hidden",
-          }}
-        >
-          {run.name ?? "Course sans nom"}
-        </span>
-      </div>
-
-      {/* Divider */}
-      <div
-        style={{
-          height: "1px",
-          backgroundColor: "#222222",
-          marginBottom: "32px",
-        }}
-      />
-
-      {/* Stats */}
-      <div style={{ display: "flex", gap: "0px" }}>
-        {stats.map((stat, i) => (
+        {stats.map((s, i) => (
           <div
             key={i}
             style={{
               display: "flex",
               flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
               flex: 1,
-              paddingLeft: "20px",
-              borderLeft: `2px solid ${i === 0 ? "#FC4C02" : "#222222"}`,
+              gap: "6px",
+              borderLeft: i > 0 ? `1px solid ${BORDER}` : "none",
             }}
           >
-            <span
-              style={{
-                color: "#ffffff",
-                fontSize: "34px",
-                fontWeight: 700,
-              }}
-            >
-              {stat.value}
+            <span style={{ color: TEXT, fontSize: "34px", fontWeight: 700 }}>
+              {s.value}
             </span>
-            <span
-              style={{
-                color: "#555555",
-                fontSize: "14px",
-                marginTop: "4px",
-              }}
-            >
-              {stat.label}
-            </span>
+            <span style={{ color: MUTED, fontSize: "14px" }}>{s.unit}</span>
           </div>
         ))}
       </div>
