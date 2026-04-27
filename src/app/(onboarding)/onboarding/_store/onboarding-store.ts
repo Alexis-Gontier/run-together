@@ -7,6 +7,7 @@ type OnboardingState = {
   isStravaConnected: boolean
   setStep: (step: number) => void
   nextStep: () => void
+  prevStep: () => void
   setName: (name: string) => void
   setEmail: (email: string) => void
   setStravaConnected: (connected: boolean) => void
@@ -19,12 +20,13 @@ type OnboardingState = {
 }
 
 export const useOnboardingStore = create<OnboardingState>()((set) => ({
-  step: 1,
+  step: 0,
   name: "",
   email: "",
   isStravaConnected: false,
   setStep: (step) => set({ step }),
   nextStep: () => set((state) => ({ step: state.step + 1 })),
+  prevStep: () => set((state) => ({ step: Math.max(0, state.step - 1) })),
   setName: (name) => set({ name }),
   setEmail: (email) => set({ email }),
   setStravaConnected: (isStravaConnected) => set({ isStravaConnected }),

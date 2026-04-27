@@ -1,11 +1,13 @@
 "use client"
 
+import { ArrowLeft, ArrowRight } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema"
 import { useAction } from "next-safe-action/hooks"
 import { toast } from "sonner"
 
 import { Button } from "@/components/shadcn-ui/button"
+import { LoadingButton } from "@/components/ui/loading-button"
 import {
   Card,
   CardContent,
@@ -23,19 +25,24 @@ import {
 import { updateDisplayNameAction } from "../_actions/update-display-name-action"
 import { useOnboardingStore } from "../_store/onboarding-store"
 
-export function StepDisplayName() {
-  const { name, setName, nextStep } = useOnboardingStore()
+type StepDisplayNameProps = {
+  onNext: () => void
+  onBack: () => void
+}
+
+export function StepDisplayName({ onNext, onBack }: StepDisplayNameProps) {
+  const { setName } = useOnboardingStore()
 
   const form = useForm<OnboardingDisplayNameType>({
     resolver: standardSchemaResolver(onboardingDisplayNameSchema),
-    defaultValues: { name },
+    defaultValues: { firstName: "", lastName: "" },
   })
 
   const { execute, isPending } = useAction(updateDisplayNameAction, {
     onError: () => toast.error("Impossible de mettre à jour le nom."),
     onSuccess: (result) => {
-      setName(result.input.name)
-      nextStep()
+      setName(`${result.input.firstName} ${result.input.lastName}`.trim())
+      onNext()
     },
   })
 
@@ -44,7 +51,7 @@ export function StepDisplayName() {
       <CardHeader>
         <CardTitle>Comment veux-tu être affiché ?</CardTitle>
         <CardDescription>
-          Ton nom affiché sera visible par les autres membres.
+          Ton nom sera visible par les autres membres.
         </CardDescription>
       </CardHeader>
       <form
@@ -52,24 +59,55 @@ export function StepDisplayName() {
         className="space-y-6"
       >
         <CardContent>
-          <div className="space-y-2">
-            <Label htmlFor="name">Nom affiché</Label>
-            <Input
-              id="name"
-              placeholder="Ex: Alex Martin"
-              {...form.register("name")}
-            />
-            {form.formState.errors.name && (
-              <p className="text-sm text-destructive">
-                {form.formState.errors.name.message}
-              </p>
-            )}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-2">
+              <Label htmlFor="firstName">Prénom</Label>
+              <Input
+                id="firstName"
+                placeholder="Alex"
+                autoFocus
+                {...form.register("firstName")}
+              />
+              {form.formState.errors.firstName && (
+                <p className="text-xs text-destructive">
+                  {form.formState.errors.firstName.message}
+                </p>
+              )}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="lastName">Nom</Label>
+              <Input
+                id="lastName"
+                placeholder="Martin"
+                {...form.register("lastName")}
+              />
+              {form.formState.errors.lastName && (
+                <p className="text-xs text-destructive">
+                  {form.formState.errors.lastName.message}
+                </p>
+              )}
+            </div>
           </div>
         </CardContent>
-        <CardFooter className="justify-end">
-          <Button type="submit" disabled={isPending}>
-            {isPending ? "Enregistrement…" : "Suivant"}
+        <CardFooter className="justify-between">
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={onBack}
+            disabled={isPending}
+            className="cursor-pointer gap-1.5"
+          >
+            <ArrowLeft className="size-4" />
+            Retour
           </Button>
+          <LoadingButton
+            type="submit"
+            isLoading={isPending}
+            className="cursor-pointer gap-1.5"
+          >
+            Suivant
+            <ArrowRight className="size-4" />
+          </LoadingButton>
         </CardFooter>
       </form>
     </Card>

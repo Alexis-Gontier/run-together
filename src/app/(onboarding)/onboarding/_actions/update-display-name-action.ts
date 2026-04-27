@@ -7,7 +7,8 @@ import { onboardingDisplayNameSchema } from "@/lib/schemas/auth-schema"
 
 export const updateDisplayNameAction = authActionClient
   .inputSchema(onboardingDisplayNameSchema)
-  .action(async ({ parsedInput: { name } }) => {
+  .action(async ({ parsedInput: { firstName, lastName } }) => {
+    const name = `${firstName} ${lastName}`.trim()
     await auth.api.updateUser({
       body: { name },
       headers: await headers(),

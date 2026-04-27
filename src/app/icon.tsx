@@ -9,11 +9,12 @@ export default function Icon() {
       style={{
         width: 32,
         height: 32,
-        background: "#22896a",
-        borderRadius: 7,
+        background: "#1a2e27",
+        borderRadius: 8,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        outline: "2px solid #2a4a3e",
       }}
     >
       <svg
@@ -21,8 +22,8 @@ export default function Icon() {
         height={20}
         viewBox="0 0 24 24"
         fill="none"
-        stroke="white"
-        strokeWidth={2.25}
+        stroke="#4ecf9e"
+        strokeWidth={1.75}
         strokeLinecap="round"
         strokeLinejoin="round"
       >

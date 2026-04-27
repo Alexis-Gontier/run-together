@@ -12,7 +12,7 @@ import { PasswordInput } from "@/components/ui/password-input"
 import { signInSchema, type SignInType } from "@/lib/schemas/auth-schema"
 import { loginAction } from "../_actions/login-action"
 
-export function LoginForm() {
+export function LoginWithUsernameForm() {
   const form = useForm<SignInType>({
     resolver: standardSchemaResolver(signInSchema),
     defaultValues: {
@@ -32,7 +32,7 @@ export function LoginForm() {
   }
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
+    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
       <Controller
         name="username"
         control={form.control}

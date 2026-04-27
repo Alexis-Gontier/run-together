@@ -21,7 +21,7 @@ export const getStravaUnimportedRunsAction = authActionClient.action(
 
     const activities = await stravaApiFetch(stravaEndpoints.athleteActivities, {
       headers: { Authorization: `Bearer ${accessToken}` },
-      params: { per_page: 30 },
+      params: { per_page: 200 },
       schema: z.array(stravaActivitySchema),
     })
 
