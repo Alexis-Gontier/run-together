@@ -25,7 +25,6 @@ interface RunNotificationPayload {
   paceSecondsPerKm: number
   elevationMeters: number
   heartRateAvg?: number | null
-  mapImageUrl?: string | null
 }
 
 export async function sendRunNotification(run: RunNotificationPayload) {
@@ -49,17 +48,14 @@ export async function sendRunNotification(run: RunNotificationPayload) {
     })
   }
 
-  const embed: Record<string, unknown> = {
+  const embed = {
     color: 0xfc4c02,
     author: { name: run.userName },
     title: run.runName,
     url: runUrl,
     description: `**${run.userName}** vient de terminer une course !`,
     fields,
-  }
-
-  if (run.mapImageUrl) {
-    embed.image = { url: run.mapImageUrl }
+    image: { url: `${env.NEXT_PUBLIC_APP_URL}/api/og/run/${run.runId}` },
   }
 
   await fetch(env.DISCORD_WEBHOOK_URL, {

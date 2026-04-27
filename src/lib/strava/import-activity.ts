@@ -1,5 +1,4 @@
 import { sendRunNotification } from "@/lib/discord"
-import { env } from "@/env"
 import { prisma } from "@/lib/db/prisma"
 import { stravaApiFetch } from "@/lib/strava/client"
 import { STRAVA_RUN_TYPES, stravaEndpoints } from "@/lib/strava/constants"
@@ -61,10 +60,6 @@ export async function importStravaActivity(
   })
 
   if (!options.silent) {
-    const mapImageUrl = run.summaryPolyline
-      ? `https://api.mapbox.com/styles/v1/mapbox/dark-v11/static/path-2+FC4C02(${encodeURIComponent(run.summaryPolyline)})/auto/600x300@2x?access_token=${env.NEXT_PUBLIC_MAPBOX_TOKEN}&padding=40,40,40,40`
-      : null
-
     sendRunNotification({
       runId: run.id,
       userName: account.user.name ?? "Inconnu",
@@ -74,7 +69,6 @@ export async function importStravaActivity(
       paceSecondsPerKm: run.pace,
       elevationMeters: run.elevation,
       heartRateAvg: run.heartRateAvg,
-      mapImageUrl,
     }).catch((err) => console.error("[discord] run notification failed", err))
   }
 }
