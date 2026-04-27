@@ -4,6 +4,8 @@ import { getUser } from "@/lib/auth/auth-session"
 import { getRouteType } from "@/lib/utils/route"
 import { ROUTES, AUTH_ROUTES } from "@/lib/constants/routes"
 
+const FORBIDDEN_URL = "/forbidden"
+
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
@@ -28,6 +30,18 @@ export async function proxy(request: NextRequest) {
     }
     if (user.onboardingCompleted) {
       return NextResponse.redirect(new URL(ROUTES.HOME, request.url))
+    }
+    return NextResponse.next()
+  }
+
+  if (routeType === "admin") {
+    if (!user) {
+      const loginUrl = new URL(AUTH_ROUTES.LOGIN, request.url)
+      loginUrl.searchParams.set("callbackUrl", pathname)
+      return NextResponse.redirect(loginUrl)
+    }
+    if (user.role !== "admin") {
+      return NextResponse.redirect(new URL(FORBIDDEN_URL, request.url))
     }
     return NextResponse.next()
   }

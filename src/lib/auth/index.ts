@@ -3,7 +3,7 @@ import { prismaAdapter } from "better-auth/adapters/prisma"
 import { prisma } from "@/lib/db/prisma"
 import { env } from "@/env"
 
-import { username } from "better-auth/plugins"
+import { username, admin } from "better-auth/plugins"
 import { nextCookies } from "better-auth/next-js"
 
 export const auth = betterAuth({
@@ -43,6 +43,7 @@ export const auth = betterAuth({
   },
   plugins: [
     username(),
+    admin(),
     nextCookies(), // make sure this is the last plugin in the array
   ],
 })

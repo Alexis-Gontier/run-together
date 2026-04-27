@@ -37,6 +37,12 @@ model User {
   // Onboarding
   onboardingCompleted Boolean @default(false)
 
+  // Admin plugin
+  role       String?   @default("user")
+  banned     Boolean   @default(false)
+  banReason  String?
+  banExpires DateTime?
+
   // Relations
   sessions        Session[]
   accounts        Account[]
@@ -54,9 +60,10 @@ model Session {
   token     String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  ipAddress String?
-  userAgent String?
-  userId    String
+  ipAddress      String?
+  userAgent      String?
+  userId         String
+  impersonatedBy String?
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([token])
