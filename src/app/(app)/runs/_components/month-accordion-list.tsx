@@ -36,7 +36,7 @@ const MONTHS_FR = [
 
 interface RunRow {
   id: string
-  name: string
+  name: string | null
   date: Date
   distance: number
   duration: number
@@ -140,7 +140,7 @@ export function MonthAccordionList({ months }: MonthAccordionListProps) {
                       {format(new Date(run.date), "EEE d", { locale: fr })}
                     </span>
                     <span className="min-w-0 flex-1 truncate font-medium">
-                      {run.name}
+                      {run.name ?? "—"}
                     </span>
                     <div className="flex shrink-0 items-center gap-4 text-muted-foreground">
                       <span>
