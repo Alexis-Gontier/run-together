@@ -1,6 +1,3 @@
-import { env } from "@/env"
-import { CenteredLayout } from "@/components/layout/centered-layout"
-import { Countdown } from "@/components/ui/countdown"
 import { ImpersonationBanner } from "@/components/ui/impersonation-banner"
 import { AppRightPanel } from "@/components/layout/app-right-panel"
 import { AppSidebar } from "@/components/layout/app-sidebar"
@@ -17,24 +14,8 @@ export default async function AppLayout({
   children,
   rightPanel,
 }: AppLayoutProps) {
-  const IS_PROD = env.NODE_ENV === "production" && !env.BYPASS_COUNTDOWN
   const session = await getSession()
   const isImpersonating = !!session?.session?.impersonatedBy
-
-  if (IS_PROD) {
-    return (
-      <>
-        {isImpersonating && (
-          <ImpersonationBanner
-            username={session!.user.username ?? session!.user.name}
-          />
-        )}
-        <CenteredLayout>
-          <Countdown target="2026-04-27T10:00:00Z" />
-        </CenteredLayout>
-      </>
-    )
-  }
 
   return (
     <>
@@ -50,7 +31,7 @@ export default async function AppLayout({
           {children}
         </main>
         <AppRightPanel>{rightPanel}</AppRightPanel>
-        <MobileNav />
+        <MobileNav username={session?.user.username} />
       </div>
     </>
   )
