@@ -7,11 +7,7 @@ import { getUser } from "@/lib/auth/auth-session"
 import { prisma } from "@/lib/db/prisma"
 import { AUTH_ROUTES, ROUTES } from "@/lib/constants/routes"
 import { stravaApiFetch, stravaOAuthFetch } from "@/lib/strava/client"
-import {
-  STRAVA_SCOPE,
-  stravaEndpoints,
-  stravaOAuthPaths,
-} from "@/lib/strava/constants"
+import { stravaEndpoints, stravaOAuthPaths } from "@/lib/strava/constants"
 import { stravaTokenExchangeSchema } from "@/lib/strava/schemas"
 import { z } from "zod"
 
@@ -71,11 +67,6 @@ export async function GET(request: NextRequest) {
       { error: "Token exchange failed" },
       { status: 502 },
     )
-  }
-
-  const grantedScopes = tokenData.scope?.split(",") ?? []
-  if (!grantedScopes.includes(STRAVA_SCOPE)) {
-    return redirectTo(`${ROUTES.SETTINGS}?strava_error=insufficient_scope`)
   }
 
   const stravaAthleteId = String(tokenData.athlete.id)
