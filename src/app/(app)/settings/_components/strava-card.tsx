@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect } from "react"
 import { useAction } from "next-safe-action/hooks"
 import { toast } from "sonner"
 
@@ -23,6 +24,7 @@ type StravaConnectionInfo = {
 type StravaCardProps = {
   connection: StravaConnectionInfo | null
   webhookActive: boolean
+  error?: string
 }
 
 function StravaLogo() {
@@ -157,7 +159,19 @@ function DisconnectedState() {
   )
 }
 
-export function StravaCard({ connection, webhookActive }: StravaCardProps) {
+export function StravaCard({
+  connection,
+  webhookActive,
+  error,
+}: StravaCardProps) {
+  useEffect(() => {
+    if (error === "insufficient_scope") {
+      toast.error(
+        "Autorisations Strava insuffisantes. Reconnectez votre compte pour accorder l'accès aux activités privées.",
+      )
+    }
+  }, [error])
+
   const { execute, isPending } = useAction(disconnectStravaAction, {
     onError: () => toast.error("Erreur lors de la déconnexion."),
     onSuccess: () => toast.success("Compte Strava déconnecté."),

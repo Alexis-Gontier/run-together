@@ -33,6 +33,11 @@ export const impersonateUserSchema = z.object({
 })
 export type ImpersonateUserType = z.infer<typeof impersonateUserSchema>
 
+export const revokeSessionsSchema = z.object({
+  userId: z.string(),
+})
+export type RevokeSessionsType = z.infer<typeof revokeSessionsSchema>
+
 export const createUserSchema = z.object({
   username: usernameSchema,
   name: nameSchema,
