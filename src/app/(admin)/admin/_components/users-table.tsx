@@ -10,6 +10,9 @@ import { unbanUserAction } from "../_actions/unban-user-action"
 import { deleteUserAction } from "../_actions/delete-user-action"
 import { setRoleAction } from "../_actions/set-role-action"
 import { impersonateUserAction } from "../_actions/impersonate-user-action"
+import { setOnboardingAction } from "../_actions/set-onboarding-action"
+import { revokeSessionsAction } from "../_actions/revoke-sessions-action"
+import { changePasswordAction } from "../_actions/change-password-action"
 
 import { Button } from "@/components/shadcn-ui/button"
 import { Badge } from "@/components/shadcn-ui/badge"
@@ -54,8 +57,10 @@ type AdminUser = {
   banned: boolean
   banReason: string | null
   banExpires: Date | null
+  onboardingCompleted: boolean
   createdAt: Date
   image: string | null
+  _count: { sessions: number }
 }
 
 type DialogState = { open: boolean; userId: string; username: string }
@@ -76,6 +81,9 @@ export function UsersTable({
   const [banDialog, setBanDialog] = useState<DialogState>(closedDialog)
   const [banReason, setBanReason] = useState("")
   const [deleteDialog, setDeleteDialog] = useState<DialogState>(closedDialog)
+  const [passwordDialog, setPasswordDialog] =
+    useState<DialogState>(closedDialog)
+  const [newPassword, setNewPassword] = useState("")
 
   const refresh = () => startTransition(() => router.refresh())
 
@@ -133,6 +141,41 @@ export function UsersTable({
     },
   )
 
+  const { execute: executeSetOnboarding } = useAction(setOnboardingAction, {
+    onSuccess: ({ input }) => {
+      toast.success(
+        input.completed
+          ? "Onboarding marqué comme complété."
+          : "Onboarding réinitialisé.",
+      )
+      refresh()
+    },
+    onError: ({ error }) =>
+      toast.error(error.serverError ?? "Une erreur est survenue."),
+  })
+
+  const { execute: executeChangePassword, isPending: isChangingPassword } =
+    useAction(changePasswordAction, {
+      onSuccess: () => {
+        toast.success("Mot de passe modifié.")
+        setPasswordDialog(closedDialog)
+        setNewPassword("")
+      },
+      onError: ({ error }) =>
+        toast.error(error.serverError ?? "Une erreur est survenue."),
+    })
+
+  const { execute: executeRevokeSessions } = useAction(revokeSessionsAction, {
+    onSuccess: ({ data }) => {
+      toast.success(
+        `${data?.count ?? 0} session${(data?.count ?? 0) > 1 ? "s" : ""} révoquée${(data?.count ?? 0) > 1 ? "s" : ""}.`,
+      )
+      refresh()
+    },
+    onError: ({ error }) =>
+      toast.error(error.serverError ?? "Une erreur est survenue."),
+  })
+
   const filtered = search
     ? users.filter((u) => {
         const q = search.toLowerCase()
@@ -170,6 +213,12 @@ export function UsersTable({
                 </th>
                 <th className="px-4 py-3 text-left font-medium text-muted-foreground">
                   Statut
+                </th>
+                <th className="px-4 py-3 text-left font-medium text-muted-foreground">
+                  Onboarding
+                </th>
+                <th className="px-4 py-3 text-left font-medium text-muted-foreground">
+                  Sessions
                 </th>
                 <th className="px-4 py-3 text-left font-medium text-muted-foreground">
                   Inscrit le
@@ -210,6 +259,26 @@ export function UsersTable({
                       <Badge variant="outline">Actif</Badge>
                     )}
                   </td>
+                  <td className="px-4 py-3">
+                    {user.onboardingCompleted ? (
+                      <Badge
+                        variant="outline"
+                        className="border-green-500 text-green-600"
+                      >
+                        Complété
+                      </Badge>
+                    ) : (
+                      <Badge
+                        variant="outline"
+                        className="border-orange-500 text-orange-600"
+                      >
+                        En attente
+                      </Badge>
+                    )}
+                  </td>
+                  <td className="px-4 py-3 text-muted-foreground">
+                    {user._count.sessions}
+                  </td>
                   <td className="px-4 py-3 text-muted-foreground">
                     {new Date(user.createdAt).toLocaleDateString("fr-FR")}
                   </td>
@@ -225,7 +294,7 @@ export function UsersTable({
                             <MoreHorizontal className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
+                        <DropdownMenuContent align="end" className="w-56">
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem
@@ -266,6 +335,52 @@ export function UsersTable({
                             disabled={isImpersonating}
                           >
                             Impersonifier
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() =>
+                              setPasswordDialog({
+                                open: true,
+                                userId: user.id,
+                                username: user.displayUsername ?? user.name,
+                              })
+                            }
+                          >
+                            Changer le mot de passe
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
+                            Diagnostic
+                          </DropdownMenuLabel>
+                          {user.onboardingCompleted ? (
+                            <DropdownMenuItem
+                              onClick={() =>
+                                executeSetOnboarding({
+                                  userId: user.id,
+                                  completed: false,
+                                })
+                              }
+                            >
+                              Réinitialiser l&apos;onboarding
+                            </DropdownMenuItem>
+                          ) : (
+                            <DropdownMenuItem
+                              onClick={() =>
+                                executeSetOnboarding({
+                                  userId: user.id,
+                                  completed: true,
+                                })
+                              }
+                            >
+                              Forcer l&apos;onboarding complété
+                            </DropdownMenuItem>
+                          )}
+                          <DropdownMenuItem
+                            onClick={() =>
+                              executeRevokeSessions({ userId: user.id })
+                            }
+                            disabled={user._count.sessions === 0}
+                          >
+                            Révoquer les sessions ({user._count.sessions})
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem
@@ -336,6 +451,53 @@ export function UsersTable({
               }
             >
               {isBanning ? "Bannissement…" : "Bannir"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog changement de mot de passe */}
+      <Dialog
+        open={passwordDialog.open}
+        onOpenChange={(open) => {
+          setPasswordDialog((d) => ({ ...d, open }))
+          if (!open) setNewPassword("")
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Changer le mot de passe</DialogTitle>
+            <DialogDescription>
+              Nouveau mot de passe pour {passwordDialog.username}.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2">
+            <Label htmlFor="new-password">Nouveau mot de passe</Label>
+            <Input
+              id="new-password"
+              type="password"
+              placeholder="8 caractères minimum"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+            />
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setPasswordDialog(closedDialog)}
+            >
+              Annuler
+            </Button>
+            <Button
+              disabled={isChangingPassword || newPassword.length < 8}
+              onClick={() =>
+                executeChangePassword({
+                  userId: passwordDialog.userId,
+                  newPassword,
+                })
+              }
+            >
+              {isChangingPassword ? "Modification…" : "Modifier"}
             </Button>
           </DialogFooter>
         </DialogContent>

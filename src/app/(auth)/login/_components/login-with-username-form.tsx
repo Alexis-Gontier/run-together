@@ -22,6 +22,9 @@ export function LoginWithUsernameForm() {
   })
 
   const { execute, isPending } = useAction(loginAction, {
+    onSuccess: ({ data }) => {
+      if (data?.error) toast.error(data.error)
+    },
     onError: ({ error }) => {
       toast.error(error.serverError ?? "Une erreur est survenue.")
     },

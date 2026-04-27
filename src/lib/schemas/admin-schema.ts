@@ -41,3 +41,20 @@ export const createUserSchema = z.object({
   role: z.enum(["user", "admin"]),
 })
 export type CreateUserType = z.infer<typeof createUserSchema>
+
+export const changePasswordSchema = z.object({
+  userId: z.string(),
+  newPassword: passwordSchema,
+})
+export type ChangePasswordType = z.infer<typeof changePasswordSchema>
+
+export const setOnboardingSchema = z.object({
+  userId: z.string(),
+  completed: z.boolean(),
+})
+export type SetOnboardingType = z.infer<typeof setOnboardingSchema>
+
+export const revokeSessionsSchema = z.object({
+  userId: z.string(),
+})
+export type RevokeSessionsType = z.infer<typeof revokeSessionsSchema>

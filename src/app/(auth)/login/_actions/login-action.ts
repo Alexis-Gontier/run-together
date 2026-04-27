@@ -13,10 +13,21 @@ export const loginAction = actionClient
   .action(async ({ parsedInput: { username, password } }) => {
     const reqHeaders = await headers()
 
-    await auth.api.signInUsername({
-      body: { username, password },
-      headers: reqHeaders,
-    })
+    try {
+      await auth.api.signInUsername({
+        body: { username, password },
+        headers: reqHeaders,
+      })
+    } catch (error) {
+      const e = error as { statusCode?: number; body?: { code?: string } }
+      if (e.statusCode === 429) {
+        return { error: "Trop de tentatives. Réessaie dans 60 secondes." }
+      }
+      if (e.statusCode === 403 || e.body?.code === "BANNED_USER") {
+        return { error: "Ton compte a été suspendu." }
+      }
+      return { error: "Identifiants incorrects." }
+    }
 
     const referer = reqHeaders.get("referer")
     const callbackUrl = referer

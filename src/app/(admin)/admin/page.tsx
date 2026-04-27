@@ -18,8 +18,10 @@ export default async function AdminUsersPage() {
       banned: true,
       banReason: true,
       banExpires: true,
+      onboardingCompleted: true,
       createdAt: true,
       image: true,
+      _count: { select: { sessions: true } },
     },
   })
 
