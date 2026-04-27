@@ -43,10 +43,12 @@ export const stravaActivitySchema = z.object({
   total_elevation_gain: z.number(),
   average_speed: z.number(),
   max_speed: z.number(),
-  average_heartrate: z.number().optional(),
-  max_heartrate: z.number().optional(),
-  average_cadence: z.number().optional(),
-  start_latlng: z.tuple([z.number(), z.number()]).optional(),
+  average_heartrate: z.number().nullish(),
+  max_heartrate: z.number().nullish(),
+  average_cadence: z.number().nullish(),
+  start_latlng: z
+    .union([z.tuple([z.number(), z.number()]), z.tuple([])])
+    .optional(),
   map: z
     .object({
       id: z.string(),
