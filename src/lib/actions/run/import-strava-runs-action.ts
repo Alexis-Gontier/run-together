@@ -25,41 +25,45 @@ export const importStravaRunsAction = authActionClient
 
     const accessToken = await getValidAccessToken(account)
 
-    const BATCH_SIZE = 10
-    const activities = []
-    for (let i = 0; i < ids.length; i += BATCH_SIZE) {
-      const batch = ids.slice(i, i + BATCH_SIZE)
+    // Fetch all details from Strava in chunks of 5 to avoid rate limits
+    const CHUNK_SIZE = 5
+    const details: z.infer<typeof stravaActivityDetailSchema>[] = []
+
+    for (let i = 0; i < ids.length; i += CHUNK_SIZE) {
+      const chunk = ids.slice(i, i + CHUNK_SIZE)
       const results = await Promise.allSettled(
-        batch.map((id) =>
+        chunk.map((id) =>
           stravaApiFetch(stravaEndpoints.activityDetail(id), {
             headers: { Authorization: `Bearer ${accessToken}` },
             schema: stravaActivityDetailSchema,
           }),
         ),
       )
-      for (const result of results) {
-        if (result.status === "fulfilled") activities.push(result.value)
+      for (const r of results) {
+        if (r.status === "fulfilled") details.push(r.value)
       }
     }
 
-    // Filtrer les activités déjà importées
-    const stravaIds = activities.map((a) => String(a.id))
+    if (details.length === 0) return { count: 0 }
+
+    // Filter already imported
+    const stravaIds = details.map((a) => String(a.id))
     const existing = await prisma.run.findMany({
       where: { stravaId: { in: stravaIds } },
       select: { stravaId: true },
     })
     const existingIds = new Set(existing.map((r) => r.stravaId))
-    const newActivities = activities.filter(
-      (a) => !existingIds.has(String(a.id)),
-    )
+    const newActivities = details.filter((a) => !existingIds.has(String(a.id)))
 
     if (newActivities.length === 0) return { count: 0 }
 
-    await prisma.$transaction(async (tx) => {
-      for (const a of newActivities) {
-        await createRunFromActivity(tx, user.id, a)
-      }
-    })
+    // Write each activity in its own transaction so one failure doesn't block others
+    const writeResults = await Promise.allSettled(
+      newActivities.map((a) =>
+        prisma.$transaction((tx) => createRunFromActivity(tx, user.id, a)),
+      ),
+    )
 
-    return { count: newActivities.length }
+    const count = writeResults.filter((r) => r.status === "fulfilled").length
+    return { count }
   })
