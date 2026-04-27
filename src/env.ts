@@ -10,10 +10,6 @@ export const env = createEnv({
     STRAVA_CLIENT_SECRET: z.string(),
     STRAVA_WEBHOOK_VERIFY_TOKEN: z.string(),
     DISCORD_WEBHOOK_URL: z.string(),
-    BYPASS_COUNTDOWN: z
-      .string()
-      .optional()
-      .transform((v) => v === "true"),
   },
   client: {
     NEXT_PUBLIC_APP_URL: z.url(),
