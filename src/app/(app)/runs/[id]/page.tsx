@@ -9,6 +9,7 @@ import {
 import { DeleteRunButton } from "./_components/delete-run-button"
 import { RunProfileChart } from "./_components/run-profile-chart"
 import { getRunAction } from "./_actions/get-run-action"
+import { getUser } from "@/lib/auth/auth-session"
 
 type RunDetailPageProps = {
   params: Promise<{ id: string }>
@@ -16,10 +17,15 @@ type RunDetailPageProps = {
 
 export default async function RunDetailPage({ params }: RunDetailPageProps) {
   const { id } = await params
-  const result = await getRunAction({ id })
+  const [result, currentUser] = await Promise.all([
+    getRunAction({ id }),
+    getUser(),
+  ])
   const run = result?.data
 
   if (!run) notFound()
+
+  const isOwner = currentUser?.id === run.userId
 
   return (
     <div className="divide-y divide-border">
@@ -34,11 +40,13 @@ export default async function RunDetailPage({ params }: RunDetailPageProps) {
           <RunCardSplits splits={run.splits} />
         </div>
       )}
-      <div className="p-4">
-        <div className="flex items-center justify-end gap-1 rounded-lg border px-4 py-2.5">
-          <DeleteRunButton id={run.id} />
+      {isOwner && (
+        <div className="p-4">
+          <div className="flex items-center justify-end gap-1 rounded-lg border px-4 py-2.5">
+            <DeleteRunButton id={run.id} />
+          </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }
