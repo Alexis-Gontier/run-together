@@ -29,7 +29,7 @@ export const importStravaRunsAction = authActionClient
     const activities = []
     for (let i = 0; i < ids.length; i += BATCH_SIZE) {
       const batch = ids.slice(i, i + BATCH_SIZE)
-      const results = await Promise.all(
+      const results = await Promise.allSettled(
         batch.map((id) =>
           stravaApiFetch(stravaEndpoints.activityDetail(id), {
             headers: { Authorization: `Bearer ${accessToken}` },
@@ -37,7 +37,9 @@ export const importStravaRunsAction = authActionClient
           }),
         ),
       )
-      activities.push(...results)
+      for (const result of results) {
+        if (result.status === "fulfilled") activities.push(result.value)
+      }
     }
 
     // Filtrer les activités déjà importées
