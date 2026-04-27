@@ -59,7 +59,7 @@ export function PreferencesCard() {
           label="Notifications"
           description="Recevez des alertes pour les nouvelles activités."
         >
-          <Switch className="cursor-pointer" />
+          <Switch className="cursor-pointer" disabled />
         </PreferenceRow>
       </CardContent>
     </Card>

@@ -100,7 +100,7 @@ export async function GET(request: NextRequest) {
   return redirectTo(
     freshUser?.onboardingCompleted
       ? ROUTES.SETTINGS
-      : `${ROUTES.ONBOARDING}?step=2`,
+      : `${ROUTES.ONBOARDING}?step=3`,
   )
 }
 

@@ -17,12 +17,13 @@ export default async function OnboardingPage({
     select: { stravaAthleteId: true },
   })
 
-  const initialStep = step === "2" ? 2 : 1
+  const initialStep = step === "3" ? 3 : 0
 
   return (
     <OnboardingWizard
       initialStep={initialStep}
       userName={user.name}
+      userEmail={user.email}
       isStravaConnected={!!stravaAccount}
     />
   )

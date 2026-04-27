@@ -1,11 +1,13 @@
 "use client"
 
+import { ArrowLeft, ArrowRight } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema"
 import { useAction } from "next-safe-action/hooks"
 import { toast } from "sonner"
 
 import { Button } from "@/components/shadcn-ui/button"
+import { LoadingButton } from "@/components/ui/loading-button"
 import {
   Card,
   CardContent,
@@ -23,8 +25,13 @@ import {
 import { updateEmailAction } from "../_actions/update-email-action"
 import { useOnboardingStore } from "../_store/onboarding-store"
 
-export function StepEmail() {
-  const { email, setEmail, nextStep } = useOnboardingStore()
+type StepEmailProps = {
+  onNext: () => void
+  onBack: () => void
+}
+
+export function StepEmail({ onNext, onBack }: StepEmailProps) {
+  const { email, setEmail } = useOnboardingStore()
 
   const form = useForm<OnboardingEmailType>({
     resolver: standardSchemaResolver(onboardingEmailSchema),
@@ -35,7 +42,7 @@ export function StepEmail() {
     onError: () => toast.error("Impossible de mettre à jour l'e-mail."),
     onSuccess: (result) => {
       setEmail(result.input.email)
-      nextStep()
+      onNext()
     },
   })
 
@@ -48,14 +55,18 @@ export function StepEmail() {
           compte.
         </CardDescription>
       </CardHeader>
-      <form onSubmit={form.handleSubmit((data) => execute(data))}>
+      <form
+        onSubmit={form.handleSubmit((data) => execute(data))}
+        className="space-y-6"
+      >
         <CardContent>
-          <div className="flex flex-col gap-2">
+          <div className="space-y-2">
             <Label htmlFor="email">Adresse e-mail</Label>
             <Input
               id="email"
               type="email"
-              placeholder="Ex: alex@example.com"
+              placeholder="alex@example.com"
+              autoFocus
               {...form.register("email")}
             />
             {form.formState.errors.email && (
@@ -65,10 +76,25 @@ export function StepEmail() {
             )}
           </div>
         </CardContent>
-        <CardFooter className="justify-end">
-          <Button type="submit" disabled={isPending}>
-            {isPending ? "Enregistrement…" : "Suivant"}
+        <CardFooter className="justify-between">
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={onBack}
+            disabled={isPending}
+            className="cursor-pointer gap-1.5"
+          >
+            <ArrowLeft className="size-4" />
+            Retour
           </Button>
+          <LoadingButton
+            type="submit"
+            isLoading={isPending}
+            className="cursor-pointer gap-1.5"
+          >
+            Suivant
+            <ArrowRight className="size-4" />
+          </LoadingButton>
         </CardFooter>
       </form>
     </Card>
