@@ -11,7 +11,6 @@ export type StravaTokenRefresh = z.infer<typeof stravaTokenRefreshSchema>
 
 export const stravaTokenExchangeSchema = stravaTokenRefreshSchema.extend({
   athlete: z.object({ id: z.number() }),
-  scope: z.string().optional(),
 })
 export type StravaTokenExchange = z.infer<typeof stravaTokenExchangeSchema>
 
