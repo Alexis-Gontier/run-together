@@ -27,7 +27,7 @@ export async function GET() {
     client_id: env.STRAVA_CLIENT_ID,
     redirect_uri: `${env.NEXT_PUBLIC_APP_URL}${API_ROUTES.STRAVA_CALLBACK}`,
     response_type: "code",
-    approval_prompt: "force",
+    approval_prompt: "auto",
     scope: STRAVA_SCOPE,
     state,
   })
