@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, Route, TrendingUp, Trophy, Settings } from "lucide-react"
+import { Home, Route, Trophy, Settings, User } from "lucide-react"
 
 import { Button } from "@/components/shadcn-ui/button"
 import { cn } from "@/lib/utils/cn"
@@ -11,12 +11,6 @@ import { ROUTES } from "@/lib/constants/routes"
 const NAV_ITEMS = [
   { label: "Accueil", Icon: Home, href: ROUTES.HOME, mobile: true },
   { label: "Mes courses", Icon: Route, href: ROUTES.RUNS, mobile: true },
-  {
-    label: "Progression",
-    Icon: TrendingUp,
-    href: ROUTES.PROGRESS,
-    mobile: true,
-  },
   { label: "Classement", Icon: Trophy, href: ROUTES.LEADERBOARD, mobile: true },
   { label: "Paramètres", Icon: Settings, href: ROUTES.SETTINGS, mobile: true },
 ] as const
@@ -52,8 +46,9 @@ export function AppSidebarNav() {
   )
 }
 
-export function MobileNav() {
+export function MobileNav({ username }: { username?: string | null }) {
   const pathname = usePathname()
+  const profileHref = username ? `/profile/${username}` : null
 
   return (
     <nav className="fixed right-0 bottom-0 left-0 z-50 flex border-t border-border bg-background md:hidden">
@@ -76,6 +71,19 @@ export function MobileNav() {
           </Link>
         )
       })}
+      {profileHref && (
+        <Link
+          href={profileHref}
+          className={cn(
+            "flex flex-1 items-center justify-center py-5 transition-colors",
+            pathname.startsWith("/profile/")
+              ? "bg-secondary text-secondary-foreground"
+              : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+          )}
+        >
+          <User size={24} />
+        </Link>
+      )}
     </nav>
   )
 }
