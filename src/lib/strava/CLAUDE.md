@@ -2,95 +2,41 @@
 
 ## Files
 
-| File           | Purpose                                                   |
-| -------------- | --------------------------------------------------------- |
-| `constants.ts` | Base URLs, OAuth paths, API endpoint paths, scopes        |
-| `schemas.ts`   | Zod schemas for all Strava API responses                  |
-| `client.ts`    | upfetch clients — `stravaOAuthFetch` and `stravaApiFetch` |
-| `token.ts`     | `getValidAccessToken()` — refreshes tokens automatically  |
+| File                          | Purpose                                                            |
+| ----------------------------- | ------------------------------------------------------------------ |
+| `constants.ts`                | Base URLs, OAuth paths, API endpoint paths, scopes                 |
+| `schemas.ts`                  | Zod schemas for Strava API responses                               |
+| `client.ts`                   | `stravaOAuthFetch` (oauth base) and `stravaApiFetch` (api/v3 base) |
+| `token.ts`                    | `getValidAccessToken()` — auto-refresh with 60 s grace period      |
+| `create-run-from-activity.ts` | Maps a Strava activity + stream → `Run` + `Split[]` shapes         |
+| `import-activity.ts`          | `importStravaActivity()` — full import pipeline                    |
+| `types.ts`                    | Additional TypeScript types                                        |
 
-## Clients
+## Token management
 
-### `stravaOAuthFetch`
+`getValidAccessToken(account)` — always use this before any Strava API call:
 
-For all OAuth operations (base URL: `https://www.strava.com/oauth`).
+1. Returns current token if valid (60 s grace)
+2. Re-fetches from DB to avoid concurrent refresh races
+3. Refreshes via `POST /oauth/token` if expired, persists new tokens
 
-```ts
-import { stravaOAuthFetch } from "@/lib/strava/client"
-import { stravaOAuthPaths } from "@/lib/strava/constants"
-import { stravaTokenRefreshSchema } from "@/lib/strava/schemas"
+## Import pipeline (`importStravaActivity`)
 
-const data = await stravaOAuthFetch(stravaOAuthPaths.token, {
-  method: "POST",
-  body: {
-    client_id,
-    client_secret,
-    grant_type: "refresh_token",
-    refresh_token,
-  },
-  schema: stravaTokenRefreshSchema,
-})
-```
+1. Fetch activity detail + GPS stream from Strava API
+2. `createRunFromActivity()` maps it to `Run` + `Split[]`
+3. Upsert via Prisma transaction (idempotent on `stravaId`)
+4. `sendRunNotification()` posts to Discord webhook
 
-### `stravaApiFetch`
+## OAuth flow
 
-For Strava API calls (base URL: `https://www.strava.com/api/v3`).
-Always pass the `Authorization` header — use `getValidAccessToken()` to get a fresh token.
+`GET /api/strava/connect` → Strava → `GET /api/strava/callback`
 
-```ts
-import { stravaApiFetch } from "@/lib/strava/client"
-import { stravaEndpoints } from "@/lib/strava/constants"
-import { stravaAthleteSchema } from "@/lib/strava/schemas"
+Disconnect: revokes token via `POST /oauth/deauthorize` (best-effort) then deletes `StravaAccount` record.
 
-const athlete = await stravaApiFetch(stravaEndpoints.athlete, {
-  headers: { Authorization: `Bearer ${accessToken}` },
-  schema: stravaAthleteSchema,
-})
+## Webhook (`POST /api/strava/webhook`)
 
-const activities = await stravaApiFetch(stravaEndpoints.athleteActivities, {
-  headers: { Authorization: `Bearer ${accessToken}` },
-  params: { per_page: 30, page: 1 },
-  schema: z.array(stravaActivitySchema),
-})
-```
+- `create` → `importStravaActivity()`
+- `update` → update run name/date
+- `delete` → delete run by `stravaId`
 
-## Schemas
-
-| Export                      | Used for                                           |
-| --------------------------- | -------------------------------------------------- |
-| `stravaTokenRefreshSchema`  | Token refresh response                             |
-| `stravaTokenExchangeSchema` | Initial OAuth code exchange (includes athlete)     |
-| `stravaAthleteSchema`       | `GET /athlete`                                     |
-| `stravaActivitySchema`      | Individual activity from `GET /athlete/activities` |
-
-## Token Management
-
-`getValidAccessToken(account)` handles expiry automatically:
-
-1. Returns current token if not expired (with 60s grace).
-2. Re-fetches from DB to avoid duplicate refreshes across instances.
-3. Calls `POST /oauth/token` to refresh if still expired.
-4. Persists new tokens to DB and returns the fresh access token.
-
-```ts
-import { getValidAccessToken } from "@/lib/strava/token"
-
-const accessToken = await getValidAccessToken(stravaAccount)
-```
-
-## OAuth Flow
-
-**Connect:** `GET /api/strava/connect` → Strava → `GET /api/strava/callback`
-
-**Disconnect:** `disconnectStravaAction` (server action used by UI) and `POST /api/strava/disconnect` (API route). Both revoke the token via `POST /oauth/deauthorize` (best effort) before deleting the local record.
-
-## Endpoint Paths
-
-```ts
-stravaOAuthPaths.token // "/token"
-stravaOAuthPaths.deauthorize // "/deauthorize"
-
-stravaEndpoints.athlete // "/athlete"
-stravaEndpoints.athleteActivities // "/athlete/activities"
-stravaEndpoints.activityDetail(id) // "/activities/:id"
-```
+Verification token: `STRAVA_WEBHOOK_VERIFY_TOKEN` env var.

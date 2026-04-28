@@ -8,7 +8,10 @@ export const usernameSchema = z
     /^[a-zA-Z0-9_]+$/,
     "Le nom d'utilisateur ne peut contenir que des lettres, des chiffres et des underscores",
   )
-export const nameSchema = z.string().min(1).max(50)
+export const nameSchema = z
+  .string()
+  .min(1, "Le nom est requis")
+  .max(50, "Le nom ne peut pas dépasser 50 caractères")
 export const emailSchema = z.email()
 export const passwordSchema = z
   .string()
@@ -37,7 +40,7 @@ export const signUpSchema = z
 
 export const signInSchema = z.object({
   username: usernameSchema,
-  password: z.string().min(1).max(128),
+  password: z.string().min(1, "Le mot de passe est requis").max(128),
 })
 
 export type SignUpType = z.infer<typeof signUpSchema>

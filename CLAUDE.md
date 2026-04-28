@@ -2,87 +2,65 @@
 
 ## Tech Stack
 
-- **Framework**: Next.js 16 (App Router, Turbopack)
-- **Language**: TypeScript 5
-- **Database**: PostgreSQL via Prisma v7 + `@prisma/adapter-pg` (driver adapter required)
-- **Auth**: better-auth v1 with username plugin → @src/lib/auth/CLAUDE.md
+- **Framework**: Next.js 16 (App Router, Turbopack, `authInterrupts` enabled)
+- **Database**: PostgreSQL via Prisma v7 + `@prisma/adapter-pg` — driver adapter is required, see `src/lib/db/`
+- **Auth**: better-auth v1 (username + admin plugins) → @src/lib/auth/CLAUDE.md
 - **Server Actions**: next-safe-action v8 → @src/lib/safe-action/CLAUDE.md
-- **Forms**: React Hook Form + Zod v4 + `standardSchemaResolver`
-- **Validation schemas**: centralized in `src/lib/schemas/` → @src/lib/schemas/CLAUDE.md
-- **UI**: shadcn/ui + Radix UI + Tailwind CSS v4
-- **Env validation**: `@t3-oss/env-nextjs` → `src/env.ts`
+- **Forms**: React Hook Form + Zod v4 + `standardSchemaResolver` → @src/lib/schemas/CLAUDE.md
+- **UI**: shadcn/ui + Tailwind CSS v4
+- **State**: Zustand (onboarding flow), nuqs (URL query params)
+- **Strava integration**: OAuth 2 + webhook + auto token refresh → @src/lib/strava/CLAUDE.md
+- **Discord notifications**: run import events → @src/lib/discord/CLAUDE.md
+- **Run formatting utils**: pace, distance, duration, dates → @src/lib/utils/CLAUDE.md
+- **Env validation**: `@t3-oss/env-nextjs` — never use `process.env` directly, always go through `src/env.ts`
 
-## Directory Structure
+## Route Groups
 
 ```
-src/
-├── app/
-│   ├── (app)/              # Protected routes
-│   ├── (auth)/             # Login / register
-│   │   └── {route}/
-│   │       ├── _actions/   # Server actions ("use server")
-│   │       ├── _components/ # Client components ("use client")
-│   │       └── page.tsx
-│   └── api/auth/           # better-auth HTTP handler
-├── components/
-│   ├── shadcn-ui/          # Raw shadcn base components
-│   └── ui/                 # Custom composed components
-├── lib/
-│   ├── auth/               # better-auth config
-│   ├── safe-action/        # action clients
-│   ├── schemas/            # Zod schemas (one file per domain)
-│   ├── db/                 # Prisma client singleton
-│   └── constants/          # Route constants (ROUTES.*)
-├── hooks/                  # Custom React hooks
-└── providers/              # Context providers
+src/app/
+├── (app)/         # Protected — auth required
+│   └── @rightPanel/  # Parallel route slot (right panel)
+├── (admin)/       # Protected — role === "admin" required
+├── (auth)/        # Public (login, register)
+├── (onboarding)/  # Post-signup onboarding flow
+└── api/           # auth/[...all], strava/*, runs/[id]/gpx, og/run/[runId]
 ```
+
+Each route follows:
+
+```
+{route}/
+├── _actions/    # "use server"
+├── _components/ # "use client"
+├── _schemas/    # Route-local Zod schemas
+├── _utils/      # Route-local utilities
+└── page.tsx
+```
+
+Shared actions used across multiple routes live in `src/lib/actions/`.
 
 ## Critical Conventions
 
-### Forms
+**Forms** — always use `standardSchemaResolver` from `@hookform/resolvers/standard-schema`. Zod v4 is incompatible with the `@hookform/resolvers/zod` typed overloads.
 
-Always use `standardSchemaResolver` — Zod v4 is incompatible with the typed overloads of `@hookform/resolvers/zod`:
+**Routing** — use `ROUTES.*` / `AUTH_ROUTES.*` / `ADMIN_ROUTES.*` / `API_ROUTES.*` from `src/lib/constants/routes.ts`. Helper functions: `runRoute(id)`, `profileRoute(username)`. Never hardcode paths.
 
-```ts
-import { standardSchemaResolver } from "@hookform/resolvers/standard-schema"
-```
+**Prisma** — use the singleton in `src/lib/db/`. Never instantiate `PrismaClient` elsewhere. Schema: `prisma/schema.prisma`. Generated client: `src/generated/prisma/`.
 
-### Routing
+**Env vars** — add to `src/env.ts`. Server-only → `server` block. Client-exposed → `client` block (prefix `NEXT_PUBLIC_`).
 
-Use `ROUTES.*` constants from `src/lib/constants/routes.ts` — never hardcode paths.
-
-### Environment Variables
-
-Always add to `src/env.ts` via `@t3-oss/env-nextjs`. Never access `process.env` directly.
-
-- Server-only → `server` block
-- Client-exposed → `client` block (must be prefixed `NEXT_PUBLIC_`)
-
-### Prisma
-
-Prisma v7 requires driver adapter. Use the singleton in `src/lib/db/`. Never instantiate `PrismaClient` elsewhere.
-
-- Schema: `prisma/schema.prisma`
-- Generated client: `src/generated/prisma/`
-
-### Commits
-
-Conventional commits enforced by commitlint + husky:
-`feat | fix | chore | refactor | docs | style | test | perf | ci`
-
-### Code Quality
-
-Pre-commit hook (husky + lint-staged) runs ESLint --fix + Prettier automatically.
+**Commits** — conventional commits enforced by commitlint + husky: `feat | fix | chore | refactor | docs | style | test | perf | ci`. Pre-commit hook runs ESLint --fix + Prettier automatically.
 
 ## Scripts
 
-| Script            | Purpose                            |
-| ----------------- | ---------------------------------- |
-| `pnpm dev`        | Start dev server                   |
-| `pnpm build`      | Production build                   |
-| `pnpm lint`       | ESLint                             |
-| `pnpm format`     | Prettier write                     |
-| `pnpm db:migrate` | Create + apply migration (dev)     |
-| `pnpm db:push`    | Push schema without migration file |
-| `pnpm db:studio`  | Open Prisma Studio                 |
-| `pnpm db:seed`    | Seed the database                  |
+| Script             | Purpose                            |
+| ------------------ | ---------------------------------- |
+| `pnpm dev`         | Start dev server (Turbopack)       |
+| `pnpm build`       | Production build                   |
+| `pnpm lint`        | ESLint                             |
+| `pnpm format`      | Prettier write                     |
+| `pnpm db:migrate`  | Create + apply migration (dev)     |
+| `pnpm db:push`     | Push schema without migration file |
+| `pnpm db:studio`   | Open Prisma Studio                 |
+| `pnpm db:seed`     | Seed the database                  |
+| `pnpm db:generate` | Regenerate Prisma client           |

@@ -3,18 +3,10 @@
 import { usePathname, useRouter } from "next/navigation"
 import { ArrowLeft } from "lucide-react"
 import { Button } from "@/components/shadcn-ui/button"
-import { ROUTES } from "@/lib/constants/routes"
-
-const ROUTE_TITLES: Record<string, string> = {
-  [ROUTES.HOME]: "Accueil",
-  [ROUTES.RUNS]: "Mes courses",
-  [ROUTES.PROGRESS]: "Progression",
-  [ROUTES.LEADERBOARD]: "Classement",
-  [ROUTES.SETTINGS]: "Paramètres",
-}
+import { ROUTE_LABELS, ROUTES } from "@/lib/constants/routes"
 
 function getTitle(pathname: string): string {
-  for (const [route, title] of Object.entries(ROUTE_TITLES)) {
+  for (const [route, title] of Object.entries(ROUTE_LABELS)) {
     if (
       pathname === route ||
       (route !== ROUTES.HOME && pathname.startsWith(route))

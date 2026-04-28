@@ -1,6 +1,7 @@
 import Link from "next/link"
 import type { Metadata } from "next"
 
+import { AUTH_ROUTES } from "@/lib/constants/routes"
 import { LoginWithUsernameForm } from "./_components/login-with-username-form"
 
 export const metadata: Metadata = {
@@ -22,7 +23,7 @@ export default function LoginPage() {
       <p className="text-center text-sm text-muted-foreground">
         Vous n&apos;avez pas de compte ?{" "}
         <Link
-          href="/register"
+          href={AUTH_ROUTES.REGISTER}
           className="text-foreground underline underline-offset-4 transition-colors hover:text-muted-foreground"
         >
           S&apos;inscrire

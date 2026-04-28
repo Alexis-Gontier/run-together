@@ -6,7 +6,7 @@ description: Build forms with React Hook Form, Zod validation, and shadcn-ui Fie
 ## Stack
 
 - `react-hook-form` — form state + `useForm`, `Controller`, `useFieldArray`
-- `zod` — schema validation via `zodResolver`
+- `zod` v4 — schema validation via `standardSchemaResolver` (**not** `zodResolver` — incompatible with Zod v4)
 - shadcn-ui primitives — `Field`, `FieldLabel`, `FieldDescription`, `FieldError`, `FieldGroup`, `FieldSet`, `FieldLegend`
 
 ## Boilerplate
@@ -14,19 +14,19 @@ description: Build forms with React Hook Form, Zod validation, and shadcn-ui Fie
 ```tsx
 "use client"
 
-import { zodResolver } from "@hookform/resolvers/zod"
+import { standardSchemaResolver } from "@hookform/resolvers/standard-schema"
 import { useForm, Controller } from "react-hook-form"
 import * as z from "zod"
 
 const schema = z.object({
-  name: z.string().min(2, "At least 2 characters."),
+  name: z.string().min(2, "Au moins 2 caractères."),
 })
 
 type FormValues = z.infer<typeof schema>
 
 export function MyForm() {
   const form = useForm<FormValues>({
-    resolver: zodResolver(schema),
+    resolver: standardSchemaResolver(schema),
     defaultValues: { name: "" },
   })
 
@@ -151,7 +151,7 @@ const { fields, append, remove } = useFieldArray({
 Zod schema for arrays:
 
 ```ts
-emails: z.array(z.object({ address: z.string().email() }))
+emails: z.array(z.object({ address: z.email("Email invalide") }))
   .min(1)
   .max(5)
 ```
@@ -165,7 +165,10 @@ emails: z.array(z.object({ address: z.string().email() }))
 | `"onChange"` | validate on every keystroke       |
 
 ```ts
-const form = useForm({ resolver: zodResolver(schema), mode: "onBlur" })
+const form = useForm({
+  resolver: standardSchemaResolver(schema),
+  mode: "onBlur",
+})
 ```
 
 ## Submit button

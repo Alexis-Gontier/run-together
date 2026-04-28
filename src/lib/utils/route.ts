@@ -1,5 +1,11 @@
 import { ROUTES, AUTH_ROUTES, ADMIN_ROUTES } from "@/lib/constants/routes"
 
+export function isNavActive(pathname: string, href: string): boolean {
+  return (
+    pathname === href || (href !== ROUTES.HOME && pathname.startsWith(href))
+  )
+}
+
 type RouteType = "public" | "auth" | "onboarding" | "admin" | "protected"
 
 const publicRoutes: string[] = [ROUTES.LANDING]
