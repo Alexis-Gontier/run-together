@@ -124,12 +124,7 @@ function ConnectedState({
       </div>
       <div className="flex items-center gap-2">
         <StravaSyncDialog />
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={onDisconnect}
-          disabled={isPending}
-        >
+        <Button variant="outline" onClick={onDisconnect} disabled={isPending}>
           {isPending ? "Déconnexion…" : "Déconnecter"}
         </Button>
       </div>
@@ -145,11 +140,7 @@ function DisconnectedState() {
         activités de course.
       </p>
       <div>
-        <Button
-          asChild
-          size="sm"
-          className="bg-[#FC4C02] text-white hover:bg-[#e04300]"
-        >
+        <Button asChild className="bg-[#FC4C02] text-white hover:bg-[#e04300]">
           <a href={API_ROUTES.STRAVA_CONNECT}>Se connecter avec Strava</a>
         </Button>
       </div>

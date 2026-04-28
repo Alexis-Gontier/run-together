@@ -15,6 +15,7 @@ import {
 import { createUserAction } from "../_actions/create-user-action"
 
 import { Button } from "@/components/shadcn-ui/button"
+import { LoadingButton } from "@/components/ui/loading-button"
 import { Input } from "@/components/shadcn-ui/input"
 import { Label } from "@/components/shadcn-ui/label"
 import {
@@ -146,13 +147,13 @@ export function CreateUserDialog() {
           </div>
 
           <div className="flex justify-end gap-2 pt-2">
-            <Button
+            <LoadingButton
               type="submit"
-              disabled={isPending}
+              isLoading={isPending}
               className="cursor-pointer"
             >
-              {isPending ? "Création…" : "Créer"}
-            </Button>
+              Créer
+            </LoadingButton>
           </div>
         </form>
       </DialogContent>

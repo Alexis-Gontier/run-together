@@ -1,11 +1,12 @@
 "use client"
 
 import { useState } from "react"
-import { useForm } from "react-hook-form"
+import { useForm, Controller } from "react-hook-form"
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema"
 import { useAction } from "next-safe-action/hooks"
 import { toast } from "sonner"
 import { Button } from "@/components/shadcn-ui/button"
+import { LoadingButton } from "@/components/ui/loading-button"
 import {
   Dialog,
   DialogContent,
@@ -26,12 +27,7 @@ import { changePasswordAction } from "../_actions/change-password-action"
 export function ChangePasswordDialog() {
   const [open, setOpen] = useState(false)
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<ChangePasswordType>({
+  const { control, handleSubmit, reset } = useForm<ChangePasswordType>({
     resolver: standardSchemaResolver(changePasswordSchema),
   })
 
@@ -63,41 +59,64 @@ export function ChangePasswordDialog() {
           onSubmit={handleSubmit((data) => execute(data))}
           className="flex flex-col gap-4"
         >
-          <Field>
-            <FieldLabel htmlFor="currentPassword">
-              Mot de passe actuel
-            </FieldLabel>
-            <PasswordInput
-              id="currentPassword"
-              autoComplete="current-password"
-              {...register("currentPassword")}
-            />
-            <FieldError errors={[errors.currentPassword]} />
-          </Field>
-          <Field>
-            <FieldLabel htmlFor="newPassword">Nouveau mot de passe</FieldLabel>
-            <PasswordInput
-              id="newPassword"
-              autoComplete="new-password"
-              {...register("newPassword")}
-            />
-            <FieldError errors={[errors.newPassword]} />
-          </Field>
-          <Field>
-            <FieldLabel htmlFor="confirmPassword">
-              Confirmer le mot de passe
-            </FieldLabel>
-            <PasswordInput
-              id="confirmPassword"
-              autoComplete="new-password"
-              {...register("confirmPassword")}
-            />
-            <FieldError errors={[errors.confirmPassword]} />
-          </Field>
+          <Controller
+            name="currentPassword"
+            control={control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor="currentPassword">
+                  Mot de passe actuel
+                </FieldLabel>
+                <PasswordInput
+                  {...field}
+                  id="currentPassword"
+                  autoComplete="current-password"
+                  aria-invalid={fieldState.invalid}
+                />
+                <FieldError errors={[fieldState.error]} />
+              </Field>
+            )}
+          />
+          <Controller
+            name="newPassword"
+            control={control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor="newPassword">
+                  Nouveau mot de passe
+                </FieldLabel>
+                <PasswordInput
+                  {...field}
+                  id="newPassword"
+                  autoComplete="new-password"
+                  aria-invalid={fieldState.invalid}
+                />
+                <FieldError errors={[fieldState.error]} />
+              </Field>
+            )}
+          />
+          <Controller
+            name="confirmPassword"
+            control={control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor="confirmPassword">
+                  Confirmer le mot de passe
+                </FieldLabel>
+                <PasswordInput
+                  {...field}
+                  id="confirmPassword"
+                  autoComplete="new-password"
+                  aria-invalid={fieldState.invalid}
+                />
+                <FieldError errors={[fieldState.error]} />
+              </Field>
+            )}
+          />
           <DialogFooter>
-            <Button type="submit" disabled={isPending}>
-              {isPending ? "Enregistrement…" : "Enregistrer"}
-            </Button>
+            <LoadingButton type="submit" isLoading={isPending}>
+              Enregistrer
+            </LoadingButton>
           </DialogFooter>
         </form>
       </DialogContent>

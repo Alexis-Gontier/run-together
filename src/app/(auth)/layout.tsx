@@ -1,6 +1,8 @@
 import Image from "next/image"
 import Link from "next/link"
 
+import { ROUTES } from "@/lib/constants/routes"
+
 type AuthLayoutProps = {
   children: React.ReactNode
 }
@@ -10,7 +12,10 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
     <div className="grid min-h-svh lg:grid-cols-[1fr_1.6fr]">
       <main className="relative flex flex-col items-center justify-center border-r">
         <div className="absolute top-6 left-6 lg:top-8 lg:left-8">
-          <Link href="/" className="text-xl font-bold tracking-tight">
+          <Link
+            href={ROUTES.LANDING}
+            className="text-xl font-bold tracking-tight"
+          >
             RunTogether
           </Link>
         </div>

@@ -2,59 +2,47 @@
 
 ## Files
 
-| File              | Purpose                                                     |
-| ----------------- | ----------------------------------------------------------- |
-| `index.ts`        | Server-side auth instance (`auth`) — server code only       |
-| `auth-client.ts`  | Browser-side client (`authClient`) — client components only |
-| `auth-session.ts` | Server session helpers — Server Components and actions      |
+| File              | Purpose                                                |
+| ----------------- | ------------------------------------------------------ |
+| `index.ts`        | `auth` — server-side instance (server code only)       |
+| `auth-client.ts`  | `authClient` — browser client (client components only) |
+| `auth-session.ts` | Session helpers — Server Components and actions        |
 
-## Key Exports
+## Session helpers (`auth-session.ts`)
 
-### `auth` — server only
+- `getUser()` — returns `user | null` (auth optional)
+- `getRequiredUser()` — returns `user` or redirects to `/unauthorized`
+- `getRequiredAdmin()` — returns `user` or redirects to `/forbidden` (role === "admin" required)
 
-Full better-auth instance. Used by the API route handler and server actions.
+## Calling Auth API in Server Actions
 
-### `authClient` — client only
-
-Browser client with `usernameClient()` plugin. Use for client-side auth flows.
-
-### Session helpers
-
-```ts
-import { getUser, getRequiredUser } from "@/lib/auth/auth-session"
-
-getUser() // Returns user | null — when auth is optional
-getRequiredUser() // Returns user or redirects to /unauthorized — protected contexts
-```
-
-Both read the cookie-cached session (5-minute cache, compact strategy).
-
-## Calling Auth API Inside Server Actions
-
-Forward the incoming request headers — better-auth requires them:
+better-auth requires the incoming request headers to be forwarded — forgetting this breaks session handling:
 
 ```ts
 import { headers } from "next/headers"
 import { auth } from "@/lib/auth"
 
-await auth.api.signInUsername({
-  body: { username, password },
-  headers: await headers(),
-})
+await auth.api.signInUsername({ body: { ... }, headers: await headers() })
 ```
 
-## Configuration Details
+## Configuration
 
-- **Sign-in method**: username + password (not email)
-- **Sign-up**: disabled in production (`NODE_ENV !== "development"`)
-- **Rate limit**: 5 attempts per 60 s
-- **Session TTL**: 365 days, cookie cache max-age 5 min
-- **Plugins**: `username()`, `nextCookies()`
-- **Adapter**: Prisma with `postgresql` provider
+- Sign-in: username + password (not email)
+- Sign-up: disabled in production (`NODE_ENV !== "development"`)
+- Rate limit: 5 attempts / 60 s
+- Session TTL: 365 days, cookie cache 5 min
+- Plugins: `username()`, `admin()`, `nextCookies()`
 
-## Owned Database Tables
+## Roles
 
-better-auth manages these — never modify their columns manually:
+- `"user"` — default
+- `"admin"` — access to `(admin)` routes, can impersonate / ban / manage users
+
+Impersonation is tracked via `Session.impersonatedBy`. `ImpersonationBanner` renders when active.
+
+## Owned DB tables — never modify columns manually
+
 `User`, `Session`, `Account`, `Verification`
 
-`User` has extra fields from the username plugin: `username`, `displayUsername`.
+Extra `User` fields: `username`, `displayUsername`, `onboardingCompleted`, `role`, `banned`, `banReason`, `banExpires`
+Extra `Session` field: `impersonatedBy`

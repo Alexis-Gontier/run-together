@@ -1,3 +1,7 @@
+export function isNavItemNew(newUntil?: Date): boolean {
+  return newUntil != null && Date.now() < newUntil.getTime()
+}
+
 export function getPeriodRange(
   period: string,
   daysMap: Record<string, number>,

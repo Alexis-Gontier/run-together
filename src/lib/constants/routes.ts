@@ -15,6 +15,14 @@ export const AUTH_ROUTES = {
   REGISTER: "/register",
 } as const
 
+export const ROUTE_LABELS: Record<string, string> = {
+  [ROUTES.HOME]: "Accueil",
+  [ROUTES.RUNS]: "Mes courses",
+  [ROUTES.PROGRESS]: "Progression",
+  [ROUTES.LEADERBOARD]: "Classement",
+  [ROUTES.SETTINGS]: "Paramètres",
+}
+
 export const runRoute = (id: string) => `${ROUTES.RUNS}/${id}`
 export const profileRoute = (username: string) => `/profile/${username}`
 
