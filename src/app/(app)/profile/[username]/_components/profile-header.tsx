@@ -1,5 +1,4 @@
 import Link from "next/link"
-import { CalendarDays } from "lucide-react"
 import { Button } from "@/components/shadcn-ui/button"
 import {
   Avatar,
@@ -9,14 +8,16 @@ import {
 import { Skeleton } from "@/components/shadcn-ui/skeleton"
 import { ROUTES } from "@/lib/constants/routes"
 import { getInitials } from "@/lib/utils/get-initials"
+import { formatRunDistance } from "@/lib/utils/run"
 
 type ProfileHeaderProps = {
   name: string
   username: string
   displayUsername: string | null
   image: string | null
-  createdAt: Date
   isOwnProfile: boolean
+  runsCount: number
+  totalDistance: number
 }
 
 export function ProfileHeader({
@@ -24,14 +25,10 @@ export function ProfileHeader({
   username,
   displayUsername,
   image,
-  createdAt,
   isOwnProfile,
+  runsCount,
+  totalDistance,
 }: ProfileHeaderProps) {
-  const joinedAt = new Intl.DateTimeFormat("fr-FR", {
-    month: "long",
-    year: "numeric",
-  }).format(createdAt)
-
   const handle = displayUsername ?? username
 
   return (
@@ -64,21 +61,16 @@ export function ProfileHeader({
         <h1 className="text-xl font-black tracking-tight">{name}</h1>
         <p className="text-sm text-muted-foreground">@{handle}</p>
 
-        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
-          <span className="flex items-center gap-1.5">
-            <CalendarDays size={13} />
-            Inscrit en {joinedAt}
-          </span>
-        </div>
-
         {/* Stats */}
         <div className="mt-4 flex gap-5 pb-4 text-sm">
           <span>
-            <strong className="font-bold text-foreground">0</strong>{" "}
+            <strong className="font-bold text-foreground">{runsCount}</strong>{" "}
             <span className="text-muted-foreground">courses</span>
           </span>
           <span>
-            <strong className="font-bold text-foreground">0 km</strong>{" "}
+            <strong className="font-bold text-foreground">
+              {formatRunDistance(totalDistance)} km
+            </strong>{" "}
             <span className="text-muted-foreground">parcourus</span>
           </span>
         </div>

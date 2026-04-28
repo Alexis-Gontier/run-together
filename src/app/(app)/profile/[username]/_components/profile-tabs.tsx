@@ -1,48 +1,42 @@
 "use client"
 
-import { Footprints } from "lucide-react"
-import {
-  Empty,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-} from "@/components/shadcn-ui/empty"
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from "@/components/shadcn-ui/tabs"
+import { ProfileRunsList } from "./profile-runs-list"
+import type { getProfileRunsAction } from "../_actions/get-profile-runs-action"
 
-function EmptyState({ label }: { label: string }) {
-  return (
-    <Empty>
-      <EmptyHeader>
-        <EmptyMedia variant="icon">
-          <Footprints />
-        </EmptyMedia>
-        <EmptyDescription>{label}</EmptyDescription>
-      </EmptyHeader>
-    </Empty>
-  )
+type Run = NonNullable<
+  Awaited<ReturnType<typeof getProfileRunsAction>>["data"]
+>["runs"][number]
+
+interface ProfileTabsProps {
+  username: string
+  initialRuns: Run[]
+  initialNextCursor: string | null
 }
 
-export function ProfileTabs() {
+export function ProfileTabs({
+  username,
+  initialRuns,
+  initialNextCursor,
+}: ProfileTabsProps) {
   return (
     <Tabs defaultValue="courses">
       <TabsList variant="line" className="w-full">
         <TabsTrigger value="courses" className="cursor-pointer">
           Courses
         </TabsTrigger>
-        <TabsTrigger value="stats" className="cursor-pointer">
-          Stats
-        </TabsTrigger>
       </TabsList>
       <TabsContent value="courses" className="mt-0">
-        <EmptyState label="Aucune course pour le moment." />
-      </TabsContent>
-      <TabsContent value="stats" className="mt-0">
-        <EmptyState label="Aucune statistique pour le moment." />
+        <ProfileRunsList
+          username={username}
+          initialRuns={initialRuns}
+          initialNextCursor={initialNextCursor}
+        />
       </TabsContent>
     </Tabs>
   )
