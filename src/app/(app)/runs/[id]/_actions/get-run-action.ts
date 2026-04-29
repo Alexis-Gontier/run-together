@@ -25,6 +25,9 @@ export const getRunAction = authActionClient
         splits: {
           orderBy: { kilometer: "asc" },
         },
+        personalRecords: {
+          select: { distance: true },
+        },
       },
     })
     return run

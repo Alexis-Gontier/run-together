@@ -25,6 +25,9 @@ export const getProfileRunsAction = actionClient
             image: true,
           },
         },
+        personalRecords: {
+          select: { distance: true },
+        },
       },
       orderBy: { date: "desc" },
     })

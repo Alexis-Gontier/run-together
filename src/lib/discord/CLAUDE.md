@@ -14,4 +14,4 @@ interface RunNotificationPayload {
 
 The embed automatically includes the OG image (`/api/og/run/[runId]`) and a link to the run page.
 
-Currently called only from `importStravaActivity()`. Add new notification functions here when extending to other events (e.g. badges, PRs, group runs).
+Currently called only from `importStravaActivity()`. Add new notification functions here when extending to other events (e.g. badges, group runs).

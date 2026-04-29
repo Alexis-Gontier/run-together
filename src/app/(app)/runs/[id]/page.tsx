@@ -30,7 +30,10 @@ export default async function RunDetailPage({ params }: RunDetailPageProps) {
   return (
     <div className="divide-y divide-border">
       <FeedCard>
-        <RunCardHeader run={run} />
+        <RunCardHeader
+          run={run}
+          prs={run.personalRecords.map((pr) => pr.distance)}
+        />
         {run.summaryPolyline && <RunCardMap polyline={run.summaryPolyline} />}
         <RunCardStats run={run} hasMap={!!run.summaryPolyline} />
       </FeedCard>

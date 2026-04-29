@@ -19,7 +19,8 @@
     "db:seed": "prisma db seed",
     "db:reset": "prisma migrate reset",
     "db:studio": "prisma studio",
-    "discord:send-run": "tsx scripts/send-run-to-discord.ts"
+    "discord:send-run": "tsx scripts/send-run-to-discord.ts",
+    "db:backfill-prs": "tsx scripts/backfill-personal-records.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

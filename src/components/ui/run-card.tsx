@@ -1,11 +1,13 @@
 import Link from "next/link"
 import type { Run, Split, User } from "@/generated/prisma/client"
+import type { PRDistance } from "@/generated/prisma/enums"
 import { cn } from "@/lib/utils/cn"
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
 } from "@/components/shadcn-ui/avatar"
+import { Badge } from "@/components/shadcn-ui/badge"
 import { Skeleton } from "@/components/shadcn-ui/skeleton"
 import { DeviceBadge } from "@/components/ui/device-badge"
 import { MapboxPolyline } from "@/components/ui/mapbox-polyline"
@@ -19,6 +21,7 @@ import {
   formatRunDurationDisplay,
   formatRunDateShort,
 } from "@/lib/utils/run"
+import { PR_DISTANCE_LABELS } from "@/lib/strava/pr-display"
 
 export type RunWithUser = Run & {
   user: Pick<User, "name" | "username" | "image">
@@ -28,10 +31,11 @@ export type RunWithUser = Run & {
 
 interface RunCardHeaderProps {
   run: RunWithUser
+  prs?: PRDistance[]
   className?: string
 }
 
-export function RunCardHeader({ run, className }: RunCardHeaderProps) {
+export function RunCardHeader({ run, prs, className }: RunCardHeaderProps) {
   return (
     <div className={cn("flex items-center gap-3 p-4", className)}>
       <Link
@@ -58,7 +62,22 @@ export function RunCardHeader({ run, className }: RunCardHeaderProps) {
             · {formatRunDateShort(run.date)}
           </span>
         </div>
-        <p className="truncate text-xs text-muted-foreground">{run.name}</p>
+        <div className="flex items-center gap-1.5">
+          <p className="truncate text-xs text-muted-foreground">{run.name}</p>
+          {prs && prs.length > 0 && (
+            <div className="relative z-20 flex shrink-0 gap-1">
+              {prs.map((pr) => (
+                <Badge
+                  key={pr}
+                  className="h-4 border-amber-300 bg-amber-50 px-1.5 text-[10px] text-amber-700 dark:border-amber-700 dark:bg-amber-950 dark:text-amber-300"
+                  variant="outline"
+                >
+                  PR {PR_DISTANCE_LABELS[pr]}
+                </Badge>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="relative z-20 shrink-0">
