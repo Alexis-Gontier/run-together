@@ -24,6 +24,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
   const isOwnProfile = currentUser?.username === username
   const initialRuns = runsResult?.data?.runs ?? []
   const initialNextCursor = runsResult?.data?.nextCursor ?? null
+  const records = profileResult?.data?.records ?? []
 
   return (
     <>
@@ -40,6 +41,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
         username={profileUser.username ?? username}
         initialRuns={initialRuns}
         initialNextCursor={initialNextCursor}
+        records={records}
       />
     </>
   )

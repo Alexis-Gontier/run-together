@@ -83,7 +83,10 @@ export function ProfileRunsList({
     <div className="divide-y divide-border">
       {runs.map((run) => (
         <FeedCard key={run.id} href={runRoute(run.id)}>
-          <RunCardHeader run={run as RunWithUser} />
+          <RunCardHeader
+            run={run as RunWithUser}
+            prs={run.personalRecords.map((pr) => pr.distance)}
+          />
           {run.summaryPolyline && <RunCardMap polyline={run.summaryPolyline} />}
           <RunCardStats run={run} hasMap={!!run.summaryPolyline} />
         </FeedCard>

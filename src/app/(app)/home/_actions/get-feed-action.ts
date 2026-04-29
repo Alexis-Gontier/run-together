@@ -27,6 +27,9 @@ export const getFeedAction = authActionClient
             image: true,
           },
         },
+        personalRecords: {
+          select: { distance: true },
+        },
       },
       orderBy: {
         date: "desc",

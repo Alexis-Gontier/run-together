@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { env } from "@/env"
 import { prisma } from "@/lib/db/prisma"
 import { importStravaActivity } from "@/lib/strava/import-activity"
+import { recalculatePersonalRecords } from "@/lib/strava/personal-records"
 
 // ---------------------------------------------------------------------------
 // GET — Vérification d'abonnement (hub challenge)
@@ -89,6 +90,11 @@ export async function POST(request: NextRequest) {
     await prisma.run.deleteMany({
       where: { stravaId: String(event.object_id), userId },
     })
+    try {
+      await recalculatePersonalRecords(userId)
+    } catch (err) {
+      console.error("[personal-records] recalculate failed after delete", err)
+    }
   }
 
   return NextResponse.json({ ok: true })

@@ -9,7 +9,7 @@ const schema = z.object({ username: z.string() })
 export const getProfileAction = actionClient
   .inputSchema(schema)
   .action(async ({ parsedInput: { username } }) => {
-    const [user, stats] = await Promise.all([
+    const [user, stats, records] = await Promise.all([
       prisma.user.findUnique({
         where: { username },
         select: {
@@ -25,6 +25,15 @@ export const getProfileAction = actionClient
         where: { user: { username } },
         _sum: { distance: true, elevation: true, duration: true },
         _avg: { pace: true },
+      }),
+      prisma.personalRecord.findMany({
+        where: { user: { username } },
+        select: {
+          distance: true,
+          duration: true,
+          pace: true,
+          run: { select: { id: true, name: true, date: true } },
+        },
       }),
     ])
 
@@ -43,5 +52,6 @@ export const getProfileAction = actionClient
         totalDuration: stats._sum.duration ?? 0,
         avgPace: stats._avg.pace ?? 0,
       },
+      records,
     }
   })

@@ -17,6 +17,14 @@ enum RunSource {
   MANUAL
 }
 
+enum PRDistance {
+  KM_1
+  KM_5
+  KM_10
+  HALF_MARATHON
+  MARATHON
+}
+
 // =====================================================
 // Better-Auth Models
 // =====================================================
@@ -44,10 +52,11 @@ model User {
   banExpires DateTime?
 
   // Relations
-  sessions        Session[]
-  accounts        Account[]
-  stravaAccount   StravaAccount?
-  runs            Run[]
+  sessions         Session[]
+  accounts         Account[]
+  stravaAccount    StravaAccount?
+  runs             Run[]
+  personalRecords  PersonalRecord[]
 
   @@unique([email])
   @@unique([username])
@@ -167,7 +176,8 @@ model Run {
   deviceName String? // "Garmin Forerunner 265", "Strava App"
 
   // Relations
-  splits Split[]
+  splits          Split[]
+  personalRecords PersonalRecord[]
 
   // Index composite — crucial pour feed et leaderboard
   @@index([userId, date])
@@ -194,4 +204,30 @@ model Split {
 
   @@index([runId])
   @@map("split")
+}
+
+// =====================================================
+// Personal Records
+// Calculés à partir des splits après chaque sync
+// =====================================================
+
+model PersonalRecord {
+  id String @id @default(cuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Nullable : si le run source est supprimé, on conserve le record
+  runId String?
+  run   Run?    @relation(fields: [runId], references: [id], onDelete: SetNull)
+
+  distance PRDistance
+  duration Int        // secondes pour couvrir cette distance
+  pace     Int        // secondes/km
+
+  // Un seul PR actif par distance par user
+  @@unique([userId, distance])
+  @@index([userId])
+  @@index([runId])
+  @@map("personal_record")
 }

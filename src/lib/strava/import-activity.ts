@@ -5,6 +5,7 @@ import { STRAVA_RUN_TYPES, stravaEndpoints } from "@/lib/strava/constants"
 import { stravaActivityDetailSchema } from "@/lib/strava/schemas"
 import { getValidAccessToken } from "@/lib/strava/token"
 import { createRunFromActivity } from "./create-run-from-activity"
+import { updatePersonalRecords } from "./personal-records"
 
 interface ImportOptions {
   // When true, non-run activities are silently skipped instead of throwing
@@ -59,13 +60,25 @@ export async function importStravaActivity(
     return createRunFromActivity(tx, userId, activity)
   })
 
+  const splits = (activity.splits_metric ?? []).map((s) => ({
+    kilometer: s.split,
+    distance: s.distance,
+    duration: s.moving_time,
+    pace: s.distance > 0 ? Math.round((s.moving_time / s.distance) * 1000) : 0,
+  }))
+
+  try {
+    await updatePersonalRecords(userId, run, splits)
+  } catch (err) {
+    console.error("[personal-records] update failed", run.id, err)
+  }
+
   if (!options.silent) {
+    const userName = account.user.name ?? "Inconnu"
+    const runName = run.name || "Course sans nom"
+
     try {
-      await sendRunNotification({
-        runId: run.id,
-        userName: account.user.name ?? "Inconnu",
-        runName: run.name || "Course sans nom",
-      })
+      await sendRunNotification({ runId: run.id, userName, runName })
     } catch (err) {
       console.error("[discord] run notification failed", err)
     }
