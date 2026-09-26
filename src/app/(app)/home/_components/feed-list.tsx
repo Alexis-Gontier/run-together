@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/run-card"
 import { runRoute } from "@/lib/constants/routes"
 import { getFeedAction } from "../_actions/get-feed-action"
+import type { FeedScope } from "../_schemas/feed-schema"
 
 type Run = NonNullable<
   Awaited<ReturnType<typeof getFeedAction>>["data"]
@@ -18,9 +19,14 @@ type Run = NonNullable<
 interface FeedListProps {
   initialRuns: Run[]
   initialNextCursor: string | null
+  scope: FeedScope
 }
 
-export function FeedList({ initialRuns, initialNextCursor }: FeedListProps) {
+export function FeedList({
+  initialRuns,
+  initialNextCursor,
+  scope,
+}: FeedListProps) {
   const [runs, setRuns] = useState(initialRuns)
   const [cursor, setCursor] = useState(initialNextCursor)
   const sentinelRef = useRef<HTMLDivElement>(null)
@@ -35,8 +41,8 @@ export function FeedList({ initialRuns, initialNextCursor }: FeedListProps) {
 
   const loadMore = useCallback(() => {
     if (!cursor || isPending) return
-    execute({ cursor, limit: 5 })
-  }, [cursor, isPending, execute])
+    execute({ cursor, limit: 5, scope })
+  }, [cursor, isPending, execute, scope])
 
   useEffect(() => {
     const sentinel = sentinelRef.current
