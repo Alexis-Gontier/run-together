@@ -12,6 +12,7 @@
 - **Strava integration**: OAuth 2 + webhook + auto token refresh → @src/lib/strava/CLAUDE.md
 - **Discord notifications**: run import events → @src/lib/discord/CLAUDE.md
 - **Run formatting utils**: pace, distance, duration, dates → @src/lib/utils/CLAUDE.md
+- **Tooling**: Node 24 (`.nvmrc`), pnpm 11, Biome, lefthook, knip, Vitest, React Compiler. Claude Code config in `.claude/` (see `.claude/SKILLS.md`)
 - **Env validation**: `@t3-oss/env-nextjs` — never use `process.env` directly, always go through `src/env.ts`
 
 ## Route Groups
@@ -49,18 +50,24 @@ Shared actions used across multiple routes live in `src/lib/actions/`.
 
 **Env vars** — add to `src/env.ts`. Server-only → `server` block. Client-exposed → `client` block (prefix `NEXT_PUBLIC_`).
 
-**Commits** — conventional commits enforced by commitlint + husky: `feat | fix | chore | refactor | docs | style | test | perf | ci`. Pre-commit hook runs ESLint --fix + Prettier automatically.
+**Commits** — conventional commits enforced by commitlint via lefthook: `feat | fix | chore | refactor | docs | style | test | perf | ci` (body lines ≤ 100 chars). Pre-commit runs `biome check --write` on staged files; pre-push runs `typecheck`, `test` and `knip`.
+
+**Strava** — the Strava API app is **inactive** since 2026-08-19. No run arrives through Strava; do not debug import failures as code bugs. Manual entry + GPX/FIT import replace it (phase 2 of `docs/superpowers/specs/2026-09-26-refonte-roadmap-design.md`).
 
 ## Scripts
 
-| Script             | Purpose                            |
-| ------------------ | ---------------------------------- |
-| `pnpm dev`         | Start dev server (Turbopack)       |
-| `pnpm build`       | Production build                   |
-| `pnpm lint`        | ESLint                             |
-| `pnpm format`      | Prettier write                     |
-| `pnpm db:migrate`  | Create + apply migration (dev)     |
-| `pnpm db:push`     | Push schema without migration file |
-| `pnpm db:studio`   | Open Prisma Studio                 |
-| `pnpm db:seed`     | Seed the database                  |
-| `pnpm db:generate` | Regenerate Prisma client           |
+| Script             | Purpose                               |
+| ------------------ | ------------------------------------- |
+| `pnpm dev`         | Start dev server (Turbopack)          |
+| `pnpm build`       | Production build                      |
+| `pnpm lint`        | Biome lint + format check             |
+| `pnpm lint:fix`    | Biome with safe fixes                 |
+| `pnpm format`      | Biome format write                    |
+| `pnpm typecheck`   | `next typegen` + `tsc --noEmit`       |
+| `pnpm test`        | Vitest (colocated `src/**/*.test.ts`) |
+| `pnpm knip`        | Dead code / dependencies              |
+| `pnpm db:migrate`  | Create + apply migration (dev)        |
+| `pnpm db:push`     | Push schema without migration file    |
+| `pnpm db:studio`   | Open Prisma Studio                    |
+| `pnpm db:seed`     | Seed the database                     |
+| `pnpm db:generate` | Regenerate Prisma client              |

@@ -12,7 +12,8 @@
       "!node_modules",
       "!.next",
       "!src/generated",
-      "!pnpm-lock.yaml"
+      "!pnpm-lock.yaml",
+      "!.claude/skills"
     ]
   },
   "formatter": {
