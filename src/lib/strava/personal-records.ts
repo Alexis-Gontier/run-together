@@ -1,8 +1,6 @@
 import type { PRDistance } from "@/generated/prisma/client"
 import { prisma } from "@/lib/db/prisma"
 
-export { PR_DISTANCE_LABELS, PR_DISTANCE_ORDER } from "./pr-display"
-
 // Meters required and sliding-window size (null = use overall run)
 const PR_CONFIG: Record<
   PRDistance,

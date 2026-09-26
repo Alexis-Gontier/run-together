@@ -34,10 +34,6 @@ export function formatPace(secondsPerKm: number): string {
   return `${min}:${String(sec).padStart(2, "0")}`
 }
 
-export function formatRunDuration(totalSeconds: number): string {
-  return formatDuration(totalSeconds)
-}
-
 export function formatDuration(totalSeconds: number): string {
   const h = Math.floor(totalSeconds / 3600)
   const m = Math.floor((totalSeconds % 3600) / 60)
