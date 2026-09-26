@@ -59,6 +59,7 @@ model User {
   stravaAccount   StravaAccount?
   runs            Run[]
   personalRecords PersonalRecord[]
+  badges          UserBadge[]
 
   @@unique([email])
   @@unique([username])
@@ -180,6 +181,7 @@ model Run {
   // Relations
   splits          Split[]
   personalRecords PersonalRecord[]
+  badges          UserBadge[]
 
   // Index composite — crucial pour feed et leaderboard
   @@index([userId, date])
@@ -258,4 +260,25 @@ model DiscordNotification {
 
   @@index([createdAt])
   @@map("discord_notification")
+}
+
+// =====================================================
+// Badges
+// Les définitions vivent dans le code (src/lib/badges/catalog.ts) : une ligne = un badge
+// débloqué par un utilisateur, identifié par sa clé.
+// =====================================================
+
+model UserBadge {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badgeKey   String
+  unlockedAt DateTime @default(now())
+  // Course qui a déclenché le badge (null si elle a été supprimée depuis)
+  runId      String?
+  run        Run?     @relation(fields: [runId], references: [id], onDelete: SetNull)
+
+  @@unique([userId, badgeKey])
+  @@index([userId])
+  @@map("user_badge")
 }

@@ -2,6 +2,7 @@
 
 import { z } from "zod"
 import { RunSource } from "@/generated/prisma/client"
+import { evaluateBadges } from "@/lib/badges/evaluate"
 import { prisma } from "@/lib/db/prisma"
 import { computePace } from "@/lib/runs/pace"
 import { recalculatePersonalRecords } from "@/lib/runs/personal-records"
@@ -71,8 +72,9 @@ export const updateRunAction = authActionClient
 
     try {
       await recalculatePersonalRecords(user.id)
+      await evaluateBadges(user.id)
     } catch (err) {
-      console.error("[personal-records] recalculate failed after update", err)
+      console.error("[records/badges] recalculate failed after update", err)
     }
     return { runId: id }
   })

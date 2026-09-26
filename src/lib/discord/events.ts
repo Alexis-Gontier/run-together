@@ -1,6 +1,7 @@
 import { env } from "@/env"
 import { prisma } from "@/lib/db/prisma"
 import type { NewPR } from "@/lib/runs/personal-records"
+import { buildBadgeUnlockedMessage } from "./embeds/badge-unlocked"
 import { buildRunCreatedMessage } from "./embeds/run-created"
 import { buildMemberJoinedMessage, buildTestMessage } from "./embeds/simple"
 import { notify } from "./notify"
@@ -62,4 +63,26 @@ export function sendTestNotification(adminName: string) {
     dedupeKey: `test:${Date.now()}`,
     message: buildTestMessage(adminName),
   })
+}
+
+/** Badges débloqués par une course : un seul message, dédoublonné par course. */
+export async function notifyBadgesUnlocked(
+  userId: string,
+  runId: string,
+  badges: { emoji: string; name: string; description: string }[],
+) {
+  if (badges.length === 0) return
+  try {
+    const user = await prisma.user.findUniqueOrThrow({
+      where: { id: userId },
+      select: { name: true, username: true },
+    })
+    await notify({
+      type: "badge.unlocked",
+      dedupeKey: `badge.unlocked:${runId}`,
+      message: buildBadgeUnlockedMessage(user, badges, env.NEXT_PUBLIC_APP_URL),
+    })
+  } catch (err) {
+    console.error("[discord] badge.unlocked failed", runId, err)
+  }
 }

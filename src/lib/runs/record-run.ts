@@ -1,6 +1,7 @@
 import type { Run, RunSource } from "@/generated/prisma/client"
+import { evaluateBadges } from "@/lib/badges/evaluate"
 import { prisma } from "@/lib/db/prisma"
-import { notifyRunCreated } from "@/lib/discord/events"
+import { notifyBadgesUnlocked, notifyRunCreated } from "@/lib/discord/events"
 import { computePace } from "./pace"
 import {
   type NewPR,
@@ -90,6 +91,14 @@ export async function recordRun(
 
   if (options.notify) await notifyRunCreated(run.id, newPRs)
 
+  // Après les records : deux badges dépendent du nombre de records détenus.
+  try {
+    const badges = await evaluateBadges(userId, run.id)
+    if (options.notify) await notifyBadgesUnlocked(userId, run.id, badges)
+  } catch (err) {
+    console.error("[badges] evaluate failed", run.id, err)
+  }
+
   return { run, newPRs }
 }
 
@@ -100,6 +109,11 @@ export async function removeRun(userId: string, runId: string): Promise<void> {
     await recalculatePersonalRecords(userId)
   } catch (err) {
     console.error("[personal-records] recalculate failed after delete", err)
+  }
+  try {
+    await evaluateBadges(userId)
+  } catch (err) {
+    console.error("[badges] evaluate failed after delete", err)
   }
 }
 
