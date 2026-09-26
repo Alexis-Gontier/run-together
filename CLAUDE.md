@@ -11,7 +11,7 @@
 - **State**: Zustand (onboarding flow), nuqs (URL query params)
 - **Runs**: source-agnostic pipeline (`recordRun`), personal records, GPX/FIT parsing → @src/lib/runs/CLAUDE.md
 - **Strava integration** (disabled by `STRAVA_ENABLED=false`): OAuth 2 + webhook + auto token refresh → @src/lib/strava/CLAUDE.md
-- **Discord notifications**: new run events (from `recordRun`) → @src/lib/discord/CLAUDE.md
+- **Discord notifications**: rich run embeds, welcome, weekly recap (Vercel Cron), delivery log + admin resend (`/admin/discord`) → @src/lib/discord/CLAUDE.md
 - **Run formatting utils**: pace, distance, duration, dates → @src/lib/utils/CLAUDE.md
 - **Tooling**: Node 24 (`.nvmrc`), pnpm 11, Biome, lefthook, knip, Vitest, React Compiler. Claude Code config in `.claude/` (see `.claude/SKILLS.md`)
 - **Env validation**: `@t3-oss/env-nextjs` — never use `process.env` directly, always go through `src/env.ts`
@@ -25,7 +25,7 @@ src/app/
 ├── (admin)/       # Protected — role === "admin" required
 ├── (auth)/        # Public (login, register)
 ├── (onboarding)/  # Post-signup onboarding flow
-└── api/           # auth/[...all], strava/* (404 unless STRAVA_ENABLED), og/run/[runId]
+└── api/           # auth/[...all], strava/* (404 unless STRAVA_ENABLED), og/run/[runId], cron/weekly-recap
 ```
 
 Each route follows:
