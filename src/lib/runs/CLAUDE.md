@@ -36,8 +36,7 @@ tel quel).
 
 - Pause : segment < 0,5 m/s, ou > 30 s pour < 10 m. Exclue du temps **et** de la distance.
 - D+ : hystérésis de 3 m.
-- Splits interpolés au kilomètre ; dernier split gardé s'il fait ≥ 50 m. `Split.elevation` reste
-  `null` pour les fichiers.
+- Splits interpolés au kilomètre (durée, FC, dénivelé net) ; dernier split gardé s'il fait ≥ 50 m.
 - Distance cumulée de l'appareil (FIT `distance`) préférée au GPS quand elle existe.
 - `summaryPolyline` = tracé sous-échantillonné à ≤ 200 points (miniatures).
 - Les fichiers ne sont jamais stockés. Limite 15 Mo (`serverActions.bodySizeLimit` = 16 Mo).

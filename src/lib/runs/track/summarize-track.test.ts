@@ -54,6 +54,12 @@ describe("summarizeTrack", () => {
     expect(s.elevation).toBeLessThanOrEqual(100)
   })
 
+  it("donne le dénivelé net de chaque split", () => {
+    // 1 m de montée par point, 1 km ≈ 33,3 points
+    const s = summarizeTrack(parsed(line(101, { climb: 1 })))
+    expect(s.track.splits[0].elevation).toBeCloseTo(33.3, 0)
+  })
+
   it("encode une polyline et une polyline résumée plus courte", () => {
     const s = summarizeTrack(parsed(line(500)))
     expect(s.track.startLat).toBeCloseTo(45)

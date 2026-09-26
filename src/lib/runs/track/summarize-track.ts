@@ -28,6 +28,9 @@ export function summarizeTrack(parsed: ParsedTrack): TrackSummary {
   let moving = 0
   let gain = 0
   let eleRef = pts.find((p) => p.ele != null)?.ele ?? null
+  // Dernière altitude connue, et altitude au début du split en cours (dénivelé net par split).
+  let lastEle = eleRef
+  let splitStartEle = eleRef
 
   const splits: TrackData["splits"] = []
   let splitStart = 0
@@ -46,15 +49,21 @@ export function summarizeTrack(parsed: ParsedTrack): TrackSummary {
     if (!paused) {
       // Interpoler chaque frontière de kilomètre franchie dans ce segment.
       while (distance + d >= nextKm) {
-        const at = moving + dt * ((nextKm - distance) / d)
+        const frac = (nextKm - distance) / d
+        const at = moving + dt * frac
+        const eleAt =
+          a.ele != null && b.ele != null
+            ? a.ele + (b.ele - a.ele) * frac
+            : lastEle
         splits.push({
           kilometer: splits.length + 1,
           distance: 1000,
           duration: Math.round(at - splitStart),
           heartRate: average(splitHr),
-          elevation: null,
+          elevation: netElevation(splitStartEle, eleAt),
         })
         splitStart = at
+        splitStartEle = eleAt
         splitHr = []
         nextKm += 1000
       }
@@ -62,6 +71,7 @@ export function summarizeTrack(parsed: ParsedTrack): TrackSummary {
       moving += dt
     }
     if (b.hr != null) splitHr.push(b.hr)
+    if (b.ele != null) lastEle = b.ele
 
     if (b.ele != null && eleRef != null) {
       if (b.ele - eleRef >= ELE_HYSTERESIS) {
@@ -80,7 +90,7 @@ export function summarizeTrack(parsed: ParsedTrack): TrackSummary {
       distance: Math.round(rest),
       duration: Math.round(moving - splitStart),
       heartRate: average(splitHr),
-      elevation: null,
+      elevation: netElevation(splitStartEle, lastEle),
     })
   }
 
@@ -122,6 +132,11 @@ function segmentDistance(a: TrackPoint, b: TrackPoint): number {
   if (a.lat != null && a.lng != null && b.lat != null && b.lng != null)
     return haversine(a.lat, a.lng, b.lat, b.lng)
   return 0
+}
+
+function netElevation(from: number | null, to: number | null): number | null {
+  if (from == null || to == null) return null
+  return Math.round((to - from) * 10) / 10
 }
 
 function average(values: number[]): number | null {
