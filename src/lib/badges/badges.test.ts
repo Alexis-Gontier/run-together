@@ -2,9 +2,11 @@ import { describe, expect, it } from "vitest"
 import { BADGES, earnedBadges } from "./catalog"
 import { computeBadgeStats, maxConsecutiveWeeks } from "./stats"
 
-const run = (iso: string, km = 5, elevation = 0) => ({
+// Allure par défaut : 5'00"/km.
+const run = (iso: string, km = 5, elevation = 0, pace = 300) => ({
   date: new Date(iso),
   distance: km * 1000,
+  duration: Math.round(km * pace),
   elevation,
 })
 
@@ -61,5 +63,31 @@ describe("earnedBadges", () => {
   it("des clés uniques dans le catalogue", () => {
     const keys = BADGES.map((b) => b.key)
     expect(new Set(keys).size).toBe(keys.length)
+  })
+})
+
+describe("badges pour rire", () => {
+  it("six seven, π, nuit blanche, Noël, dimanche, double dose, fusée, escargot", () => {
+    const s = computeBadgeStats(
+      [
+        run("2026-09-20T08:00:00Z", 6.7), // dimanche, 6,7 km
+        run("2026-09-21T08:00:00Z", 5, 0, 367), // allure 6'07"
+        run("2026-09-22T08:00:00Z", 3.14),
+        run("2026-09-22T17:00:00Z", 5, 0, 235), // 2e course du jour, fusée
+        run("2026-09-23T00:30:00Z"), // 02:30 à Paris
+        run("2026-12-25T10:00:00Z", 4, 0, 500), // Noël, escargot
+      ],
+      0,
+    )
+    expect(s).toMatchObject({
+      sixSevenRuns: 2,
+      piRuns: 1,
+      nightRuns: 1,
+      christmasRuns: 1,
+      sundayRuns: 1,
+      doubleDays: 1,
+      fastRuns: 1,
+      slowRuns: 1,
+    })
   })
 })

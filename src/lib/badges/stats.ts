@@ -1,4 +1,9 @@
-export type RunForBadges = { date: Date; distance: number; elevation: number }
+export type RunForBadges = {
+  date: Date
+  distance: number // mètres
+  duration: number // secondes
+  elevation: number
+}
 
 export type BadgeStats = {
   totalKm: number
@@ -10,6 +15,15 @@ export type BadgeStats = {
   lateRuns: number // départ à 21 h ou après
   newYearRuns: number // courses un 1er janvier
   recordDistances: number // distances sur lesquelles l'utilisateur détient un record
+  // Badges « pour rire »
+  sixSevenRuns: number // 6,7 km (± 50 m) ou allure de 6'07"/km
+  piRuns: number // 3,14 km (± 40 m)
+  nightRuns: number // départ entre minuit et 4 h
+  christmasRuns: number // un 25 décembre
+  sundayRuns: number
+  doubleDays: number // jours avec au moins deux courses
+  fastRuns: number // < 4'00"/km sur 5 km ou plus
+  slowRuns: number // > 8'00"/km
 }
 
 const DAY_MS = 24 * 60 * 60 * 1000
@@ -22,6 +36,7 @@ const parisParts = new Intl.DateTimeFormat("en-GB", {
   day: "2-digit",
   hour: "2-digit",
   hourCycle: "h23",
+  weekday: "short",
 })
 
 function paris(date: Date) {
@@ -33,6 +48,7 @@ function paris(date: Date) {
     month: Number(p.month),
     day: Number(p.day),
     hour: Number(p.hour),
+    weekday: p.weekday,
   }
 }
 
@@ -63,11 +79,30 @@ export function computeBadgeStats(
   let early = 0
   let late = 0
   let newYear = 0
+  let sixSeven = 0
+  let pi = 0
+  let night = 0
+  let christmas = 0
+  let sunday = 0
+  let fast = 0
+  let slow = 0
+  const perDay = new Map<string, number>()
   for (const r of runs) {
     const t = paris(r.date)
+    const pace =
+      r.distance > 0 ? Math.round((r.duration / r.distance) * 1000) : 0
     if (t.hour < 7) early++
     if (t.hour >= 21) late++
+    if (t.hour < 4) night++
     if (t.month === 1 && t.day === 1) newYear++
+    if (t.month === 12 && t.day === 25) christmas++
+    if (t.weekday === "Sun") sunday++
+    if (Math.abs(r.distance - 6700) <= 50 || pace === 367) sixSeven++
+    if (Math.abs(r.distance - 3140) <= 40) pi++
+    if (r.distance >= 5000 && pace > 0 && pace < 240) fast++
+    if (pace > 480) slow++
+    const day = `${t.year}-${t.month}-${t.day}`
+    perDay.set(day, (perDay.get(day) ?? 0) + 1)
   }
   return {
     totalKm: runs.reduce((s, r) => s + r.distance, 0) / 1000,
@@ -79,5 +114,13 @@ export function computeBadgeStats(
     lateRuns: late,
     newYearRuns: newYear,
     recordDistances,
+    sixSevenRuns: sixSeven,
+    piRuns: pi,
+    nightRuns: night,
+    christmasRuns: christmas,
+    sundayRuns: sunday,
+    doubleDays: [...perDay.values()].filter((n) => n >= 2).length,
+    fastRuns: fast,
+    slowRuns: slow,
   }
 }

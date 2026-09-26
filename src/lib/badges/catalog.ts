@@ -8,6 +8,7 @@ export type BadgeCategory =
   | "streak"
   | "moments"
   | "records"
+  | "fun"
 
 export type BadgeIcon =
   | "route"
@@ -20,6 +21,19 @@ export type BadgeIcon =
   | "party"
   | "trophy"
   | "crown"
+  | "landmark"
+  | "mountain-snow"
+  | "car"
+  | "map"
+  | "hand"
+  | "pi"
+  | "moon-star"
+  | "gift"
+  | "church"
+  | "snail"
+  | "rocket"
+  | "repeat"
+  | "sparkles"
 
 export type BadgeDef = {
   key: string
@@ -41,6 +55,7 @@ export const BADGE_CATEGORIES: { key: BadgeCategory; label: string }[] = [
   { key: "streak", label: "Régularité" },
   { key: "moments", label: "Moments" },
   { key: "records", label: "Records" },
+  { key: "fun", label: "Pour rire" },
 ]
 
 // Même tolérance GPS que les records perso : un 4,9 km compte pour un 5 km.
@@ -183,6 +198,175 @@ export const BADGES: BadgeDef[] = [
     target: 4,
     unit: "distances",
     value: (s) => s.recordDistances,
+  },
+
+  // ── Repères concrets ──────────────────────────────────────────────────────
+  {
+    key: "eiffel-tower",
+    name: "Tour Eiffel",
+    description: "Cumuler 330 m de D+, la hauteur de la tour.",
+    category: "elevation",
+    icon: "landmark",
+    emoji: "🗼",
+    target: 330,
+    unit: "m",
+    value: (s) => s.totalElevation,
+  },
+  {
+    key: "mont-blanc",
+    name: "Mont Blanc",
+    description: "Cumuler 4 806 m de D+ : le toit des Alpes.",
+    category: "elevation",
+    icon: "mountain-snow",
+    emoji: "🏔️",
+    target: 4806,
+    unit: "m",
+    value: (s) => s.totalElevation,
+  },
+  {
+    key: "everest",
+    name: "Everest",
+    description: "Cumuler 8 849 m de D+ : le toit du monde.",
+    category: "elevation",
+    icon: "mountain-snow",
+    emoji: "🧗",
+    target: 8849,
+    unit: "m",
+    value: (s) => s.totalElevation,
+  },
+  {
+    key: "peripherique",
+    name: "Tour du périph'",
+    description: "Cumuler 35 km, un tour du boulevard périphérique parisien.",
+    category: "distance",
+    icon: "car",
+    emoji: "🚗",
+    target: 35,
+    unit: "km",
+    value: (s) => s.totalKm,
+  },
+  {
+    key: "paris-lyon",
+    name: "Paris–Lyon",
+    description: "Cumuler 465 km, la distance entre les deux villes.",
+    category: "distance",
+    icon: "map",
+    emoji: "🗺️",
+    target: 465,
+    unit: "km",
+    value: (s) => s.totalKm,
+  },
+  {
+    key: "paris-marseille",
+    name: "Paris–Marseille",
+    description: "Cumuler 775 km : on arrive à la mer.",
+    category: "distance",
+    icon: "map",
+    emoji: "🌊",
+    target: 775,
+    unit: "km",
+    value: (s) => s.totalKm,
+  },
+  // ── Pour rire ─────────────────────────────────────────────────────────────
+  {
+    key: "six-seven",
+    name: "Six Seven",
+    description: "Courir 6,7 km pile, ou tenir 6'07\" au kilomètre. 🤷",
+    category: "fun",
+    icon: "hand",
+    emoji: "🤷",
+    target: 1,
+    unit: "fois",
+    value: (s) => s.sixSevenRuns,
+  },
+  {
+    key: "pi",
+    name: "π",
+    description: "Courir 3,14 km. Ni plus, ni moins.",
+    category: "fun",
+    icon: "pi",
+    emoji: "🥧",
+    target: 1,
+    unit: "fois",
+    value: (s) => s.piRuns,
+  },
+  {
+    key: "answer-42",
+    name: "La réponse",
+    description: "Enregistrer 42 courses. La réponse à la grande question.",
+    category: "fun",
+    icon: "sparkles",
+    emoji: "🌌",
+    target: 42,
+    unit: "courses",
+    value: (s) => s.totalRuns,
+  },
+  {
+    key: "night-shift",
+    name: "Nuit blanche",
+    description: "Partir courir entre minuit et 4 h.",
+    category: "fun",
+    icon: "moon-star",
+    emoji: "🦉",
+    target: 1,
+    unit: "fois",
+    value: (s) => s.nightRuns,
+  },
+  {
+    key: "christmas",
+    name: "Joyeux Noël",
+    description: "Courir un 25 décembre, avant ou après la bûche.",
+    category: "fun",
+    icon: "gift",
+    emoji: "🎄",
+    target: 1,
+    unit: "fois",
+    value: (s) => s.christmasRuns,
+  },
+  {
+    key: "sunday-mass",
+    name: "Messe du dimanche",
+    description: "Courir 10 dimanches.",
+    category: "fun",
+    icon: "church",
+    emoji: "⛪",
+    target: 10,
+    unit: "dimanches",
+    value: (s) => s.sundayRuns,
+  },
+  {
+    key: "double-dose",
+    name: "Double dose",
+    description: "Courir deux fois le même jour.",
+    category: "fun",
+    icon: "repeat",
+    emoji: "🔁",
+    target: 1,
+    unit: "fois",
+    value: (s) => s.doubleDays,
+  },
+  {
+    key: "rocket",
+    name: "Fusée",
+    description: "Passer sous les 4'00\" au kilomètre sur 5 km ou plus.",
+    category: "fun",
+    icon: "rocket",
+    emoji: "🚀",
+    target: 1,
+    unit: "fois",
+    value: (s) => s.fastRuns,
+  },
+  {
+    key: "snail",
+    name: "Escargot",
+    description:
+      "Prendre son temps : plus de 8'00\" au kilomètre. Ça compte aussi.",
+    category: "fun",
+    icon: "snail",
+    emoji: "🐌",
+    target: 1,
+    unit: "fois",
+    value: (s) => s.slowRuns,
   },
 ]
 

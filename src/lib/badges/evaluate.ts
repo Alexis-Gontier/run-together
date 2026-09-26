@@ -12,7 +12,7 @@ async function loadStats(userId: string): Promise<BadgeStats> {
   const [runs, records] = await Promise.all([
     prisma.run.findMany({
       where: { userId },
-      select: { date: true, distance: true, elevation: true },
+      select: { date: true, distance: true, duration: true, elevation: true },
     }),
     prisma.personalRecord.count({ where: { userId } }),
   ])

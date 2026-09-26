@@ -1,13 +1,26 @@
 import {
   CalendarCheck,
+  Car,
+  Church,
   Crown,
   Flag,
   Footprints,
+  Gift,
+  Hand,
+  Landmark,
   type LucideIcon,
+  Map as MapIcon,
   Moon,
+  MoonStar,
   Mountain,
+  MountainSnow,
   PartyPopper,
+  Pi,
+  Repeat,
+  Rocket,
   Route,
+  Snail,
+  Sparkles,
   Sunrise,
   Trophy,
 } from "lucide-react"
@@ -25,6 +38,19 @@ const ICONS: Record<BadgeIcon, LucideIcon> = {
   party: PartyPopper,
   trophy: Trophy,
   crown: Crown,
+  landmark: Landmark,
+  "mountain-snow": MountainSnow,
+  car: Car,
+  map: MapIcon,
+  hand: Hand,
+  pi: Pi,
+  "moon-star": MoonStar,
+  gift: Gift,
+  church: Church,
+  snail: Snail,
+  rocket: Rocket,
+  repeat: Repeat,
+  sparkles: Sparkles,
 }
 
 // Une teinte par catégorie, pour reconnaître la famille d'un badge d'un coup d'œil.
@@ -36,6 +62,7 @@ const TONES: Record<BadgeCategory, string> = {
   streak: "bg-teal-500/15 text-teal-500 ring-teal-500/40",
   moments: "bg-pink-500/15 text-pink-500 ring-pink-500/40",
   records: "bg-amber-500/15 text-amber-500 ring-amber-500/40",
+  fun: "bg-fuchsia-500/15 text-fuchsia-500 ring-fuchsia-500/40",
 }
 
 /** Médaille ronde d'un badge ; grisée tant qu'il n'est pas débloqué. */
