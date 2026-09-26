@@ -22,9 +22,12 @@ export const ROUTE_LABELS: Record<string, string> = {
   [ROUTES.PROGRESS]: "Progression",
   [ROUTES.LEADERBOARD]: "Classement",
   [ROUTES.BADGES]: "Badges",
+  [ROUTES.COMPARE]: "Comparer",
   [ROUTES.SETTINGS]: "Paramètres",
 }
 
+export const compareRoute = (username: string) =>
+  `${ROUTES.COMPARE}?with=${encodeURIComponent(username)}`
 export const runRoute = (id: string) => `${ROUTES.RUNS}/${id}`
 export const editRunRoute = (id: string) => `${ROUTES.RUNS}/${id}/edit`
 export const profileRoute = (username: string) => `/profile/${username}`

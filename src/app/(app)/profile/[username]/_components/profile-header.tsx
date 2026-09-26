@@ -1,4 +1,4 @@
-import { Settings } from "lucide-react"
+import { Settings, Swords } from "lucide-react"
 import Link from "next/link"
 import {
   Avatar,
@@ -7,7 +7,7 @@ import {
 } from "@/components/shadcn-ui/avatar"
 import { Button } from "@/components/shadcn-ui/button"
 import { Skeleton } from "@/components/shadcn-ui/skeleton"
-import { ROUTES } from "@/lib/constants/routes"
+import { compareRoute, ROUTES } from "@/lib/constants/routes"
 import { getInitials } from "@/lib/utils/get-initials"
 import { formatRunDistance } from "@/lib/utils/run"
 
@@ -45,6 +45,19 @@ export function ProfileHeader({
             {getInitials(name)}
           </AvatarFallback>
         </Avatar>
+        {!isOwnProfile && (
+          <Button
+            variant="outline"
+            size="sm"
+            asChild
+            className="cursor-pointer"
+          >
+            <Link href={compareRoute(username)}>
+              <Swords />
+              Me comparer
+            </Link>
+          </Button>
+        )}
         {isOwnProfile && (
           <Button
             variant="outline"

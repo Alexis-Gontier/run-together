@@ -1,6 +1,15 @@
 "use client"
 
-import { ChartLine, Home, Medal, Plus, Route, Trophy, User } from "lucide-react"
+import {
+  ChartLine,
+  Home,
+  Medal,
+  Plus,
+  Route,
+  Swords,
+  Trophy,
+  User,
+} from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
@@ -43,6 +52,13 @@ function navItems(username?: string | null): NavItem[] {
       label: ROUTE_LABELS[ROUTES.BADGES],
       Icon: Medal,
       href: ROUTES.BADGES,
+      newUntil: PROGRESS_NEW_UNTIL,
+      desktopOnly: true,
+    },
+    {
+      label: ROUTE_LABELS[ROUTES.COMPARE],
+      Icon: Swords,
+      href: ROUTES.COMPARE,
       newUntil: PROGRESS_NEW_UNTIL,
       desktopOnly: true,
     },

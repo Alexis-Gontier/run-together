@@ -16,11 +16,11 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/shadcn-ui/empty"
+import { PeriodToggle } from "@/components/ui/period-toggle"
 import { StatCard } from "@/components/ui/stat-card"
 import { ROUTES } from "@/lib/constants/routes"
 import { getProgressAction } from "./_actions/get-progress-action"
 import { ActivityHeatmap } from "./_components/activity-heatmap"
-import { PeriodToggle } from "./_components/period-toggle"
 import {
   PaceChart,
   WeeklyElevationChart,
@@ -34,6 +34,12 @@ type Props = {
 }
 
 const PERIODS: ProgressPeriod[] = ["3m", "6m", "1y", "all"]
+const PERIOD_OPTIONS: { value: ProgressPeriod; label: string }[] = [
+  { value: "3m", label: "3 mois" },
+  { value: "6m", label: "6 mois" },
+  { value: "1y", label: "1 an" },
+  { value: "all", label: "Tout" },
+]
 // Semaines affichées dans le calendrier d'activité selon la période.
 const HEATMAP_WEEKS: Record<ProgressPeriod, number> = {
   "3m": 13,
@@ -55,7 +61,7 @@ export default async function ProgressPage({ searchParams }: Props) {
 
   return (
     <div className="space-y-4 p-4">
-      <PeriodToggle value={period} />
+      <PeriodToggle value={period} options={PERIOD_OPTIONS} />
 
       {!hasRuns ? (
         <Empty className="border">
