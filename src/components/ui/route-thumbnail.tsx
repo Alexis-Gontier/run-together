@@ -54,6 +54,8 @@ export function RouteThumbnail({
           )),
         ),
       )}
+      {/* Teinte bleutée sur le gris Esri, comme l'image Discord (`MAP_TINT`). */}
+      <div className="absolute inset-0 bg-sky-500/10 dark:bg-[rgba(16,36,84,0.5)]" />
       <svg
         viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
         className="absolute inset-0 size-full"
