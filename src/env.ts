@@ -5,7 +5,8 @@ export const env = createEnv({
   server: {
     NODE_ENV: z.enum(["development", "test", "production"]),
     DATABASE_URL: z.url(),
-    BETTER_AUTH_SECRET: z.string(),
+    // Vide, better-auth retombe sur un secret public : sessions forgeables.
+    BETTER_AUTH_SECRET: z.string().min(32),
     STRAVA_CLIENT_ID: z.string(),
     STRAVA_CLIENT_SECRET: z.string(),
     STRAVA_WEBHOOK_VERIFY_TOKEN: z.string(),

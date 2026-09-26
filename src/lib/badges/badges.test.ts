@@ -118,7 +118,7 @@ describe("volume, métronome, pile poil, badges collectifs", () => {
         run("2026-09-14T08:17:00Z", 10), // semaine du 14 : 10 + 8 = 18 km
         run("2026-09-16T08:17:00Z", 8),
         run("2026-09-22T08:17:00Z", 5), // même allure que les deux autres
-        run("2026-09-13T11:00:00Z", 4.004), // dimanche 13 à 13:00 pile, pile poil
+        { ...run("2026-09-13T11:00:00Z", 4.004), hasTrack: true }, // 13:00 pile, pile poil
       ],
       { ...EMPTY_CONTEXT, groupKm: 12000, groupElevation: 1000 },
     )

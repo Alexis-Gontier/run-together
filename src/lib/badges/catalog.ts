@@ -475,7 +475,8 @@ export const BADGES: BadgeDef[] = [
   {
     key: "on-the-hour",
     name: "Heure pile",
-    description: "Partir à l'heure pile : 7:00, 18:00…",
+    description:
+      "Partir à l'heure pile (7:00, 18:00…), montre à l'appui : course avec tracé GPS.",
     category: "fun",
     icon: "clock",
     emoji: "🕐",

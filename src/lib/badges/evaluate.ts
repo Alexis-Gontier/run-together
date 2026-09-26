@@ -12,7 +12,13 @@ async function loadStats(userId: string): Promise<BadgeStats> {
   const [runs, recordsByRun, group] = await Promise.all([
     prisma.run.findMany({
       where: { userId },
-      select: { date: true, distance: true, duration: true, elevation: true },
+      select: {
+        date: true,
+        distance: true,
+        duration: true,
+        elevation: true,
+        summaryPolyline: true,
+      },
     }),
     prisma.personalRecord.groupBy({
       by: ["runId"],
@@ -21,7 +27,11 @@ async function loadStats(userId: string): Promise<BadgeStats> {
     }),
     prisma.run.aggregate({ _sum: { distance: true, elevation: true } }),
   ])
-  return computeBadgeStats(runs, {
+  const withTrack = runs.map(({ summaryPolyline, ...r }) => ({
+    ...r,
+    hasTrack: summaryPolyline !== null,
+  }))
+  return computeBadgeStats(withTrack, {
     recordDistances: recordsByRun.reduce((s, r) => s + r._count, 0),
     maxRecordsOnOneRun: Math.max(
       0,

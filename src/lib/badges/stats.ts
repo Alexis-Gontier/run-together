@@ -3,6 +3,8 @@ export type RunForBadges = {
   distance: number // mètres
   duration: number // secondes
   elevation: number
+  // Tracé GPS présent : l'heure de départ vient de la montre, pas d'une saisie manuelle.
+  hasTrack?: boolean
 }
 
 /** Données qui ne se déduisent pas des seules courses de l'utilisateur. */
@@ -37,7 +39,7 @@ export type BadgeStats = BadgeContext & {
   doubleDays: number // jours avec au moins deux courses
   fastRuns: number // < 4'00"/km sur 5 km ou plus
   slowRuns: number // > 8'00"/km
-  onTheHourRuns: number // départ à XX:00 pile
+  onTheHourRuns: number // départ à XX:00 pile, courses avec tracé GPS seulement
   roundKmRuns: number // distance au kilomètre rond (± 10 m), 3 km ou plus
   palindromeRuns: number // chrono qui se lit dans les deux sens (4 chiffres ou plus)
   samePaceRuns: number // courses de 3 km ou plus partageant leur allure avec une autre
@@ -145,7 +147,7 @@ export function computeBadgeStats(
     if (t.hour < 7) c.early++
     if (t.hour >= 21) c.late++
     if (t.hour < 4) c.night++
-    if (t.minute === 0) c.onTheHour++
+    if (t.minute === 0 && r.hasTrack) c.onTheHour++
     if (t.month === 1 && t.day === 1) c.newYear++
     if (t.month === 12 && t.day === 25) c.christmas++
     if (t.month === 4 && t.day === 1) c.aprilFool++
