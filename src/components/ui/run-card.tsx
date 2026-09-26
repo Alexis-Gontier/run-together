@@ -13,7 +13,7 @@ import { MapboxPolyline } from "@/components/ui/mapbox-polyline"
 import type { Run, Split, User } from "@/generated/prisma/client"
 import type { PRDistance } from "@/generated/prisma/enums"
 import { profileRoute } from "@/lib/constants/routes"
-import { PR_DISTANCE_LABELS } from "@/lib/strava/pr-display"
+import { PR_DISTANCE_LABELS } from "@/lib/runs/pr-display"
 import { cn } from "@/lib/utils/cn"
 import { getInitials } from "@/lib/utils/get-initials"
 import {

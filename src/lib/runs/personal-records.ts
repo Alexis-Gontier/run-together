@@ -13,22 +13,30 @@ const PR_CONFIG: Record<
   MARATHON: { meters: 42195, splitWindow: null },
 }
 
-type RunForPR = { id: string; distance: number; duration: number; pace: number }
-type SplitForPR = {
+export type RunForPR = {
+  id: string
+  distance: number
+  duration: number
+  pace: number
+}
+export type SplitForPR = {
   kilometer: number
   distance: number
   duration: number
   pace: number
 }
 
-interface PRCandidate {
+export interface PRCandidate {
   distance: PRDistance
   runId: string
   duration: number
   pace: number
 }
 
-function extractCandidates(run: RunForPR, splits: SplitForPR[]): PRCandidate[] {
+export function extractCandidates(
+  run: RunForPR,
+  splits: SplitForPR[],
+): PRCandidate[] {
   const results: PRCandidate[] = []
   const sorted = [...splits].sort((a, b) => a.kilometer - b.kilometer)
 
@@ -37,6 +45,22 @@ function extractCandidates(run: RunForPR, splits: SplitForPR[]): PRCandidate[] {
     (typeof PR_CONFIG)[PRDistance],
   ][]) {
     if (config.splitWindow !== null) {
+      // Pas de splits (saisie manuelle, fichier sans GPS) : la course entière ne compte que si
+      // sa distance colle à la cible — un 10,3 km n'est pas un temps sur 10 km.
+      if (sorted.length === 0) {
+        if (
+          run.distance >= config.meters * 0.97 &&
+          run.distance <= config.meters * 1.05
+        ) {
+          results.push({
+            distance: key,
+            runId: run.id,
+            duration: run.duration,
+            pace: run.pace,
+          })
+        }
+        continue
+      }
       const w = config.splitWindow
       if (sorted.length < w) continue
 

@@ -10,7 +10,7 @@ import {
 } from "@/components/shadcn-ui/empty"
 import type { PRDistance } from "@/generated/prisma/enums"
 import { runRoute } from "@/lib/constants/routes"
-import { PR_DISTANCE_LABELS, PR_DISTANCE_ORDER } from "@/lib/strava/pr-display"
+import { PR_DISTANCE_LABELS, PR_DISTANCE_ORDER } from "@/lib/runs/pr-display"
 import {
   formatRunDateShort,
   formatRunDurationDisplay,

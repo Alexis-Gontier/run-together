@@ -2,8 +2,8 @@ import { type NextRequest, NextResponse } from "next/server"
 
 import { env } from "@/env"
 import { prisma } from "@/lib/db/prisma"
+import { recalculatePersonalRecords } from "@/lib/runs/personal-records"
 import { importStravaActivity } from "@/lib/strava/import-activity"
-import { recalculatePersonalRecords } from "@/lib/strava/personal-records"
 
 // ---------------------------------------------------------------------------
 // GET — Vérification d'abonnement (hub challenge)

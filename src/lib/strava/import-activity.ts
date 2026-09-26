@@ -1,11 +1,11 @@
 import { prisma } from "@/lib/db/prisma"
 import { sendRunNotification } from "@/lib/discord"
+import { updatePersonalRecords } from "@/lib/runs/personal-records"
 import { stravaApiFetch } from "@/lib/strava/client"
 import { STRAVA_RUN_TYPES, stravaEndpoints } from "@/lib/strava/constants"
 import { stravaActivityDetailSchema } from "@/lib/strava/schemas"
 import { getValidAccessToken } from "@/lib/strava/token"
 import { createRunFromActivity } from "./create-run-from-activity"
-import { updatePersonalRecords } from "./personal-records"
 
 interface ImportOptions {
   // When true, non-run activities are silently skipped instead of throwing
