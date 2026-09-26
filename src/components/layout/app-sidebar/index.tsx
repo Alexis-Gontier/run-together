@@ -11,7 +11,7 @@ export async function AppSidebar() {
     <aside className="sticky top-0 hidden h-screen w-16 shrink-0 flex-col justify-between p-2 md:flex lg:w-64 lg:p-4">
       <div className="space-y-4">
         <AppLogo />
-        <AppSidebarNav />
+        <AppSidebarNav username={user?.username} />
       </div>
       <div className="space-y-4">
         <UserNav
@@ -19,6 +19,7 @@ export async function AppSidebar() {
           username={user?.username}
           email={user?.email}
           image={user?.image}
+          isAdmin={user?.role === "admin"}
         />
       </div>
     </aside>

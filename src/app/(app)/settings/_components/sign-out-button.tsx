@@ -13,7 +13,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/shadcn-ui/alert-dialog"
 import { Button } from "@/components/shadcn-ui/button"
-import { signOutAction } from "../_actions/sign-out-action"
+import { signOutAction } from "@/lib/actions/auth/sign-out-action"
 
 export function SignOutButton() {
   const [isPending, startTransition] = useTransition()

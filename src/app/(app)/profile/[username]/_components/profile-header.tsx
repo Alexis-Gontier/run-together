@@ -1,3 +1,4 @@
+import { Settings } from "lucide-react"
 import Link from "next/link"
 import {
   Avatar,
@@ -51,7 +52,10 @@ export function ProfileHeader({
             asChild
             className="cursor-pointer"
           >
-            <Link href={ROUTES.SETTINGS}>Modifier le profil</Link>
+            <Link href={ROUTES.SETTINGS}>
+              <Settings />
+              Paramètres
+            </Link>
           </Button>
         )}
       </div>

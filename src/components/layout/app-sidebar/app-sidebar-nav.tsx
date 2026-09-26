@@ -1,6 +1,6 @@
 "use client"
 
-import { Home, Plus, Route, Settings, Trophy, User } from "lucide-react"
+import { ChartLine, Home, Plus, Route, Trophy, User } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
@@ -15,43 +15,40 @@ type NavItem = {
   label: string
   Icon: React.ComponentType<{ size?: number }>
   href: string
-  mobile: boolean
   newUntil?: Date
 }
 
-const NAV_ITEMS: NavItem[] = [
-  {
-    label: ROUTE_LABELS[ROUTES.HOME],
-    Icon: Home,
-    href: ROUTES.HOME,
-    mobile: true,
-  },
-  {
-    label: ROUTE_LABELS[ROUTES.RUNS],
-    Icon: Route,
-    href: ROUTES.RUNS,
-    mobile: true,
-  },
-  {
-    label: ROUTE_LABELS[ROUTES.LEADERBOARD],
-    Icon: Trophy,
-    href: ROUTES.LEADERBOARD,
-    mobile: true,
-  },
-  {
-    label: ROUTE_LABELS[ROUTES.SETTINGS],
-    Icon: Settings,
-    href: ROUTES.SETTINGS,
-    mobile: true,
-  },
-]
+// « Progression » est mise en avant jusqu'à fin octobre : la page était invisible jusqu'ici.
+const PROGRESS_NEW_UNTIL = new Date("2026-10-31")
 
-export function AppSidebarNav() {
+/** Entrées de navigation, identiques en desktop et en mobile. Paramètres : menu utilisateur. */
+function navItems(username?: string | null): NavItem[] {
+  const items: NavItem[] = [
+    { label: ROUTE_LABELS[ROUTES.HOME], Icon: Home, href: ROUTES.HOME },
+    { label: ROUTE_LABELS[ROUTES.RUNS], Icon: Route, href: ROUTES.RUNS },
+    {
+      label: ROUTE_LABELS[ROUTES.PROGRESS],
+      Icon: ChartLine,
+      href: ROUTES.PROGRESS,
+      newUntil: PROGRESS_NEW_UNTIL,
+    },
+    {
+      label: ROUTE_LABELS[ROUTES.LEADERBOARD],
+      Icon: Trophy,
+      href: ROUTES.LEADERBOARD,
+    },
+  ]
+  if (username)
+    items.push({ label: "Profil", Icon: User, href: profileRoute(username) })
+  return items
+}
+
+export function AppSidebarNav({ username }: { username?: string | null }) {
   const pathname = usePathname()
 
   return (
     <nav className="w-full space-y-px">
-      {NAV_ITEMS.map(({ label, Icon, href, newUntil }) => {
+      {navItems(username).map(({ label, Icon, href, newUntil }) => {
         const isActive = isNavActive(pathname, href)
         const showNew = isNavItemNew(newUntil)
         return (
@@ -65,7 +62,7 @@ export function AppSidebarNav() {
             )}
             asChild
           >
-            <Link href={href}>
+            <Link href={href} aria-label={label}>
               <Icon size={20} />
               <span className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-between">
                 {label}
@@ -96,7 +93,6 @@ function isRunFormPage(pathname: string) {
 
 export function MobileNav({ username }: { username?: string | null }) {
   const pathname = usePathname()
-  const profileHref = username ? profileRoute(username) : null
 
   return (
     <>
@@ -110,44 +106,30 @@ export function MobileNav({ username }: { username?: string | null }) {
         </Link>
       )}
       <nav className="fixed right-0 bottom-0 left-0 z-50 flex border-border border-t bg-background md:hidden">
-        {NAV_ITEMS.filter((item) => item.mobile).map(
-          ({ Icon, href, newUntil }) => {
-            const isActive = isNavActive(pathname, href)
-            const showNew = isNavItemNew(newUntil)
-            return (
-              <Link
-                key={href}
-                href={href}
-                className={cn(
-                  "flex flex-1 items-center justify-center py-5 transition-colors",
-                  isActive
-                    ? "bg-secondary text-secondary-foreground"
-                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+        {navItems(username).map(({ label, Icon, href, newUntil }) => {
+          const isActive = isNavActive(pathname, href)
+          const showNew = isNavItemNew(newUntil)
+          return (
+            <Link
+              key={href}
+              href={href}
+              aria-label={label}
+              className={cn(
+                "flex flex-1 items-center justify-center py-5 transition-colors",
+                isActive
+                  ? "bg-secondary text-secondary-foreground"
+                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+              )}
+            >
+              <div className="relative">
+                <Icon size={24} />
+                {showNew && (
+                  <span className="absolute -top-1 -right-1 size-2 rounded-full bg-primary" />
                 )}
-              >
-                <div className="relative">
-                  <Icon size={24} />
-                  {showNew && (
-                    <span className="absolute -top-1 -right-1 size-2 rounded-full bg-primary" />
-                  )}
-                </div>
-              </Link>
-            )
-          },
-        )}
-        {profileHref && (
-          <Link
-            href={profileHref}
-            className={cn(
-              "flex flex-1 items-center justify-center py-5 transition-colors",
-              pathname.startsWith("/profile/")
-                ? "bg-secondary text-secondary-foreground"
-                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
-            )}
-          >
-            <User size={24} />
-          </Link>
-        )}
+              </div>
+            </Link>
+          )
+        })}
       </nav>
     </>
   )
