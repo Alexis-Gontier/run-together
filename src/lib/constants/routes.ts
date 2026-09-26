@@ -21,6 +21,7 @@ export const ROUTE_LABELS: Record<string, string> = {
   [ROUTES.RUNS]: "Mes courses",
   [ROUTES.PROGRESS]: "Progression",
   [ROUTES.LEADERBOARD]: "Classement",
+  [ROUTES.BADGES]: "Badges",
   [ROUTES.SETTINGS]: "Paramètres",
 }
 

@@ -8,11 +8,12 @@
 - **Server Actions**: next-safe-action v8 → @src/lib/safe-action/CLAUDE.md
 - **Forms**: React Hook Form + Zod v4 + `standardSchemaResolver` → @src/lib/schemas/CLAUDE.md
 - **UI**: shadcn/ui + Tailwind CSS v4 ; maps via mapcn (MapLibre GL, free CARTO vector basemaps, light/dark) — `src/components/ui/run-map.tsx`, SVG thumbnails in lists (`route-thumbnail.tsx`)
+- **Badges**: catalog in code, `UserBadge` table, evaluated by `recordRun` → @src/lib/badges/CLAUDE.md
 - **Stats**: week summary, highlights, streaks, milestones for the right panels → `src/lib/stats/`
 - **State**: Zustand (onboarding flow), nuqs (URL query params)
 - **Runs**: source-agnostic pipeline (`recordRun`), personal records, GPX/FIT parsing → @src/lib/runs/CLAUDE.md
 - **Strava integration** (disabled by `STRAVA_ENABLED=false`): OAuth 2 + webhook + auto token refresh → @src/lib/strava/CLAUDE.md
-- **Discord notifications**: rich run embeds, welcome, weekly recap (Vercel Cron), delivery log + admin resend (`/admin/discord`) → @src/lib/discord/CLAUDE.md
+- **Discord notifications**: rich run embeds, badges, welcome, weekly recap (Vercel Cron), delivery log + admin resend (`/admin/discord`) → @src/lib/discord/CLAUDE.md
 - **Run formatting utils**: pace, distance, duration, dates → @src/lib/utils/CLAUDE.md
 - **Tooling**: Node 24 (`.nvmrc`), pnpm 11, Biome, lefthook, knip, Vitest, React Compiler. Claude Code config in `.claude/` (see `.claude/SKILLS.md`)
 - **Env validation**: `@t3-oss/env-nextjs` — never use `process.env` directly, always go through `src/env.ts`

@@ -1,6 +1,7 @@
 import { getRequiredAdmin } from "@/lib/auth/auth-session"
 import { prisma } from "@/lib/db/prisma"
 import { CreateUserDialog } from "./_components/create-user-dialog"
+import { RecalculateBadgesButton } from "./_components/recalculate-badges-button"
 import { UsersTable } from "./_components/users-table"
 
 export default async function AdminUsersPage() {
@@ -34,7 +35,10 @@ export default async function AdminUsersPage() {
             {users.length} compte{users.length > 1 ? "s" : ""}
           </p>
         </div>
-        <CreateUserDialog />
+        <div className="flex items-center gap-2">
+          <RecalculateBadgesButton />
+          <CreateUserDialog />
+        </div>
       </div>
       <UsersTable users={users} currentUserId={currentUser.id} />
     </div>

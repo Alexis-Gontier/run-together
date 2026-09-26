@@ -1,6 +1,6 @@
 "use client"
 
-import { ChartLine, Home, Plus, Route, Trophy, User } from "lucide-react"
+import { ChartLine, Home, Medal, Plus, Route, Trophy, User } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
@@ -16,9 +16,11 @@ type NavItem = {
   Icon: React.ComponentType<{ size?: number }>
   href: string
   newUntil?: Date
+  // Absent de la barre mobile (5 entrées max) : accessible depuis le profil.
+  desktopOnly?: boolean
 }
 
-// « Progression » est mise en avant jusqu'à fin octobre : la page était invisible jusqu'ici.
+// « Progression » et « Badges » sont mises en avant jusqu'à fin octobre (nouvelles pages).
 const PROGRESS_NEW_UNTIL = new Date("2026-10-31")
 
 /** Entrées de navigation, identiques en desktop et en mobile. Paramètres : menu utilisateur. */
@@ -36,6 +38,13 @@ function navItems(username?: string | null): NavItem[] {
       label: ROUTE_LABELS[ROUTES.LEADERBOARD],
       Icon: Trophy,
       href: ROUTES.LEADERBOARD,
+    },
+    {
+      label: ROUTE_LABELS[ROUTES.BADGES],
+      Icon: Medal,
+      href: ROUTES.BADGES,
+      newUntil: PROGRESS_NEW_UNTIL,
+      desktopOnly: true,
     },
   ]
   if (username)
@@ -106,30 +115,32 @@ export function MobileNav({ username }: { username?: string | null }) {
         </Link>
       )}
       <nav className="fixed right-0 bottom-0 left-0 z-50 flex border-border border-t bg-background md:hidden">
-        {navItems(username).map(({ label, Icon, href, newUntil }) => {
-          const isActive = isNavActive(pathname, href)
-          const showNew = isNavItemNew(newUntil)
-          return (
-            <Link
-              key={href}
-              href={href}
-              aria-label={label}
-              className={cn(
-                "flex flex-1 items-center justify-center py-5 transition-colors",
-                isActive
-                  ? "bg-secondary text-secondary-foreground"
-                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
-              )}
-            >
-              <div className="relative">
-                <Icon size={24} />
-                {showNew && (
-                  <span className="absolute -top-1 -right-1 size-2 rounded-full bg-primary" />
+        {navItems(username)
+          .filter((item) => !item.desktopOnly)
+          .map(({ label, Icon, href, newUntil }) => {
+            const isActive = isNavActive(pathname, href)
+            const showNew = isNavItemNew(newUntil)
+            return (
+              <Link
+                key={href}
+                href={href}
+                aria-label={label}
+                className={cn(
+                  "flex flex-1 items-center justify-center py-5 transition-colors",
+                  isActive
+                    ? "bg-secondary text-secondary-foreground"
+                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
                 )}
-              </div>
-            </Link>
-          )
-        })}
+              >
+                <div className="relative">
+                  <Icon size={24} />
+                  {showNew && (
+                    <span className="absolute -top-1 -right-1 size-2 rounded-full bg-primary" />
+                  )}
+                </div>
+              </Link>
+            )
+          })}
       </nav>
     </>
   )

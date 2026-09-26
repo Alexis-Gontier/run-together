@@ -13,6 +13,7 @@ export const getProfileAction = actionClient
       prisma.user.findUnique({
         where: { username },
         select: {
+          id: true,
           name: true,
           username: true,
           displayUsername: true,
@@ -41,6 +42,7 @@ export const getProfileAction = actionClient
 
     return {
       user: {
+        id: user.id,
         name: user.name,
         username: user.username,
         displayUsername: user.displayUsername,
