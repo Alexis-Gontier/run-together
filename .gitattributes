@@ -1,0 +1,16 @@
+# Les fins de ligne se normalisent en LF dans le dépôt, quelle que soit la machine.
+# Sans cette règle, git recheckout en CRLF sous Windows et Biome refuse le fichier.
+* text=auto eol=lf
+
+# Les binaires ne se convertissent jamais.
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.webp binary
+*.gif  binary
+*.ico  binary
+*.woff binary
+*.woff2 binary
+*.ttf  binary
+*.pdf  binary
+*.fit  binary

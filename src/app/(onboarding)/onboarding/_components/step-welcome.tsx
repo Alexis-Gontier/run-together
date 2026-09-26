@@ -34,12 +34,12 @@ export function StepWelcome({ onStart }: StepWelcomeProps) {
           <div className="flex size-24 items-center justify-center rounded-3xl bg-primary/10 ring-2 ring-primary/20">
             <Route className="size-12 text-primary" strokeWidth={1.5} />
           </div>
-          <div className="absolute -top-1 -right-1 flex size-6 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+          <div className="absolute -top-1 -right-1 flex size-6 items-center justify-center rounded-full bg-primary font-bold text-[10px] text-primary-foreground">
             ✓
           </div>
         </div>
         <div>
-          <h1 className="text-4xl font-bold tracking-tight">RunTogether</h1>
+          <h1 className="font-bold text-4xl tracking-tight">RunTogether</h1>
           <p className="mt-2 text-base text-muted-foreground">
             Entraîne-toi. Partage. Progresse.
           </p>
@@ -57,7 +57,7 @@ export function StepWelcome({ onStart }: StepWelcomeProps) {
             </div>
             <div>
               <p className="font-medium">{title}</p>
-              <p className="text-sm text-muted-foreground">{description}</p>
+              <p className="text-muted-foreground text-sm">{description}</p>
             </div>
           </div>
         ))}

@@ -2,9 +2,9 @@
 
 import { useRouter } from "next/navigation"
 import { useState } from "react"
+import { Button } from "@/components/shadcn-ui/button"
 import { authClient } from "@/lib/auth/auth-client"
 import { ADMIN_ROUTES } from "@/lib/constants/routes"
-import { Button } from "@/components/shadcn-ui/button"
 
 export function ImpersonationBanner({ username }: { username: string }) {
   const router = useRouter()
@@ -17,7 +17,7 @@ export function ImpersonationBanner({ username }: { username: string }) {
   }
 
   return (
-    <div className="flex items-center justify-between gap-4 border-b border-amber-500/30 bg-amber-500/15 px-4 py-2 text-sm text-amber-700 dark:text-amber-400">
+    <div className="flex items-center justify-between gap-4 border-amber-500/30 border-b bg-amber-500/15 px-4 py-2 text-amber-700 text-sm dark:text-amber-400">
       <span>
         Vous impersonifiez <strong>@{username}</strong>
       </span>

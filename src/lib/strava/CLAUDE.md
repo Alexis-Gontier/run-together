@@ -1,5 +1,8 @@
 # Strava Library
 
+> **Inactive** since 2026-08-19. Everything here is gated by `env.STRAVA_ENABLED` (default
+> `false`): API routes answer 404, settings card and onboarding step are hidden.
+
 ## Files
 
 | File                          | Purpose                                                            |
@@ -8,7 +11,7 @@
 | `schemas.ts`                  | Zod schemas for Strava API responses                               |
 | `client.ts`                   | `stravaOAuthFetch` (oauth base) and `stravaApiFetch` (api/v3 base) |
 | `token.ts`                    | `getValidAccessToken()` — auto-refresh with 60 s grace period      |
-| `create-run-from-activity.ts` | Maps a Strava activity + stream → `Run` + `Split[]` shapes         |
+| `create-run-from-activity.ts` | `stravaActivityToRunInput()` — pure mapper → `RecordRunInput`       |
 | `import-activity.ts`          | `importStravaActivity()` — full import pipeline                    |
 | `types.ts`                    | Additional TypeScript types                                        |
 
@@ -23,9 +26,8 @@
 ## Import pipeline (`importStravaActivity`)
 
 1. Fetch activity detail + GPS stream from Strava API
-2. `createRunFromActivity()` maps it to `Run` + `Split[]`
-3. Upsert via Prisma transaction (idempotent on `stravaId`)
-4. `sendRunNotification()` posts to Discord webhook
+2. Skip if the `stravaId` already exists (unless `replaceExisting`)
+3. `stravaActivityToRunInput()` → `recordRun()` (transaction, personal records, Discord) — see `src/lib/runs/CLAUDE.md`
 
 ## OAuth flow
 

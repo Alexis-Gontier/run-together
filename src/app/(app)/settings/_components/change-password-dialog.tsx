@@ -1,12 +1,11 @@
 "use client"
 
-import { useState } from "react"
-import { useForm, Controller } from "react-hook-form"
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema"
 import { useAction } from "next-safe-action/hooks"
+import { useState } from "react"
+import { Controller, useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { Button } from "@/components/shadcn-ui/button"
-import { LoadingButton } from "@/components/ui/loading-button"
 import {
   Dialog,
   DialogContent,
@@ -17,10 +16,11 @@ import {
   DialogTrigger,
 } from "@/components/shadcn-ui/dialog"
 import { Field, FieldError, FieldLabel } from "@/components/shadcn-ui/field"
+import { LoadingButton } from "@/components/ui/loading-button"
 import { PasswordInput } from "@/components/ui/password-input"
 import {
-  changePasswordSchema,
   type ChangePasswordType,
+  changePasswordSchema,
 } from "@/lib/schemas/auth-schema"
 import { changePasswordAction } from "../_actions/change-password-action"
 

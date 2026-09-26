@@ -2,13 +2,14 @@ import { NextResponse } from "next/server"
 
 import { env } from "@/env"
 import { getUser } from "@/lib/auth/auth-session"
-import { prisma } from "@/lib/db/prisma"
 import { AUTH_ROUTES } from "@/lib/constants/routes"
+import { prisma } from "@/lib/db/prisma"
 import { stravaOAuthFetch } from "@/lib/strava/client"
 import { stravaOAuthPaths } from "@/lib/strava/constants"
 import { getValidAccessToken } from "@/lib/strava/token"
 
 export async function POST() {
+  if (!env.STRAVA_ENABLED) return new NextResponse(null, { status: 404 })
   const user = await getUser()
   if (!user) {
     return NextResponse.redirect(

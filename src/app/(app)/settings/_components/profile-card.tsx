@@ -11,6 +11,7 @@ import {
   CardTitle,
 } from "@/components/shadcn-ui/card"
 import { getInitials } from "@/lib/utils/get-initials"
+import { EditProfileDialog } from "./edit-profile-dialog"
 
 type ProfileCardProps = {
   name: string
@@ -22,8 +23,8 @@ type ProfileCardProps = {
 function ProfileRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center justify-between py-3">
-      <span className="text-sm text-muted-foreground">{label}</span>
-      <span className="text-sm font-medium">{value}</span>
+      <span className="text-muted-foreground text-sm">{label}</span>
+      <span className="font-medium text-sm">{value}</span>
     </div>
   )
 }
@@ -36,9 +37,12 @@ export function ProfileCard({
 }: ProfileCardProps) {
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="text-base">Profil</CardTitle>
-        <CardDescription>Informations de votre compte.</CardDescription>
+      <CardHeader className="flex items-start justify-between gap-4">
+        <div className="space-y-1.5">
+          <CardTitle className="text-base">Profil</CardTitle>
+          <CardDescription>Informations de votre compte.</CardDescription>
+        </div>
+        {username && <EditProfileDialog name={name} username={username} />}
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex items-center gap-4">
@@ -51,7 +55,7 @@ export function ProfileCard({
           <div>
             <p className="font-semibold">{name}</p>
             {username && (
-              <p className="text-sm text-muted-foreground">@{username}</p>
+              <p className="text-muted-foreground text-sm">@{username}</p>
             )}
           </div>
         </div>

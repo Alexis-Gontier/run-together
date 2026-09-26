@@ -1,7 +1,8 @@
-import { prisma } from "@/lib/db/prisma"
 import { getRequiredAdmin } from "@/lib/auth/auth-session"
-import { UsersTable } from "./_components/users-table"
+import { prisma } from "@/lib/db/prisma"
 import { CreateUserDialog } from "./_components/create-user-dialog"
+import { RecalculateBadgesButton } from "./_components/recalculate-badges-button"
+import { UsersTable } from "./_components/users-table"
 
 export default async function AdminUsersPage() {
   const currentUser = await getRequiredAdmin()
@@ -29,12 +30,15 @@ export default async function AdminUsersPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Utilisateurs</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <h1 className="font-bold text-2xl">Utilisateurs</h1>
+          <p className="mt-1 text-muted-foreground text-sm">
             {users.length} compte{users.length > 1 ? "s" : ""}
           </p>
         </div>
-        <CreateUserDialog />
+        <div className="flex items-center gap-2">
+          <RecalculateBadgesButton />
+          <CreateUserDialog />
+        </div>
       </div>
       <UsersTable users={users} currentUserId={currentUser.id} />
     </div>

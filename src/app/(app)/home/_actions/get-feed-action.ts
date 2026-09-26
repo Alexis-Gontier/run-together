@@ -4,12 +4,11 @@ import { prisma } from "@/lib/db/prisma"
 import { authActionClient } from "@/lib/safe-action/auth-action-client"
 import { feedSchema } from "../_schemas/feed-schema"
 
-import { z } from "zod"
-
 export const getFeedAction = authActionClient
   .inputSchema(feedSchema)
-  .action(async ({ parsedInput: { cursor, limit } }) => {
+  .action(async ({ parsedInput: { cursor, limit, scope }, ctx: { user } }) => {
     const runs = await prisma.run.findMany({
+      where: scope === "me" ? { userId: user.id } : undefined,
       take: limit + 1,
       ...(cursor
         ? {

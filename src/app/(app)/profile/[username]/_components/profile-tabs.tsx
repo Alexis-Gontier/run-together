@@ -6,10 +6,10 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/shadcn-ui/tabs"
-import { ProfileRunsList } from "./profile-runs-list"
-import { ProfileRecords } from "./profile-records"
-import type { getProfileRunsAction } from "../_actions/get-profile-runs-action"
 import type { getProfileAction } from "../_actions/get-profile-action"
+import type { getProfileRunsAction } from "../_actions/get-profile-runs-action"
+import { ProfileRecords } from "./profile-records"
+import { ProfileRunsList } from "./profile-runs-list"
 
 type Run = NonNullable<
   Awaited<ReturnType<typeof getProfileRunsAction>>["data"]

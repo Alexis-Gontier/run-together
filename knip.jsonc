@@ -1,0 +1,23 @@
+{
+  "$schema": "./node_modules/knip/schema.json",
+
+  // Points d'entrée hors graphe Next : scripts CLI lancés par `tsx` et hooks Claude Code
+  // (exécutés par l'agent, jamais importés).
+  "entry": ["scripts/*.ts", ".claude/hooks/*.mjs"],
+
+  "ignore": [
+    // Généré par shadcn : exporte volontairement plus que ce qu'on consomme ; élaguer casserait
+    // la prochaine régénération.
+    "src/components/shadcn-ui/**"
+  ],
+
+  // Un schéma Zod exporté mais consommé seulement par son propre fichier (via `z.infer` ou
+  // composition) n'est pas du code mort.
+  "ignoreExportsUsedInFile": true,
+
+  "rules": {
+    // Convention du projet (src/lib/schemas/CLAUDE.md) : chaque schéma exporte son type inféré,
+    // qu'il soit consommé ou non. Knip ne peut pas le savoir.
+    "types": "off"
+  }
+}

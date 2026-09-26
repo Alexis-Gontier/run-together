@@ -14,7 +14,7 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
         <div className="absolute top-6 left-6 lg:top-8 lg:left-8">
           <Link
             href={ROUTES.LANDING}
-            className="text-xl font-bold tracking-tight"
+            className="font-bold text-xl tracking-tight"
           >
             RunTogether
           </Link>
@@ -22,7 +22,7 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
         <div className="relative w-full max-w-md space-y-8 px-6 lg:px-8">
           {children}
         </div>
-        <p className="absolute bottom-4 max-w-md px-6 text-center text-xs text-muted-foreground lg:px-8">
+        <p className="absolute bottom-4 max-w-md px-6 text-center text-muted-foreground text-xs lg:px-8">
           En cliquant sur continuer, vous acceptez nos{" "}
           <Link
             href="/terms"

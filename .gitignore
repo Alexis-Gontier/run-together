@@ -43,3 +43,6 @@ next-env.d.ts
 
 # prisma
 /src/generated/prisma
+
+# Playwright MCP (captures, logs)
+/.playwright-mcp

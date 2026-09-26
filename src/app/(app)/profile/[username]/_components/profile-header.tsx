@@ -1,12 +1,13 @@
+import { Settings, Swords } from "lucide-react"
 import Link from "next/link"
-import { Button } from "@/components/shadcn-ui/button"
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
 } from "@/components/shadcn-ui/avatar"
+import { Button } from "@/components/shadcn-ui/button"
 import { Skeleton } from "@/components/shadcn-ui/skeleton"
-import { ROUTES } from "@/lib/constants/routes"
+import { compareRoute, ROUTES } from "@/lib/constants/routes"
 import { getInitials } from "@/lib/utils/get-initials"
 import { formatRunDistance } from "@/lib/utils/run"
 
@@ -40,10 +41,23 @@ export function ProfileHeader({
       <div className="flex items-end justify-between px-5 pb-3">
         <Avatar className="-mt-15 size-30 border-4 border-background shadow-md">
           <AvatarImage src={image ?? undefined} alt={name} />
-          <AvatarFallback className="text-2xl font-bold">
+          <AvatarFallback className="font-bold text-2xl">
             {getInitials(name)}
           </AvatarFallback>
         </Avatar>
+        {!isOwnProfile && (
+          <Button
+            variant="outline"
+            size="sm"
+            asChild
+            className="cursor-pointer"
+          >
+            <Link href={compareRoute(username)}>
+              <Swords />
+              Me comparer
+            </Link>
+          </Button>
+        )}
         {isOwnProfile && (
           <Button
             variant="outline"
@@ -51,15 +65,18 @@ export function ProfileHeader({
             asChild
             className="cursor-pointer"
           >
-            <Link href={ROUTES.SETTINGS}>Modifier le profil</Link>
+            <Link href={ROUTES.SETTINGS}>
+              <Settings />
+              Paramètres
+            </Link>
           </Button>
         )}
       </div>
 
       {/* Identity */}
       <div className="px-5">
-        <h1 className="text-xl font-black tracking-tight">{name}</h1>
-        <p className="text-sm text-muted-foreground">@{handle}</p>
+        <h1 className="font-black text-xl tracking-tight">{name}</h1>
+        <p className="text-muted-foreground text-sm">@{handle}</p>
 
         {/* Stats */}
         <div className="mt-4 flex gap-5 pb-4 text-sm">

@@ -1,34 +1,67 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(pnpm dev*)",
+      "Bash(pnpm lint*)",
+      "Bash(pnpm format*)",
+      "Bash(pnpm build*)",
+      "Bash(pnpm typecheck*)",
+      "Bash(pnpm test*)",
+      "Bash(pnpm knip*)",
+      "Bash(pnpm install*)",
+      "Bash(pnpm add *)",
+      "Bash(pnpm db:generate*)",
+      "Bash(pnpm db:studio*)",
+      "Bash(pnpm exec biome*)",
+      "Bash(pnpm exec knip*)",
+      "Bash(pnpm exec tsc*)",
+      "Bash(pnpm exec vitest*)",
+      "Bash(pnpm exec lefthook*)",
+      "Bash(pnpm dlx shadcn*)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git show*)",
+      "Bash(git branch*)",
+      "Bash(gh pr view*)",
+      "Bash(gh pr diff*)",
+      "Bash(gh run list*)",
+      "Bash(gh run view*)"
+    ]
+  },
   "hooks": {
-    "PostToolUse": [
+    "PreToolUse": [
       {
-        "matcher": "Edit|Write",
+        "matcher": "Write|Edit",
         "hooks": [
           {
             "type": "command",
-            "command": "python3 -c \"import sys,json; d=json.load(sys.stdin); f=d.get('tool_input',{}).get('file_path',''); exit(0 if f.endswith(('.ts','.tsx')) else 1)\" && pnpm lint 2>&1 | tail -30 || true",
-            "shell": "bash",
-            "timeout": 60,
-            "statusMessage": "Lint en cours..."
+            "command": "node \"${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/conventions-guard.mjs\"",
+            "timeout": 10,
+            "statusMessage": "Conventions"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/biome-format.mjs\"",
+            "timeout": 20,
+            "statusMessage": "Biome"
           }
         ]
       }
     ]
   },
-  "permissions": {
-    "allow": [
-      "Bash(pnpm dev)",
-      "Bash(pnpm build)",
-      "Bash(pnpm lint)",
-      "Bash(pnpm lint --fix)",
-      "Bash(pnpm format)",
-      "Bash(pnpm format:check)",
-      "Bash(pnpm install)",
-      "Bash(pnpm add *)",
-      "Bash(pnpm dlx shadcn@latest add *)",
-      "Bash(git status)",
-      "Bash(git diff*)",
-      "Bash(git log*)"
-    ]
+  "enabledPlugins": {
+    "prisma@claude-plugins-official": true,
+    "context7@claude-plugins-official": true,
+    "playwright@claude-plugins-official": true,
+    "superpowers@claude-plugins-official": true
   }
 }

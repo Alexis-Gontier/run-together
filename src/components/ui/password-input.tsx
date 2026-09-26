@@ -1,11 +1,10 @@
 "use client"
 
-import * as React from "react"
 import { EyeIcon, EyeOffIcon } from "lucide-react"
-
-import { cn } from "@/lib/utils/cn"
-import { usePasswordVisibility } from "@/hooks/use-password-visibility"
+import type * as React from "react"
 import { Input } from "@/components/shadcn-ui/input"
+import { usePasswordVisibility } from "@/hooks/use-password-visibility"
+import { cn } from "@/lib/utils/cn"
 
 function PasswordInput({
   className,

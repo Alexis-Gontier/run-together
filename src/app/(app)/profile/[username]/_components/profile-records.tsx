@@ -1,21 +1,21 @@
 "use client"
 
-import Link from "next/link"
-import type { PRDistance } from "@/generated/prisma/enums"
 import { Trophy } from "lucide-react"
-import { PR_DISTANCE_LABELS, PR_DISTANCE_ORDER } from "@/lib/strava/pr-display"
-import { runRoute } from "@/lib/constants/routes"
-import {
-  formatRunPace,
-  formatRunDurationDisplay,
-  formatRunDateShort,
-} from "@/lib/utils/run"
+import Link from "next/link"
 import {
   Empty,
   EmptyDescription,
   EmptyHeader,
   EmptyMedia,
 } from "@/components/shadcn-ui/empty"
+import type { PRDistance } from "@/generated/prisma/enums"
+import { runRoute } from "@/lib/constants/routes"
+import { PR_DISTANCE_LABELS, PR_DISTANCE_ORDER } from "@/lib/runs/pr-display"
+import {
+  formatRunDateShort,
+  formatRunDurationDisplay,
+  formatRunPace,
+} from "@/lib/utils/run"
 
 type RecordEntry = {
   distance: PRDistance
@@ -48,7 +48,7 @@ export function ProfileRecords({ records }: ProfileRecordsProps) {
 
   return (
     <div className="overflow-hidden rounded-lg border">
-      <div className="grid grid-cols-[6rem_1fr_5rem_5rem] border-b px-4 py-2.5 text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
+      <div className="grid grid-cols-[6rem_1fr_5rem_5rem] border-b px-4 py-2.5 font-medium text-[11px] text-muted-foreground uppercase tracking-wide">
         <span>Distance</span>
         <span>Course</span>
         <span className="text-right">Temps</span>
@@ -63,7 +63,7 @@ export function ProfileRecords({ records }: ProfileRecordsProps) {
             key={dist}
             className="grid grid-cols-[6rem_1fr_5rem_5rem] items-center border-t px-4 py-3"
           >
-            <span className="text-sm font-semibold">
+            <span className="font-semibold text-sm">
               {PR_DISTANCE_LABELS[dist]}
             </span>
 
@@ -73,29 +73,29 @@ export function ProfileRecords({ records }: ProfileRecordsProps) {
                   {record.run ? (
                     <Link
                       href={runRoute(record.run.id)}
-                      className="block truncate text-xs text-muted-foreground hover:text-foreground hover:underline"
+                      className="block truncate text-muted-foreground text-xs hover:text-foreground hover:underline"
                     >
                       {record.run.name || "Course sans nom"} ·{" "}
                       {formatRunDateShort(record.run.date)}
                     </Link>
                   ) : (
-                    <span className="text-xs text-muted-foreground">—</span>
+                    <span className="text-muted-foreground text-xs">—</span>
                   )}
                 </div>
-                <span className="text-right text-sm font-semibold text-amber-600 tabular-nums dark:text-amber-400">
+                <span className="text-right font-semibold text-amber-600 text-sm tabular-nums dark:text-amber-400">
                   {formatRunDurationDisplay(record.duration)}
                 </span>
-                <span className="text-right text-xs text-muted-foreground tabular-nums">
+                <span className="text-right text-muted-foreground text-xs tabular-nums">
                   {formatRunPace(record.pace)}/km
                 </span>
               </>
             ) : (
               <>
-                <span className="text-xs text-muted-foreground">—</span>
-                <span className="text-right text-sm text-muted-foreground">
+                <span className="text-muted-foreground text-xs">—</span>
+                <span className="text-right text-muted-foreground text-sm">
                   —
                 </span>
-                <span className="text-right text-xs text-muted-foreground">
+                <span className="text-right text-muted-foreground text-xs">
                   —
                 </span>
               </>

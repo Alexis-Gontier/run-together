@@ -9,7 +9,7 @@
 | `formatRunPace(s/km)`                        | seconds/km | `5'30"`                                  | Display in UI                       |
 | `formatPace(s/km)`                           | seconds/km | `5:30`                                   | Charts / compact display            |
 | `formatRunDurationDisplay(s)`                | seconds    | `1h02'30"`                               | Full display in UI                  |
-| `formatDuration(s)` / `formatRunDuration(s)` | seconds    | `1:02:30`                                | Charts / compact display            |
+| `formatDuration(s)` | seconds    | `1:02:30`                                | Charts / compact display            |
 | `formatRunDistance(m)`                       | **meters** | `"10.50"` (km)                           | Distance from DB (stored in meters) |
 | `formatDistanceShort(km)`                    | **km**     | `"10.50"`                                | Distance already in km              |
 | `formatRunDateShort(date)`                   | Date       | `"14:32"` / `"14 avr"` / `"14 avr 2024"` | Relative date, locale fr            |

@@ -7,7 +7,7 @@ type ErrorProps = {
   error: Error & { digest?: string }
 }
 
-export default function Error({ error }: ErrorProps) {
+export default function ErrorPage({ error }: ErrorProps) {
   useEffect(() => {
     console.error("Application error:", error)
   }, [error])

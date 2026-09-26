@@ -1,23 +1,13 @@
 "use client"
 
+import { standardSchemaResolver } from "@hookform/resolvers/standard-schema"
+import { UserPlus } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { useAction } from "next-safe-action/hooks"
 import { useTransition } from "react"
 import { useForm } from "react-hook-form"
-import { standardSchemaResolver } from "@hookform/resolvers/standard-schema"
-import { useAction } from "next-safe-action/hooks"
 import { toast } from "sonner"
-import { UserPlus } from "lucide-react"
-
-import {
-  createUserSchema,
-  type CreateUserType,
-} from "@/lib/schemas/admin-schema"
-import { createUserAction } from "../_actions/create-user-action"
-
 import { Button } from "@/components/shadcn-ui/button"
-import { LoadingButton } from "@/components/ui/loading-button"
-import { Input } from "@/components/shadcn-ui/input"
-import { Label } from "@/components/shadcn-ui/label"
 import {
   Dialog,
   DialogContent,
@@ -25,6 +15,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/shadcn-ui/dialog"
+import { Input } from "@/components/shadcn-ui/input"
+import { Label } from "@/components/shadcn-ui/label"
 import {
   Select,
   SelectContent,
@@ -32,6 +24,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/shadcn-ui/select"
+import { LoadingButton } from "@/components/ui/loading-button"
+import {
+  type CreateUserType,
+  createUserSchema,
+} from "@/lib/schemas/admin-schema"
+import { createUserAction } from "../_actions/create-user-action"
 
 export function CreateUserDialog() {
   const router = useRouter()
@@ -82,7 +80,7 @@ export function CreateUserDialog() {
             <Label htmlFor="cu-username">Username</Label>
             <Input id="cu-username" {...form.register("username")} />
             {form.formState.errors.username && (
-              <p className="text-xs text-destructive">
+              <p className="text-destructive text-xs">
                 {form.formState.errors.username.message}
               </p>
             )}
@@ -92,7 +90,7 @@ export function CreateUserDialog() {
             <Label htmlFor="cu-name">Nom affiché</Label>
             <Input id="cu-name" {...form.register("name")} />
             {form.formState.errors.name && (
-              <p className="text-xs text-destructive">
+              <p className="text-destructive text-xs">
                 {form.formState.errors.name.message}
               </p>
             )}
@@ -102,7 +100,7 @@ export function CreateUserDialog() {
             <Label htmlFor="cu-email">Email</Label>
             <Input id="cu-email" type="email" {...form.register("email")} />
             {form.formState.errors.email && (
-              <p className="text-xs text-destructive">
+              <p className="text-destructive text-xs">
                 {form.formState.errors.email.message}
               </p>
             )}
@@ -116,7 +114,7 @@ export function CreateUserDialog() {
               {...form.register("password")}
             />
             {form.formState.errors.password && (
-              <p className="text-xs text-destructive">
+              <p className="text-destructive text-xs">
                 {form.formState.errors.password.message}
               </p>
             )}

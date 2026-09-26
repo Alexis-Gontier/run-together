@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -30,13 +29,13 @@ enum PRDistance {
 // =====================================================
 
 model User {
-  id              String    @id
-  name            String
-  email           String
-  emailVerified   Boolean   @default(false)
-  image           String?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  id            String   @id
+  name          String
+  email         String
+  emailVerified Boolean  @default(false)
+  image         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   // Username plugin
   username        String?
@@ -45,6 +44,10 @@ model User {
   // Onboarding
   onboardingCompleted Boolean @default(false)
 
+  // Préférences
+  publishRunsToDiscord Boolean @default(true)
+  weeklyGoalKm         Int? // objectif hebdomadaire en km, null = aucun
+
   // Admin plugin
   role       String?   @default("user")
   banned     Boolean   @default(false)
@@ -52,11 +55,12 @@ model User {
   banExpires DateTime?
 
   // Relations
-  sessions         Session[]
-  accounts         Account[]
-  stravaAccount    StravaAccount?
-  runs             Run[]
-  personalRecords  PersonalRecord[]
+  sessions        Session[]
+  accounts        Account[]
+  stravaAccount   StravaAccount?
+  runs            Run[]
+  personalRecords PersonalRecord[]
+  badges          UserBadge[]
 
   @@unique([email])
   @@unique([username])
@@ -64,16 +68,16 @@ model User {
 }
 
 model Session {
-  id        String   @id
-  expiresAt DateTime
-  token     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             String   @id
+  expiresAt      DateTime
+  token          String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
   ipAddress      String?
   userAgent      String?
   userId         String
   impersonatedBy String?
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([token])
   @@index([userId])
@@ -117,20 +121,20 @@ model Verification {
 // =====================================================
 
 model StravaAccount {
-  id              String   @id @default(cuid())
-  createdAt       DateTime @default(now())
-  connectedAt     DateTime @default(now())
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  connectedAt DateTime @default(now())
 
-  userId          String   @unique
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  stravaAthleteId String   @unique
+  stravaAthleteId String @unique
 
-  accessToken     String
-  refreshToken    String
-  tokenExpiry     DateTime
+  accessToken  String
+  refreshToken String
+  tokenExpiry  DateTime
 
-  scope           String   @default("activity:read_all")
+  scope String @default("activity:read_all")
 
   @@map("strava_account")
 }
@@ -140,12 +144,12 @@ model StravaAccount {
 // =====================================================
 
 model Run {
-  id        String    @id @default(cuid())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  userId    String
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   // Source
   source   RunSource @default(STRAVA)
@@ -153,17 +157,17 @@ model Run {
 
   // Données de base (disponibles via /athlete/activities)
   name      String?
-  distance  Int              // mètres
-  duration  Int              // secondes (moving_time Strava)
-  pace      Int              // secondes/km, calculé : (duration / distance) * 1000
-  elevation Int    @default(0) // D+ mètres (total_elevation_gain arrondi)
+  distance  Int // mètres
+  duration  Int // secondes (moving_time Strava)
+  pace      Int // secondes/km, calculé : (duration / distance) * 1000
+  elevation Int      @default(0) // D+ mètres (total_elevation_gain arrondi)
   date      DateTime
 
   // Données riches — présentes si montre Garmin connectée à Strava
-  heartRateAvg Int?   // average_heartrate (has_heartrate: true)
-  heartRateMax Int?   // max_heartrate
-  cadenceAvg   Int?   // average_cadence — dispo via /activities/{id}
-  calories     Int?   // calories — dispo via /activities/{id}
+  heartRateAvg Int? // average_heartrate (has_heartrate: true)
+  heartRateMax Int? // max_heartrate
+  cadenceAvg   Int? // average_cadence — dispo via /activities/{id}
+  calories     Int? // calories — dispo via /activities/{id}
 
   // GPS
   summaryPolyline String? // map.summary_polyline — léger, pour minimap dans le feed
@@ -178,6 +182,7 @@ model Run {
   // Relations
   splits          Split[]
   personalRecords PersonalRecord[]
+  badges          UserBadge[]
 
   // Index composite — crucial pour feed et leaderboard
   @@index([userId, date])
@@ -190,16 +195,16 @@ model Run {
 // =====================================================
 
 model Split {
-  id    String @id @default(cuid())
+  id String @id @default(cuid())
 
   runId String
   run   Run    @relation(fields: [runId], references: [id], onDelete: Cascade)
 
-  kilometer Int    // numéro du km (1, 2, 3…)
-  distance  Float  // distance réelle du split en mètres (dernier split souvent < 1000m)
-  duration  Int    // secondes
-  pace      Int    // secondes/km pour ce split
-  heartRate Int?   // average_heartrate sur ce split (si Garmin)
+  kilometer Int // numéro du km (1, 2, 3…)
+  distance  Float // distance réelle du split en mètres (dernier split souvent < 1000m)
+  duration  Int // secondes
+  pace      Int // secondes/km pour ce split
+  heartRate Int? // average_heartrate sur ce split (si Garmin)
   elevation Float? // elevation_difference sur ce split
 
   @@index([runId])
@@ -222,12 +227,59 @@ model PersonalRecord {
   run   Run?    @relation(fields: [runId], references: [id], onDelete: SetNull)
 
   distance PRDistance
-  duration Int        // secondes pour couvrir cette distance
-  pace     Int        // secondes/km
+  duration Int // secondes pour couvrir cette distance
+  pace     Int // secondes/km
 
   // Un seul PR actif par distance par user
   @@unique([userId, distance])
   @@index([userId])
   @@index([runId])
   @@map("personal_record")
+}
+
+// =====================================================
+// Journal des notifications Discord
+// Une ligne par message (clé de dédoublonnage unique), avec le corps exact envoyé
+// pour pouvoir le renvoyer depuis l'admin.
+// =====================================================
+
+enum DiscordNotificationStatus {
+  SENT
+  FAILED
+}
+
+model DiscordNotification {
+  id        String                    @id @default(cuid())
+  type      String // run.created | member.joined | recap.weekly | badge.unlocked | test
+  dedupeKey String                    @unique
+  status    DiscordNotificationStatus
+  payload   Json
+  error     String?
+  attempts  Int                       @default(1)
+  createdAt DateTime                  @default(now())
+  sentAt    DateTime?
+
+  @@index([createdAt])
+  @@map("discord_notification")
+}
+
+// =====================================================
+// Badges
+// Les définitions vivent dans le code (src/lib/badges/catalog.ts) : une ligne = un badge
+// débloqué par un utilisateur, identifié par sa clé.
+// =====================================================
+
+model UserBadge {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badgeKey   String
+  unlockedAt DateTime @default(now())
+  // Course qui a déclenché le badge (null si elle a été supprimée depuis)
+  runId      String?
+  run        Run?     @relation(fields: [runId], references: [id], onDelete: SetNull)
+
+  @@unique([userId, badgeKey])
+  @@index([userId])
+  @@map("user_badge")
 }

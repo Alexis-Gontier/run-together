@@ -44,5 +44,5 @@ Impersonation is tracked via `Session.impersonatedBy`. `ImpersonationBanner` ren
 
 `User`, `Session`, `Account`, `Verification`
 
-Extra `User` fields: `username`, `displayUsername`, `onboardingCompleted`, `role`, `banned`, `banReason`, `banExpires`
+Extra `User` fields: `username`, `displayUsername`, `onboardingCompleted`, `publishRunsToDiscord`, `weeklyGoalKm`, `role`, `banned`, `banReason`, `banExpires`
 Extra `Session` field: `impersonatedBy`

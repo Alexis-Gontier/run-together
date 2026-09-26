@@ -1,6 +1,6 @@
-import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
-import { unauthorized, forbidden } from "next/navigation"
+import { forbidden, unauthorized } from "next/navigation"
+import { auth } from "@/lib/auth"
 
 export async function getSession() {
   return auth.api.getSession({

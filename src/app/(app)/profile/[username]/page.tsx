@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation"
+import { RecentBadgesCard } from "@/components/ui/recent-badges-card"
 import { getUser } from "@/lib/auth/auth-session"
 import { getProfileAction } from "./_actions/get-profile-action"
 import { getProfileRunsAction } from "./_actions/get-profile-runs-action"
@@ -37,6 +38,10 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
         runsCount={profileUser.runsCount}
         totalDistance={profileUser.totalDistance}
       />
+      {/* Le panneau droit est masqué sous lg : les badges remontent sous l'en-tête. */}
+      <div className="px-4 pb-4 lg:hidden">
+        <RecentBadgesCard userId={profileUser.id} isOwn={isOwnProfile} />
+      </div>
       <ProfileTabs
         username={profileUser.username ?? username}
         initialRuns={initialRuns}

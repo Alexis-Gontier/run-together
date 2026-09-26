@@ -1,8 +1,8 @@
 "use client"
 
-import { ThemeProvider } from "@/providers/theme-provider"
-import { Toaster } from "@/components/shadcn-ui/sonner"
 import { NuqsAdapter } from "nuqs/adapters/next/app"
+import { Toaster } from "@/components/shadcn-ui/sonner"
+import { ThemeProvider } from "@/providers/theme-provider"
 
 type ProvidersProps = {
   children: React.ReactNode

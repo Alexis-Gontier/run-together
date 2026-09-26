@@ -1,15 +1,16 @@
-import { NextRequest, NextResponse } from "next/server"
+import { type NextRequest, NextResponse } from "next/server"
 
 import { env } from "@/env"
 import { prisma } from "@/lib/db/prisma"
+import { recalculatePersonalRecords } from "@/lib/runs/personal-records"
 import { importStravaActivity } from "@/lib/strava/import-activity"
-import { recalculatePersonalRecords } from "@/lib/strava/personal-records"
 
 // ---------------------------------------------------------------------------
 // GET — Vérification d'abonnement (hub challenge)
 // Strava appelle cet endpoint lors de la création de l'abonnement webhook
 // ---------------------------------------------------------------------------
 export async function GET(request: NextRequest) {
+  if (!env.STRAVA_ENABLED) return new NextResponse(null, { status: 404 })
   const { searchParams } = request.nextUrl
 
   const mode = searchParams.get("hub.mode")
@@ -42,6 +43,7 @@ interface StravaWebhookEvent {
 }
 
 export async function POST(request: NextRequest) {
+  if (!env.STRAVA_ENABLED) return new NextResponse(null, { status: 404 })
   let event: StravaWebhookEvent
 
   try {

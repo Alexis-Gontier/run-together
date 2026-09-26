@@ -1,10 +1,9 @@
 import { betterAuth } from "better-auth"
 import { prismaAdapter } from "better-auth/adapters/prisma"
-import { prisma } from "@/lib/db/prisma"
-import { env } from "@/env"
-
-import { username, admin } from "better-auth/plugins"
 import { nextCookies } from "better-auth/next-js"
+import { admin, username } from "better-auth/plugins"
+import { env } from "@/env"
+import { prisma } from "@/lib/db/prisma"
 
 export const auth = betterAuth({
   baseURL: env.NEXT_PUBLIC_APP_URL,
@@ -33,11 +32,22 @@ export const auth = betterAuth({
     disableSignUp: env.NODE_ENV === "production",
   },
   user: {
+    // Suppression de compte depuis les paramètres, confirmée par mot de passe.
+    deleteUser: { enabled: true },
     additionalFields: {
       onboardingCompleted: {
         type: "boolean",
         required: false,
         defaultValue: false,
+      },
+      publishRunsToDiscord: {
+        type: "boolean",
+        required: false,
+        defaultValue: true,
+      },
+      weeklyGoalKm: {
+        type: "number",
+        required: false,
       },
     },
   },

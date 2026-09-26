@@ -1,57 +1,79 @@
 "use client"
 
+import {
+  ChartLine,
+  Home,
+  Medal,
+  Plus,
+  Route,
+  Swords,
+  Trophy,
+  User,
+} from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, Route, Trophy, Settings, User } from "lucide-react"
 
 import { Badge } from "@/components/shadcn-ui/badge"
 import { Button } from "@/components/shadcn-ui/button"
+import { profileRoute, ROUTE_LABELS, ROUTES } from "@/lib/constants/routes"
 import { cn } from "@/lib/utils/cn"
-import { ROUTE_LABELS, ROUTES } from "@/lib/constants/routes"
-import { isNavActive } from "@/lib/utils/route"
 import { isNavItemNew } from "@/lib/utils/date"
+import { isNavActive } from "@/lib/utils/route"
 
 type NavItem = {
   label: string
   Icon: React.ComponentType<{ size?: number }>
   href: string
-  mobile: boolean
   newUntil?: Date
+  // Absent de la barre mobile (5 entrées max) : accessible depuis le profil.
+  desktopOnly?: boolean
 }
 
-const NAV_ITEMS: NavItem[] = [
-  {
-    label: ROUTE_LABELS[ROUTES.HOME],
-    Icon: Home,
-    href: ROUTES.HOME,
-    mobile: true,
-  },
-  {
-    label: ROUTE_LABELS[ROUTES.RUNS],
-    Icon: Route,
-    href: ROUTES.RUNS,
-    mobile: true,
-  },
-  {
-    label: ROUTE_LABELS[ROUTES.LEADERBOARD],
-    Icon: Trophy,
-    href: ROUTES.LEADERBOARD,
-    mobile: true,
-  },
-  {
-    label: ROUTE_LABELS[ROUTES.SETTINGS],
-    Icon: Settings,
-    href: ROUTES.SETTINGS,
-    mobile: true,
-  },
-]
+// « Progression » et « Badges » sont mises en avant jusqu'à fin octobre (nouvelles pages).
+const PROGRESS_NEW_UNTIL = new Date("2026-10-31")
 
-export function AppSidebarNav() {
+/** Entrées de navigation, identiques en desktop et en mobile. Paramètres : menu utilisateur. */
+function navItems(username?: string | null): NavItem[] {
+  const items: NavItem[] = [
+    { label: ROUTE_LABELS[ROUTES.HOME], Icon: Home, href: ROUTES.HOME },
+    { label: ROUTE_LABELS[ROUTES.RUNS], Icon: Route, href: ROUTES.RUNS },
+    {
+      label: ROUTE_LABELS[ROUTES.PROGRESS],
+      Icon: ChartLine,
+      href: ROUTES.PROGRESS,
+      newUntil: PROGRESS_NEW_UNTIL,
+    },
+    {
+      label: ROUTE_LABELS[ROUTES.LEADERBOARD],
+      Icon: Trophy,
+      href: ROUTES.LEADERBOARD,
+    },
+    {
+      label: ROUTE_LABELS[ROUTES.BADGES],
+      Icon: Medal,
+      href: ROUTES.BADGES,
+      newUntil: PROGRESS_NEW_UNTIL,
+      desktopOnly: true,
+    },
+    {
+      label: ROUTE_LABELS[ROUTES.COMPARE],
+      Icon: Swords,
+      href: ROUTES.COMPARE,
+      newUntil: PROGRESS_NEW_UNTIL,
+      desktopOnly: true,
+    },
+  ]
+  if (username)
+    items.push({ label: "Profil", Icon: User, href: profileRoute(username) })
+  return items
+}
+
+export function AppSidebarNav({ username }: { username?: string | null }) {
   const pathname = usePathname()
 
   return (
     <nav className="w-full space-y-px">
-      {NAV_ITEMS.map(({ label, Icon, href, newUntil }) => {
+      {navItems(username).map(({ label, Icon, href, newUntil }) => {
         const isActive = isNavActive(pathname, href)
         const showNew = isNavItemNew(newUntil)
         return (
@@ -65,7 +87,7 @@ export function AppSidebarNav() {
             )}
             asChild
           >
-            <Link href={href}>
+            <Link href={href} aria-label={label}>
               <Icon size={20} />
               <span className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-between">
                 {label}
@@ -75,54 +97,67 @@ export function AppSidebarNav() {
           </Button>
         )
       })}
+      <Button
+        size="lg"
+        className="mt-3 w-full cursor-pointer justify-center lg:justify-start"
+        asChild
+      >
+        <Link href={ROUTES.RUN_NEW} aria-label="Ajouter une course">
+          <Plus size={20} />
+          <span className="hidden lg:inline">Ajouter une course</span>
+        </Link>
+      </Button>
     </nav>
   )
 }
 
+// Pas de bouton flottant sur les écrans de saisie eux-mêmes.
+function isRunFormPage(pathname: string) {
+  return pathname === ROUTES.RUN_NEW || /^\/runs\/[^/]+\/edit$/.test(pathname)
+}
+
 export function MobileNav({ username }: { username?: string | null }) {
   const pathname = usePathname()
-  const profileHref = username ? `/profile/${username}` : null
 
   return (
-    <nav className="fixed right-0 bottom-0 left-0 z-50 flex border-t border-border bg-background md:hidden">
-      {NAV_ITEMS.filter((item) => item.mobile).map(
-        ({ Icon, href, newUntil }) => {
-          const isActive = isNavActive(pathname, href)
-          const showNew = isNavItemNew(newUntil)
-          return (
-            <Link
-              key={href}
-              href={href}
-              className={cn(
-                "flex flex-1 items-center justify-center py-5 transition-colors",
-                isActive
-                  ? "bg-secondary text-secondary-foreground"
-                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
-              )}
-            >
-              <div className="relative">
-                <Icon size={24} />
-                {showNew && (
-                  <span className="absolute -top-1 -right-1 size-2 rounded-full bg-primary" />
-                )}
-              </div>
-            </Link>
-          )
-        },
-      )}
-      {profileHref && (
+    <>
+      {!isRunFormPage(pathname) && (
         <Link
-          href={profileHref}
-          className={cn(
-            "flex flex-1 items-center justify-center py-5 transition-colors",
-            pathname.startsWith("/profile/")
-              ? "bg-secondary text-secondary-foreground"
-              : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
-          )}
+          href={ROUTES.RUN_NEW}
+          aria-label="Ajouter une course"
+          className="fixed right-4 bottom-24 z-50 flex size-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform active:scale-95 md:hidden"
         >
-          <User size={24} />
+          <Plus size={26} />
         </Link>
       )}
-    </nav>
+      <nav className="fixed right-0 bottom-0 left-0 z-50 flex border-border border-t bg-background md:hidden">
+        {navItems(username)
+          .filter((item) => !item.desktopOnly)
+          .map(({ label, Icon, href, newUntil }) => {
+            const isActive = isNavActive(pathname, href)
+            const showNew = isNavItemNew(newUntil)
+            return (
+              <Link
+                key={href}
+                href={href}
+                aria-label={label}
+                className={cn(
+                  "flex flex-1 items-center justify-center py-5 transition-colors",
+                  isActive
+                    ? "bg-secondary text-secondary-foreground"
+                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+                )}
+              >
+                <div className="relative">
+                  <Icon size={24} />
+                  {showNew && (
+                    <span className="absolute -top-1 -right-1 size-2 rounded-full bg-primary" />
+                  )}
+                </div>
+              </Link>
+            )
+          })}
+      </nav>
+    </>
   )
 }

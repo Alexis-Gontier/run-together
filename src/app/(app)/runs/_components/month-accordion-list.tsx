@@ -1,5 +1,8 @@
 "use client"
 
+import { format } from "date-fns"
+import { fr } from "date-fns/locale"
+import { TrendingDown, TrendingUp } from "lucide-react"
 import Link from "next/link"
 import {
   Accordion,
@@ -7,17 +10,14 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/shadcn-ui/accordion"
+import { runRoute } from "@/lib/constants/routes"
+import { cn } from "@/lib/utils/cn"
 import {
   formatPace,
   formatRunDistance,
-  formatRunPace,
   formatRunDurationDisplay,
+  formatRunPace,
 } from "@/lib/utils/run"
-import { cn } from "@/lib/utils/cn"
-import { TrendingUp, TrendingDown } from "lucide-react"
-import { runRoute } from "@/lib/constants/routes"
-import { format } from "date-fns"
-import { fr } from "date-fns/locale"
 
 const MONTHS_FR = [
   "Janvier",
@@ -82,13 +82,13 @@ export function MonthAccordionList({ months }: MonthAccordionListProps) {
               className="gap-3 rounded-none px-4 transition-colors hover:bg-muted/40 hover:no-underline"
             >
               <div className="flex min-w-0 flex-1 items-center justify-between gap-4">
-                <span className="shrink-0 text-sm font-semibold">
+                <span className="shrink-0 font-semibold text-sm">
                   {monthName}{" "}
                   <span className="font-normal text-muted-foreground">
                     {year}
                   </span>
                 </span>
-                <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                <div className="flex items-center gap-4 text-muted-foreground text-sm">
                   <span>
                     <span className="font-semibold text-foreground">
                       {stats.count}
@@ -110,7 +110,7 @@ export function MonthAccordionList({ months }: MonthAccordionListProps) {
                   {trend !== null && (
                     <span
                       className={cn(
-                        "flex items-center gap-0.5 text-xs font-semibold",
+                        "flex items-center gap-0.5 font-semibold text-xs",
                         trend > 0
                           ? "text-emerald-600 dark:text-emerald-400"
                           : "text-red-500 dark:text-red-400",
@@ -136,7 +136,7 @@ export function MonthAccordionList({ months }: MonthAccordionListProps) {
                     href={runRoute(run.id)}
                     className="flex items-center gap-4 px-4 py-3 text-sm transition-colors hover:bg-muted/40"
                   >
-                    <span className="w-16 shrink-0 text-xs text-muted-foreground capitalize">
+                    <span className="w-16 shrink-0 text-muted-foreground text-xs capitalize">
                       {format(new Date(run.date), "EEE d", { locale: fr })}
                     </span>
                     <span className="min-w-0 flex-1 truncate font-medium">

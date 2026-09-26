@@ -1,8 +1,8 @@
+import { getPeriodRange as sharedGetPeriodRange } from "@/lib/utils/date"
 import type {
   LeaderboardMetric,
   LeaderboardPeriod,
 } from "../_schemas/leaderboard-schema"
-import { getPeriodRange as sharedGetPeriodRange } from "@/lib/utils/date"
 
 const LEADERBOARD_DAYS: Record<string, number> = {
   week: 7,

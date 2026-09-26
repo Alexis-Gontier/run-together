@@ -1,13 +1,12 @@
 "use client"
 
-import { ArrowLeft, ArrowRight } from "lucide-react"
-import { useForm } from "react-hook-form"
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema"
+import { ArrowLeft, ArrowRight } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
+import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 
 import { Button } from "@/components/shadcn-ui/button"
-import { LoadingButton } from "@/components/ui/loading-button"
 import {
   Card,
   CardContent,
@@ -18,9 +17,10 @@ import {
 } from "@/components/shadcn-ui/card"
 import { Input } from "@/components/shadcn-ui/input"
 import { Label } from "@/components/shadcn-ui/label"
+import { LoadingButton } from "@/components/ui/loading-button"
 import {
-  onboardingEmailSchema,
   type OnboardingEmailType,
+  onboardingEmailSchema,
 } from "@/lib/schemas/auth-schema"
 import { updateEmailAction } from "../_actions/update-email-action"
 import { useOnboardingStore } from "../_store/onboarding-store"
@@ -70,7 +70,7 @@ export function StepEmail({ onNext, onBack }: StepEmailProps) {
               {...form.register("email")}
             />
             {form.formState.errors.email && (
-              <p className="text-sm text-destructive">
+              <p className="text-destructive text-sm">
                 {form.formState.errors.email.message}
               </p>
             )}

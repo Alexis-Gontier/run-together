@@ -1,10 +1,9 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-
-import { authActionClient } from "@/lib/safe-action/auth-action-client"
-import { prisma } from "@/lib/db/prisma"
 import { ROUTES } from "@/lib/constants/routes"
+import { prisma } from "@/lib/db/prisma"
+import { authActionClient } from "@/lib/safe-action/auth-action-client"
 import { stravaOAuthFetch } from "@/lib/strava/client"
 import { stravaOAuthPaths } from "@/lib/strava/constants"
 import { getValidAccessToken } from "@/lib/strava/token"

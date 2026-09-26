@@ -6,7 +6,6 @@ import { useAction } from "next-safe-action/hooks"
 import { toast } from "sonner"
 
 import { Button } from "@/components/shadcn-ui/button"
-import { LoadingButton } from "@/components/ui/loading-button"
 import {
   Card,
   CardContent,
@@ -15,8 +14,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/shadcn-ui/card"
-import { API_ROUTES, ROUTES } from "@/lib/constants/routes"
+import { LoadingButton } from "@/components/ui/loading-button"
 import { StravaSyncDialog } from "@/components/ui/strava-sync-dialog"
+import { API_ROUTES, ROUTES } from "@/lib/constants/routes"
 import { completeOnboardingAction } from "../_actions/complete-onboarding-action"
 import { useOnboardingStore } from "../_store/onboarding-store"
 
@@ -68,17 +68,17 @@ export function StepStrava({ onBack }: StepStravaProps) {
             <div className="flex items-center gap-3 rounded-xl border border-green-200 bg-green-500/10 px-4 py-3">
               <CheckCircle2 className="size-5 shrink-0 text-green-500" />
               <div>
-                <p className="text-sm font-medium text-green-700 dark:text-green-400">
+                <p className="font-medium text-green-700 text-sm dark:text-green-400">
                   Compte Strava connecté
                 </p>
-                <p className="text-xs text-green-600/70 dark:text-green-500/70">
+                <p className="text-green-600/70 text-xs dark:text-green-500/70">
                   Utilise le bouton ci-dessous pour importer tes courses
                 </p>
               </div>
             </div>
             <div className="flex items-start gap-2 rounded-lg border bg-muted/40 px-3 py-2.5">
               <Info className="mt-0.5 size-3.5 shrink-0 text-muted-foreground" />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-muted-foreground text-xs">
                 La sync récupère tes{" "}
                 <span className="font-medium text-foreground">
                   200 dernières activités
@@ -92,7 +92,7 @@ export function StepStrava({ onBack }: StepStravaProps) {
           </div>
         ) : (
           <div className="space-y-4">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               Connecte ton compte Strava pour importer tes courses
               automatiquement. Tu peux aussi le faire plus tard depuis les
               paramètres.

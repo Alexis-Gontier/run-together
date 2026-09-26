@@ -44,14 +44,14 @@ function StravaLogo() {
 function ConnectionBadge({ connected }: { connected: boolean }) {
   if (connected) {
     return (
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-green-500/10 px-2.5 py-0.5 text-xs font-medium text-green-600 dark:text-green-400">
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-green-500/10 px-2.5 py-0.5 font-medium text-green-600 text-xs dark:text-green-400">
         <span className="size-1.5 rounded-full bg-green-500" />
         Connecté
       </span>
     )
   }
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-0.5 font-medium text-muted-foreground text-xs">
       <span className="size-1.5 rounded-full bg-muted-foreground/40" />
       Non connecté
     </span>
@@ -61,14 +61,14 @@ function ConnectionBadge({ connected }: { connected: boolean }) {
 function WebhookBadge({ active }: { active: boolean }) {
   if (active) {
     return (
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-green-500/10 px-2.5 py-0.5 text-xs font-medium text-green-600 dark:text-green-400">
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-green-500/10 px-2.5 py-0.5 font-medium text-green-600 text-xs dark:text-green-400">
         <span className="size-1.5 rounded-full bg-green-500" />
         Actif
       </span>
     )
   }
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-2.5 py-0.5 text-xs font-medium text-amber-600 dark:text-amber-400">
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-2.5 py-0.5 font-medium text-amber-600 text-xs dark:text-amber-400">
       <span className="size-1.5 rounded-full bg-amber-500" />
       Inactif
     </span>
@@ -84,7 +84,7 @@ function InfoRow({
 }) {
   return (
     <div className="flex items-center justify-between py-3">
-      <span className="text-sm text-muted-foreground">{label}</span>
+      <span className="text-muted-foreground text-sm">{label}</span>
       {children}
     </div>
   )
@@ -111,12 +111,12 @@ function ConnectedState({
     <div className="flex flex-col gap-4">
       <div className="divide-y divide-border rounded-lg border px-4">
         <InfoRow label="Athlète ID">
-          <span className="font-mono text-sm font-medium">
+          <span className="font-medium font-mono text-sm">
             {connection.stravaAthleteId}
           </span>
         </InfoRow>
         <InfoRow label="Connecté le">
-          <span className="text-sm font-medium">{connectedAt}</span>
+          <span className="font-medium text-sm">{connectedAt}</span>
         </InfoRow>
         <InfoRow label="Webhook temps réel">
           <WebhookBadge active={webhookActive} />
@@ -135,7 +135,7 @@ function ConnectedState({
 function DisconnectedState() {
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-sm text-muted-foreground">
+      <p className="text-muted-foreground text-sm">
         Connectez votre compte Strava pour synchroniser automatiquement vos
         activités de course.
       </p>

@@ -2,8 +2,8 @@ import { getRequiredUser } from "@/lib/auth/auth-session"
 import { getLeaderboardAction } from "./_actions/get-leaderboard-action"
 import { getPrLeaderboardAction } from "./_actions/get-pr-leaderboard-action"
 import { LeaderboardEntries } from "./_components/leaderboard-entries"
-import { PrLeaderboardEntries } from "./_components/pr-leaderboard-entries"
 import { LeaderboardFilters } from "./_components/leaderboard-filters"
+import { PrLeaderboardEntries } from "./_components/pr-leaderboard-entries"
 import type {
   LeaderboardMetric,
   LeaderboardPeriod,

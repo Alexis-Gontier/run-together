@@ -4,11 +4,11 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/components/shadcn-ui/avatar"
-import { cn } from "@/lib/utils/cn"
-import { getInitials } from "@/lib/utils/get-initials"
 import { YouBadge } from "@/components/ui/you-badge"
 import { runRoute } from "@/lib/constants/routes"
-import { formatRunPace, formatRunDurationDisplay } from "@/lib/utils/run"
+import { cn } from "@/lib/utils/cn"
+import { getInitials } from "@/lib/utils/get-initials"
+import { formatRunDurationDisplay, formatRunPace } from "@/lib/utils/run"
 
 type PrEntry = {
   rank: number
@@ -33,7 +33,7 @@ const RANK_MEDALS = ["🥇", "🥈", "🥉"]
 export function PrLeaderboardEntries({ entries, currentUserId }: Props) {
   if (entries.length === 0) {
     return (
-      <p className="py-16 text-center text-sm text-muted-foreground">
+      <p className="py-16 text-center text-muted-foreground text-sm">
         Aucun record enregistré pour cette distance
       </p>
     )
@@ -53,7 +53,7 @@ export function PrLeaderboardEntries({ entries, currentUserId }: Props) {
             {entry.rank <= 3 ? (
               <span className="text-base">{RANK_MEDALS[entry.rank - 1]}</span>
             ) : (
-              <span className="text-sm font-medium text-muted-foreground">
+              <span className="font-medium text-muted-foreground text-sm">
                 {entry.rank}
               </span>
             )}
@@ -68,7 +68,7 @@ export function PrLeaderboardEntries({ entries, currentUserId }: Props) {
 
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
-              <span className="truncate text-sm font-medium">
+              <span className="truncate font-medium text-sm">
                 {entry.user.name}
               </span>
               {entry.user.id === currentUserId && <YouBadge />}
@@ -76,22 +76,22 @@ export function PrLeaderboardEntries({ entries, currentUserId }: Props) {
             {entry.run ? (
               <Link
                 href={runRoute(entry.run.id)}
-                className="truncate text-xs text-muted-foreground hover:text-foreground hover:underline"
+                className="truncate text-muted-foreground text-xs hover:text-foreground hover:underline"
               >
                 {entry.run.name || "Course sans nom"}
               </Link>
             ) : (
-              <span className="text-xs text-muted-foreground">
+              <span className="text-muted-foreground text-xs">
                 @{entry.user.username}
               </span>
             )}
           </div>
 
           <div className="flex items-center gap-3">
-            <span className="text-sm font-semibold text-amber-600 tabular-nums dark:text-amber-400">
+            <span className="font-semibold text-amber-600 text-sm tabular-nums dark:text-amber-400">
               {formatRunDurationDisplay(entry.duration)}
             </span>
-            <span className="text-xs text-muted-foreground tabular-nums">
+            <span className="text-muted-foreground text-xs tabular-nums">
               {formatRunPace(entry.pace)}/km
             </span>
           </div>

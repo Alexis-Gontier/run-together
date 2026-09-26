@@ -16,10 +16,11 @@ export function StepIndicator({ current, total }: StepIndicatorProps) {
         const isActive = stepNum === current
 
         return (
+          // biome-ignore lint/suspicious/noArrayIndexKey: liste d'étapes statique, jamais réordonnée
           <div key={i} className="flex items-center">
             <div
               className={cn(
-                "flex size-9 items-center justify-center rounded-full text-sm font-semibold ring-2 transition-all duration-300",
+                "flex size-9 items-center justify-center rounded-full font-semibold text-sm ring-2 transition-all duration-300",
                 isActive
                   ? "bg-primary text-primary-foreground ring-primary"
                   : isDone

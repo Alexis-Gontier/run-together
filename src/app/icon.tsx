@@ -17,6 +17,7 @@ export default function Icon() {
         outline: "2px solid #2a4a3e",
       }}
     >
+      {/* biome-ignore lint/a11y/noSvgWithoutTitle: icône rendue par Satori (ImageResponse), jamais dans le DOM */}
       <svg
         width={20}
         height={20}

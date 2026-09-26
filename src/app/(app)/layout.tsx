@@ -1,8 +1,8 @@
-import { ImpersonationBanner } from "@/components/ui/impersonation-banner"
 import { AppRightPanel } from "@/components/layout/app-right-panel"
 import { AppSidebar } from "@/components/layout/app-sidebar"
 import { MobileNav } from "@/components/layout/app-sidebar/app-sidebar-nav"
 import { PageHeader } from "@/components/layout/page-header"
+import { ImpersonationBanner } from "@/components/ui/impersonation-banner"
 import { getSession } from "@/lib/auth/auth-session"
 
 type AppLayoutProps = {
@@ -26,7 +26,7 @@ export default async function AppLayout({
       )}
       <div className="flex min-h-screen justify-center">
         <AppSidebar />
-        <main className="min-w-0 flex-1 border-x border-border pb-16 md:max-w-2xl md:pb-0">
+        <main className="min-w-0 flex-1 border-border border-x pb-16 md:max-w-2xl md:pb-0">
           <PageHeader />
           {children}
         </main>

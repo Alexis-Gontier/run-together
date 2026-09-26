@@ -1,6 +1,7 @@
 export const ROUTES = {
   HOME: "/home",
   RUNS: "/runs",
+  RUN_NEW: "/runs/new",
   PROGRESS: "/progress",
   LEADERBOARD: "/leaderboard",
   BADGES: "/badges",
@@ -20,14 +21,20 @@ export const ROUTE_LABELS: Record<string, string> = {
   [ROUTES.RUNS]: "Mes courses",
   [ROUTES.PROGRESS]: "Progression",
   [ROUTES.LEADERBOARD]: "Classement",
+  [ROUTES.BADGES]: "Badges",
+  [ROUTES.COMPARE]: "Comparer",
   [ROUTES.SETTINGS]: "Paramètres",
 }
 
+export const compareRoute = (username: string) =>
+  `${ROUTES.COMPARE}?with=${encodeURIComponent(username)}`
 export const runRoute = (id: string) => `${ROUTES.RUNS}/${id}`
+export const editRunRoute = (id: string) => `${ROUTES.RUNS}/${id}/edit`
 export const profileRoute = (username: string) => `/profile/${username}`
 
 export const ADMIN_ROUTES = {
   USERS: "/admin",
+  DISCORD: "/admin/discord",
 } as const
 
 export const API_ROUTES = {
@@ -35,4 +42,11 @@ export const API_ROUTES = {
   STRAVA_CALLBACK: "/api/strava/callback",
   STRAVA_DISCONNECT: "/api/strava/disconnect",
   STRAVA_WEBHOOK: "/api/strava/webhook",
+  EXPORT: "/api/export",
 } as const
+
+// Images OG (embeds Discord)
+export const ogRunRoute = (runId: string) => `/api/og/run/${runId}`
+export const ogBadgesRoute = (runId: string) => `/api/og/badges/${runId}`
+/** `week` = lundi de la semaine, `yyyy-MM-dd` (UTC). */
+export const ogRecapRoute = (week: string) => `/api/og/recap/${week}`

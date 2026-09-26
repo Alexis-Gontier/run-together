@@ -53,9 +53,11 @@ export const getLeaderboardAction = authActionClient
     for (const run of currentRuns) userMap.get(run.userId)?.current.push(run)
     for (const run of prevRuns) userMap.get(run.userId)?.prev.push(run)
 
-    // Compute stats per user
-    const entries = Array.from(userMap.values()).map(
-      ({ user, current, prev }) => {
+    // Compute stats per user — seuls les membres qui ont couru sur la période sont classés
+    // (sinon des médailles vont à des coureurs à 0 km).
+    const entries = Array.from(userMap.values())
+      .filter(({ current }) => current.length > 0)
+      .map(({ user, current, prev }) => {
         const currentStats = computeStats(current)
         const prevStats = computeStats(prev)
         return {
@@ -67,8 +69,7 @@ export const getLeaderboardAction = authActionClient
             metric,
           ),
         }
-      },
-    )
+      })
 
     // Sort by metric (pace asc = faster is better, others desc)
     entries.sort((a, b) => {

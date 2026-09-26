@@ -1,7 +1,7 @@
 "use server"
 
-import { authActionClient } from "@/lib/safe-action/auth-action-client"
 import { prisma } from "@/lib/db/prisma"
+import { authActionClient } from "@/lib/safe-action/auth-action-client"
 
 export const getStravaConnectionAction = authActionClient.action(
   async ({ ctx: { user } }) => {

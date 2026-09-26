@@ -5,8 +5,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/shadcn-ui/card"
+import { DiscordPreferenceSwitch } from "./discord-preference-switch"
 import { ThemeToggle } from "./theme-toggle"
-import { Switch } from "@/components/shadcn-ui/switch"
 
 function PreferenceRow({
   label,
@@ -20,9 +20,9 @@ function PreferenceRow({
   return (
     <div className="flex items-center justify-between gap-4 py-3">
       <div className="space-y-0.5">
-        <p className="text-sm font-medium">{label}</p>
+        <p className="font-medium text-sm">{label}</p>
         {description && (
-          <p className="text-xs text-muted-foreground">{description}</p>
+          <p className="text-muted-foreground text-xs">{description}</p>
         )}
       </div>
       {children}
@@ -30,7 +30,11 @@ function PreferenceRow({
   )
 }
 
-export function PreferencesCard() {
+export function PreferencesCard({
+  publishRunsToDiscord,
+}: {
+  publishRunsToDiscord: boolean
+}) {
   return (
     <Card>
       <CardHeader>
@@ -44,22 +48,10 @@ export function PreferencesCard() {
           <ThemeToggle />
         </PreferenceRow>
         <PreferenceRow
-          label="Langue"
-          description="Langue d'affichage de l'interface."
+          label="Publier mes courses sur Discord"
+          description="Valeur par défaut à chaque nouvelle course, modifiable course par course."
         >
-          <span className="text-sm text-muted-foreground">Français</span>
-        </PreferenceRow>
-        <PreferenceRow
-          label="Unité de distance"
-          description="Kilomètres ou miles pour vos activités."
-        >
-          <span className="text-sm text-muted-foreground">Kilomètres</span>
-        </PreferenceRow>
-        <PreferenceRow
-          label="Notifications"
-          description="Recevez des alertes pour les nouvelles activités."
-        >
-          <Switch className="cursor-pointer" disabled />
+          <DiscordPreferenceSwitch defaultChecked={publishRunsToDiscord} />
         </PreferenceRow>
       </CardContent>
     </Card>
