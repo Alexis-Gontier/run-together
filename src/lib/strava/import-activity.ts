@@ -5,6 +5,7 @@ import { stravaApiFetch } from "@/lib/strava/client"
 import { STRAVA_RUN_TYPES, stravaEndpoints } from "@/lib/strava/constants"
 import { stravaActivityDetailSchema } from "@/lib/strava/schemas"
 import { getValidAccessToken } from "@/lib/strava/token"
+import { displayName } from "@/lib/utils/display-name"
 import { stravaActivityToRunInput } from "./create-run-from-activity"
 
 interface ImportOptions {
@@ -21,7 +22,11 @@ export async function importStravaActivity(
 ): Promise<void> {
   const account = await prisma.stravaAccount.findUnique({
     where: { userId },
-    include: { user: { select: { name: true, publishRunsToDiscord: true } } },
+    include: {
+      user: {
+        select: { name: true, username: true, publishRunsToDiscord: true },
+      },
+    },
   })
   if (!account) throw new Error("Strava account not found")
 
@@ -53,7 +58,7 @@ export async function importStravaActivity(
 
   await recordRun(stravaActivityToRunInput(activity), {
     userId,
-    userName: account.user.name ?? "Inconnu",
+    userName: displayName(account.user),
     source: RunSource.STRAVA,
     stravaId: String(activityId),
     notify: !options.silent && account.user.publishRunsToDiscord,

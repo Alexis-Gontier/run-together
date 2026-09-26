@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db/prisma"
 import { computePace } from "@/lib/runs/pace"
+import { displayName } from "@/lib/utils/display-name"
 import type { WeeklyRecapData } from "./embeds/weekly-recap"
 
 const DAY = 24 * 60 * 60 * 1000
@@ -33,7 +34,7 @@ export async function getWeeklyRecapData(
         distance: true,
         duration: true,
         userId: true,
-        user: { select: { name: true } },
+        user: { select: { name: true, username: true } },
       },
     }),
     prisma.personalRecord.findMany({
@@ -41,7 +42,7 @@ export async function getWeeklyRecapData(
       select: {
         distance: true,
         duration: true,
-        user: { select: { name: true } },
+        user: { select: { name: true, username: true } },
       },
       orderBy: { duration: "asc" },
     }),
@@ -54,7 +55,7 @@ export async function getWeeklyRecapData(
   >()
   for (const r of runs) {
     const u = byUser.get(r.userId) ?? {
-      name: r.user.name,
+      name: displayName(r.user),
       distance: 0,
       duration: 0,
       runs: 0,
@@ -91,7 +92,7 @@ export async function getWeeklyRecapData(
       .map(({ name, runs }) => ({ name, runs })),
     bestPace: bestPace ?? null,
     records: records.map((r) => ({
-      name: r.user.name,
+      name: displayName(r.user),
       distance: r.distance,
       duration: r.duration,
     })),

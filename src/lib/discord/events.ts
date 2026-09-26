@@ -1,6 +1,7 @@
 import { env } from "@/env"
 import { prisma } from "@/lib/db/prisma"
 import type { NewPR } from "@/lib/runs/personal-records"
+import { displayName } from "@/lib/utils/display-name"
 import { buildBadgeUnlockedMessage } from "./embeds/badge-unlocked"
 import { buildRunCreatedMessage } from "./embeds/run-created"
 import { buildMemberJoinedMessage, buildTestMessage } from "./embeds/simple"
@@ -11,7 +12,9 @@ export async function notifyRunCreated(runId: string, newPRs: NewPR[]) {
   try {
     const run = await prisma.run.findUniqueOrThrow({
       where: { id: runId },
-      include: { user: { select: { name: true, username: true } } },
+      include: {
+        user: { select: { name: true, username: true, image: true } },
+      },
     })
     await notify({
       type: "run.created",
@@ -20,8 +23,9 @@ export async function notifyRunCreated(runId: string, newPRs: NewPR[]) {
         {
           runId,
           runName: run.name || "Course sans nom",
-          userName: run.user.name,
+          userName: displayName(run.user),
           username: run.user.username,
+          userImage: run.user.image,
           distance: run.distance,
           duration: run.duration,
           pace: run.pace,

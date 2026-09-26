@@ -45,6 +45,7 @@ import {
   runFormSchema,
   runFormToInput,
 } from "../_schemas/run-form-schema"
+import { RunDatePicker } from "./run-date-picker"
 import { TrackDropzone } from "./track-dropzone"
 
 const SPORT_LABELS: Record<RunSportType, string> = {
@@ -293,11 +294,11 @@ export function RunForm({ run, defaultPublish = true }: RunFormProps) {
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel htmlFor={field.name}>Date</FieldLabel>
-                <Input
-                  {...field}
+                <RunDatePicker
                   id={field.name}
-                  type="date"
-                  aria-invalid={fieldState.invalid}
+                  value={field.value}
+                  onChange={field.onChange}
+                  invalid={fieldState.invalid}
                 />
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />

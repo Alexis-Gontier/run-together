@@ -1,5 +1,6 @@
 import { env } from "@/env"
 import { getRequiredUser } from "@/lib/auth/auth-session"
+import { profileImagesEnabled } from "@/lib/profile-images/store"
 import { getStravaConnectionAction } from "./_actions/get-strava-connection-action"
 import { getWebhookStatus } from "./_actions/get-webhook-status-action"
 import { AccountCard } from "./_components/account-card"
@@ -25,6 +26,8 @@ export default async function SettingsPage() {
         email={user.email}
         username={user.username}
         image={user.image}
+        bannerImage={user.bannerImage}
+        canEditImages={profileImagesEnabled()}
       />
       {env.STRAVA_ENABLED && (
         <StravaCard connection={stravaAccount} webhookActive={webhookActive} />

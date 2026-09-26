@@ -27,7 +27,7 @@ export default async function RunRightPanel({ params }: Props) {
           user.username
             ? {
                 href: profileRoute(user.username),
-                label: `Profil de ${user.name}`,
+                label: `Profil de ${user.username}`,
               }
             : undefined
         }

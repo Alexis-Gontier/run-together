@@ -3,6 +3,7 @@ import { ImageResponse } from "next/og"
 import { BADGES } from "@/lib/badges/catalog"
 import { prisma } from "@/lib/db/prisma"
 import { OG, OG_BADGE_TONES, OgHeader } from "@/lib/og/theme"
+import { displayName } from "@/lib/utils/display-name"
 
 export const runtime = "nodejs"
 
@@ -20,7 +21,7 @@ export async function GET(
     where: { id: runId },
     select: {
       name: true,
-      user: { select: { name: true } },
+      user: { select: { name: true, username: true } },
       badges: { select: { badgeKey: true }, orderBy: { unlockedAt: "asc" } },
     },
   })
@@ -47,7 +48,7 @@ export async function GET(
       }}
     >
       <OgHeader
-        title={run.user.name}
+        title={displayName(run.user)}
         subtitle={run.name ?? "Course sans nom"}
         right={
           badges.length > 1

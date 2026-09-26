@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation"
 import { RecentBadgesCard } from "@/components/ui/recent-badges-card"
 import { getUser } from "@/lib/auth/auth-session"
+import { profileImagesEnabled } from "@/lib/profile-images/store"
 import { getProfileAction } from "./_actions/get-profile-action"
 import { getProfileRunsAction } from "./_actions/get-profile-runs-action"
 import { ProfileHeader } from "./_components/profile-header"
@@ -30,11 +31,12 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
   return (
     <>
       <ProfileHeader
-        name={profileUser.name}
         username={profileUser.username ?? username}
         displayUsername={profileUser.displayUsername}
         image={profileUser.image}
+        bannerImage={profileUser.bannerImage}
         isOwnProfile={isOwnProfile}
+        canEditImages={isOwnProfile && profileImagesEnabled()}
         runsCount={profileUser.runsCount}
         totalDistance={profileUser.totalDistance}
       />

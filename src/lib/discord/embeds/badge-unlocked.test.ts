@@ -11,7 +11,7 @@ describe("buildBadgeUnlockedMessage", () => {
       "run1",
       "https://run-together.app/",
     ).embeds[0]
-    expect(e.title).toBe("🏅 Alice débloque 2 badges")
+    expect(e.title).toBe("🏅 alice débloque 2 badges")
     expect(e.url).toBe("https://run-together.app/profile/alice")
     expect(e.image?.url).toBe("https://run-together.app/api/og/badges/run1")
     expect(e.fields).toHaveLength(2)

@@ -10,6 +10,7 @@ export type RunCreatedData = {
   runName: string
   userName: string
   username: string | null
+  userImage?: string | null
   distance: number
   duration: number
   pace: number
@@ -78,6 +79,7 @@ export function buildRunCreatedMessage(
         author: {
           name: data.userName,
           url: data.username ? base + profileRoute(data.username) : undefined,
+          icon_url: data.userImage ?? undefined,
         },
         title: data.runName,
         url: base + runRoute(data.runId),

@@ -1,4 +1,4 @@
-import { Settings, Swords } from "lucide-react"
+import { Camera, Settings, Swords } from "lucide-react"
 import Link from "next/link"
 import {
   Avatar,
@@ -6,27 +6,29 @@ import {
   AvatarImage,
 } from "@/components/shadcn-ui/avatar"
 import { Button } from "@/components/shadcn-ui/button"
-import { Skeleton } from "@/components/shadcn-ui/skeleton"
+import { ProfileImageDialog } from "@/components/ui/profile-image-dialog"
 import { compareRoute, ROUTES } from "@/lib/constants/routes"
 import { getInitials } from "@/lib/utils/get-initials"
 import { formatRunDistance } from "@/lib/utils/run"
 
 type ProfileHeaderProps = {
-  name: string
   username: string
   displayUsername: string | null
   image: string | null
+  bannerImage: string | null
   isOwnProfile: boolean
+  canEditImages: boolean
   runsCount: number
   totalDistance: number
 }
 
 export function ProfileHeader({
-  name,
   username,
   displayUsername,
   image,
+  bannerImage,
   isOwnProfile,
+  canEditImages,
   runsCount,
   totalDistance,
 }: ProfileHeaderProps) {
@@ -34,17 +36,48 @@ export function ProfileHeader({
 
   return (
     <div>
-      {/* Cover */}
-      <Skeleton className="h-44 w-full rounded-none" />
+      {/* Bannière (3:1), dégradé par défaut */}
+      <div className="relative aspect-3/1 max-h-56 w-full overflow-hidden bg-linear-to-br from-emerald-500/30 via-muted to-muted">
+        {bannerImage && (
+          // biome-ignore lint/performance/noImgElement: URL Vercel Blob déjà redimensionnée
+          <img src={bannerImage} alt="" className="size-full object-cover" />
+        )}
+        {canEditImages && (
+          <ProfileImageDialog kind="banner" currentUrl={bannerImage}>
+            <Button
+              variant="secondary"
+              size="sm"
+              className="absolute top-3 right-3 cursor-pointer bg-background/70 backdrop-blur"
+            >
+              <Camera />
+              Bannière
+            </Button>
+          </ProfileImageDialog>
+        )}
+      </div>
 
       {/* Avatar row */}
       <div className="flex items-end justify-between px-5 pb-3">
-        <Avatar className="-mt-15 size-30 border-4 border-background shadow-md">
-          <AvatarImage src={image ?? undefined} alt={name} />
-          <AvatarFallback className="font-bold text-2xl">
-            {getInitials(name)}
-          </AvatarFallback>
-        </Avatar>
+        <div className="relative -mt-15">
+          <Avatar className="size-30 border-4 border-background shadow-md">
+            <AvatarImage src={image ?? undefined} alt={handle} />
+            <AvatarFallback className="font-bold text-2xl">
+              {getInitials(handle)}
+            </AvatarFallback>
+          </Avatar>
+          {canEditImages && (
+            <ProfileImageDialog kind="avatar" currentUrl={image}>
+              <Button
+                size="icon"
+                variant="secondary"
+                className="absolute right-1 bottom-1 size-8 cursor-pointer rounded-full border-2 border-background"
+                aria-label="Changer la photo de profil"
+              >
+                <Camera />
+              </Button>
+            </ProfileImageDialog>
+          )}
+        </div>
         {!isOwnProfile && (
           <Button
             variant="outline"
@@ -75,8 +108,7 @@ export function ProfileHeader({
 
       {/* Identity */}
       <div className="px-5">
-        <h1 className="font-black text-xl tracking-tight">{name}</h1>
-        <p className="text-muted-foreground text-sm">@{handle}</p>
+        <h1 className="font-black text-xl tracking-tight">{handle}</h1>
 
         {/* Stats */}
         <div className="mt-4 flex gap-5 pb-4 text-sm">

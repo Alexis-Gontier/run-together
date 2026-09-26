@@ -12,6 +12,7 @@ import { OG, OG_HEADER_H, OgHeader } from "@/lib/og/theme"
 import { PR_DISTANCE_LABELS, PR_DISTANCE_ORDER } from "@/lib/runs/pr-display"
 import { decodePolyline } from "@/lib/runs/track/decode-polyline"
 import { routeSvgPath } from "@/lib/runs/track/route-svg"
+import { displayName } from "@/lib/utils/display-name"
 
 export const runtime = "nodejs"
 
@@ -85,7 +86,7 @@ export async function GET(
       date: true,
       summaryPolyline: true,
       polyline: true,
-      user: { select: { name: true } },
+      user: { select: { name: true, username: true } },
       personalRecords: { select: { distance: true, duration: true } },
     },
   })
@@ -168,7 +169,7 @@ export async function GET(
       }}
     >
       <OgHeader
-        title={run.user.name ?? "Inconnu"}
+        title={displayName(run.user)}
         subtitle={run.name ?? "Course sans nom"}
         right={formattedDate}
       />

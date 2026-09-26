@@ -15,6 +15,10 @@ export const env = createEnv({
     STRAVA_ENABLED: z.stringbool().default(false),
     // Secret partagé avec Vercel Cron (récap hebdo Discord). Absent : la route répond 503.
     CRON_SECRET: z.string().min(16).optional(),
+    // Vercel Blob (photos de profil, bannières). Sur Vercel : OIDC via BLOB_STORE_ID ;
+    // en local : BLOB_READ_WRITE_TOKEN. Aucun des deux : upload masqué.
+    BLOB_STORE_ID: z.string().optional(),
+    BLOB_READ_WRITE_TOKEN: z.string().optional(),
   },
   client: {
     NEXT_PUBLIC_APP_URL: z.url(),

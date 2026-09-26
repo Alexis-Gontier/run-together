@@ -10,6 +10,7 @@ import { WeekSummaryCard } from "@/components/ui/week-summary-card"
 import { getRequiredUser } from "@/lib/auth/auth-session"
 import { ROUTES } from "@/lib/constants/routes"
 import { cn } from "@/lib/utils/cn"
+import { displayName } from "@/lib/utils/display-name"
 import { getInitials } from "@/lib/utils/get-initials"
 
 const MONTH_NAMES = [
@@ -102,13 +103,13 @@ export default async function HomeRightPanel() {
                 <Avatar className="size-7 shrink-0">
                   <AvatarImage src={entry.user.image ?? undefined} />
                   <AvatarFallback className="text-xs">
-                    {getInitials(entry.user.name ?? "")}
+                    {getInitials(displayName(entry.user))}
                   </AvatarFallback>
                 </Avatar>
 
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-medium text-sm leading-tight">
-                    {entry.user.name}
+                    {displayName(entry.user)}
                   </p>
                   <p className="text-muted-foreground text-xs">
                     {entry.totalDistanceKm.toFixed(1)}{" "}

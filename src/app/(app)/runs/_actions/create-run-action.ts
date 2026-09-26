@@ -5,6 +5,7 @@ import { RunSource } from "@/generated/prisma/client"
 import { findDuplicateRun, recordRun } from "@/lib/runs/record-run"
 import { recordRunInputSchema } from "@/lib/runs/schemas"
 import { authActionClient } from "@/lib/safe-action/auth-action-client"
+import { displayName } from "@/lib/utils/display-name"
 
 export const createRunAction = authActionClient
   .inputSchema(z.object({ values: recordRunInputSchema, publish: z.boolean() }))
@@ -14,7 +15,7 @@ export const createRunAction = authActionClient
     }
     const { run } = await recordRun(values, {
       userId: user.id,
-      userName: user.name,
+      userName: displayName(user),
       source: RunSource.MANUAL,
       notify: publish,
     })

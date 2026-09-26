@@ -29,6 +29,13 @@ export function FeedList({
 }: FeedListProps) {
   const [runs, setRuns] = useState(initialRuns)
   const [cursor, setCursor] = useState(initialNextCursor)
+  // Données serveur rafraîchies (router.refresh, changement d'avatar…) : on repart d'elles.
+  const [prevInitial, setPrevInitial] = useState(initialRuns)
+  if (initialRuns !== prevInitial) {
+    setPrevInitial(initialRuns)
+    setRuns(initialRuns)
+    setCursor(initialNextCursor)
+  }
   const sentinelRef = useRef<HTMLDivElement>(null)
 
   const { execute, isPending } = useAction(getFeedAction, {

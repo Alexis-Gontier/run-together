@@ -49,6 +49,10 @@ export const auth = betterAuth({
         type: "number",
         required: false,
       },
+      bannerImage: {
+        type: "string",
+        required: false,
+      },
     },
   },
   plugins: [

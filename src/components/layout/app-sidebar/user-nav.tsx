@@ -19,6 +19,7 @@ import {
 } from "@/components/shadcn-ui/dropdown-menu"
 import { signOutAction } from "@/lib/actions/auth/sign-out-action"
 import { ADMIN_ROUTES, profileRoute, ROUTES } from "@/lib/constants/routes"
+import { displayName } from "@/lib/utils/display-name"
 import { getInitials } from "@/lib/utils/get-initials"
 
 type UserInfo = {
@@ -31,8 +32,9 @@ type UserInfo = {
 
 export function UserNav({ name, username, email, image, isAdmin }: UserInfo) {
   const [isPending, startTransition] = useTransition()
-  const initials = name ? getInitials(name) : "?"
-  const displaySub = username ? `@${username}` : (email ?? null)
+  const shown = displayName({ username, name })
+  const initials = getInitials(shown)
+  const displaySub = email ?? null
 
   return (
     <DropdownMenu>
@@ -47,7 +49,7 @@ export function UserNav({ name, username, email, image, isAdmin }: UserInfo) {
           </AvatarFallback>
         </Avatar>
         <div className="hidden min-w-0 flex-1 text-left text-sm leading-tight lg:grid">
-          <span className="truncate font-medium">{name ?? "—"}</span>
+          <span className="truncate font-medium">{shown}</span>
           {displaySub && (
             <span className="truncate text-muted-foreground text-xs">
               {displaySub}
@@ -56,7 +58,7 @@ export function UserNav({ name, username, email, image, isAdmin }: UserInfo) {
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent side="top" align="start" className="w-56">
-        <DropdownMenuLabel className="truncate">{name}</DropdownMenuLabel>
+        <DropdownMenuLabel className="truncate">{shown}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {username && (
           <DropdownMenuItem asChild>

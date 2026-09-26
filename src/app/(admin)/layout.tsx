@@ -2,6 +2,7 @@ import Link from "next/link"
 import { Button } from "@/components/shadcn-ui/button"
 import { getRequiredAdmin } from "@/lib/auth/auth-session"
 import { ADMIN_ROUTES, ROUTES } from "@/lib/constants/routes"
+import { displayName } from "@/lib/utils/display-name"
 
 export default async function AdminLayout({
   children,
@@ -28,7 +29,9 @@ export default async function AdminLayout({
             </nav>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-muted-foreground text-sm">{user.name}</span>
+            <span className="text-muted-foreground text-sm">
+              {displayName(user)}
+            </span>
             <Button asChild variant="ghost" size="sm">
               <Link href={ROUTES.HOME}>← App</Link>
             </Button>
