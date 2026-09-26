@@ -10,6 +10,8 @@ export const env = createEnv({
     STRAVA_CLIENT_SECRET: z.string(),
     STRAVA_WEBHOOK_VERIFY_TOKEN: z.string(),
     DISCORD_WEBHOOK_URL: z.string(),
+    // L'app Strava est inactive depuis le 19/08/2026 : UI, OAuth et webhook coupés par défaut.
+    STRAVA_ENABLED: z.stringbool().default(false),
   },
   client: {
     NEXT_PUBLIC_APP_URL: z.url(),

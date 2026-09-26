@@ -9,6 +9,7 @@ import { stravaOAuthPaths } from "@/lib/strava/constants"
 import { getValidAccessToken } from "@/lib/strava/token"
 
 export async function POST() {
+  if (!env.STRAVA_ENABLED) return new NextResponse(null, { status: 404 })
   const user = await getUser()
   if (!user) {
     return NextResponse.redirect(

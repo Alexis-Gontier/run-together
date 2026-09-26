@@ -1,5 +1,6 @@
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
+import { NextResponse } from "next/server"
 
 import { env } from "@/env"
 import { getUser } from "@/lib/auth/auth-session"
@@ -7,6 +8,7 @@ import { API_ROUTES, AUTH_ROUTES } from "@/lib/constants/routes"
 import { STRAVA_AUTH_URL, STRAVA_SCOPE } from "@/lib/strava/constants"
 
 export async function GET() {
+  if (!env.STRAVA_ENABLED) return new NextResponse(null, { status: 404 })
   const user = await getUser()
   if (!user) {
     return redirect(AUTH_ROUTES.LOGIN)

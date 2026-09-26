@@ -10,6 +10,7 @@ import { importStravaActivity } from "@/lib/strava/import-activity"
 // Strava appelle cet endpoint lors de la création de l'abonnement webhook
 // ---------------------------------------------------------------------------
 export async function GET(request: NextRequest) {
+  if (!env.STRAVA_ENABLED) return new NextResponse(null, { status: 404 })
   const { searchParams } = request.nextUrl
 
   const mode = searchParams.get("hub.mode")
@@ -42,6 +43,7 @@ interface StravaWebhookEvent {
 }
 
 export async function POST(request: NextRequest) {
+  if (!env.STRAVA_ENABLED) return new NextResponse(null, { status: 404 })
   let event: StravaWebhookEvent
 
   try {

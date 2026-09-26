@@ -15,6 +15,7 @@ function redirectTo(path: string) {
 }
 
 export async function GET(request: NextRequest) {
+  if (!env.STRAVA_ENABLED) return new NextResponse(null, { status: 404 })
   const { searchParams } = request.nextUrl
   const code = searchParams.get("code")
   const state = searchParams.get("state")

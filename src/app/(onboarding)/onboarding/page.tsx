@@ -1,3 +1,4 @@
+import { env } from "@/env"
 import { getRequiredUser } from "@/lib/auth/auth-session"
 import { prisma } from "@/lib/db/prisma"
 import { OnboardingWizard } from "./_components/onboarding-wizard"
@@ -25,6 +26,7 @@ export default async function OnboardingPage({
       userName={user.name}
       userEmail={user.email}
       isStravaConnected={!!stravaAccount}
+      stravaEnabled={env.STRAVA_ENABLED}
     />
   )
 }

@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils/cn"
 import { useOnboardingStore } from "../_store/onboarding-store"
 import { StepDisplayName } from "./step-display-name"
 import { StepEmail } from "./step-email"
+import { StepFirstRun } from "./step-first-run"
 import { StepIndicator } from "./step-indicator"
 import { StepStrava } from "./step-strava"
 import { StepWelcome } from "./step-welcome"
@@ -15,6 +16,7 @@ type OnboardingWizardProps = {
   userName: string
   userEmail: string
   isStravaConnected: boolean
+  stravaEnabled: boolean
 }
 
 export function OnboardingWizard({
@@ -22,6 +24,7 @@ export function OnboardingWizard({
   userName,
   userEmail,
   isStravaConnected,
+  stravaEnabled,
 }: OnboardingWizardProps) {
   const { step, init, nextStep, prevStep } = useOnboardingStore()
   const [direction, setDirection] = useState<"forward" | "backward">("forward")
@@ -70,7 +73,12 @@ export function OnboardingWizard({
         {step === 0 && <StepWelcome onStart={goNext} />}
         {step === 1 && <StepDisplayName onNext={goNext} onBack={goBack} />}
         {step === 2 && <StepEmail onNext={goNext} onBack={goBack} />}
-        {step === 3 && <StepStrava onBack={goBack} />}
+        {step === 3 &&
+          (stravaEnabled ? (
+            <StepStrava onBack={goBack} />
+          ) : (
+            <StepFirstRun onBack={goBack} />
+          ))}
       </div>
     </div>
   )

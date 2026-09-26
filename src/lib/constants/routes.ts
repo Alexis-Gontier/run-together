@@ -1,6 +1,7 @@
 export const ROUTES = {
   HOME: "/home",
   RUNS: "/runs",
+  RUN_NEW: "/runs/new",
   PROGRESS: "/progress",
   LEADERBOARD: "/leaderboard",
   BADGES: "/badges",
@@ -24,6 +25,7 @@ export const ROUTE_LABELS: Record<string, string> = {
 }
 
 export const runRoute = (id: string) => `${ROUTES.RUNS}/${id}`
+export const editRunRoute = (id: string) => `${ROUTES.RUNS}/${id}/edit`
 export const profileRoute = (username: string) => `/profile/${username}`
 
 export const ADMIN_ROUTES = {
