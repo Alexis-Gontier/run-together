@@ -1,7 +1,8 @@
 import { ImageResponse } from "next/og"
 
-import { env } from "@/env"
 import { prisma } from "@/lib/db/prisma"
+import { decodePolyline } from "@/lib/runs/track/decode-polyline"
+import { routeSvgPath } from "@/lib/runs/track/route-svg"
 
 export const runtime = "nodejs"
 
@@ -10,6 +11,11 @@ const BORDER = "#27272a"
 const TEXT = "#fafafa"
 const MUTED = "#71717a"
 const ORANGE = "#FC4C02"
+const ROUTE = "#10b981"
+const MAP_BG = "#111113"
+const MAP_PADDING = 48
+// Assez de points pour un tracé lisse, assez peu pour garder le SVG léger.
+const MAX_ROUTE_POINTS = 400
 
 // Heights
 const HEADER_H = 88
@@ -50,6 +56,7 @@ export async function GET(
       calories: true,
       date: true,
       summaryPolyline: true,
+      polyline: true,
       user: { select: { name: true } },
     },
   })
@@ -76,9 +83,18 @@ export async function GET(
   const extraH = hasExtra ? 52 : 0
   const mapH = MAP_H - extraH
 
-  const mapUrl = run.summaryPolyline
-    ? `https://api.mapbox.com/styles/v1/mapbox/dark-v11/static/path-3+FC4C02-0.8(${encodeURIComponent(run.summaryPolyline)})/auto/1200x${mapH}?padding=60&access_token=${env.NEXT_PUBLIC_MAPBOX_TOKEN}`
-    : null
+  // Tracé dessiné en SVG à partir de la polyline : aucun service de carte externe.
+  const encoded = run.polyline ?? run.summaryPolyline
+  const decoded = encoded ? decodePolyline(encoded) : []
+  const step = Math.max(1, Math.ceil(decoded.length / MAX_ROUTE_POINTS))
+  const points = decoded.filter(
+    (_, i) => i % step === 0 || i === decoded.length - 1,
+  )
+  const routePath = routeSvgPath(points, 1200, mapH, MAP_PADDING)
+  const endpoints = routePath
+    ?.split(" L")
+    .filter((_, i, all) => i === 0 || i === all.length - 1)
+    .map((p) => p.replace("M", "").split(" ").map(Number))
 
   return new ImageResponse(
     <div
@@ -139,26 +155,66 @@ export async function GET(
       </div>
 
       {/* ── Map ────────────────────────────────────────────── */}
-      {mapUrl ? (
-        // biome-ignore lint/performance/noImgElement: image générée (OG / carte statique), next/image inutile ici
-        <img
-          src={mapUrl}
+      {routePath && endpoints ? (
+        // biome-ignore lint/a11y/noSvgWithoutTitle: rendu par Satori, qui afficherait <title> comme du texte
+        <svg
           width={1200}
           height={mapH}
-          style={{ objectFit: "cover", flexShrink: 0 }}
-          alt=""
-        />
+          viewBox={`0 0 1200 ${mapH}`}
+          style={{ flexShrink: 0, backgroundColor: MAP_BG }}
+        >
+          <path
+            d={routePath}
+            fill="none"
+            stroke={ROUTE}
+            strokeOpacity={0.25}
+            strokeWidth={16}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d={routePath}
+            fill="none"
+            stroke={ROUTE}
+            strokeWidth={6}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <circle
+            cx={endpoints[0][0]}
+            cy={endpoints[0][1]}
+            r={10}
+            fill={TEXT}
+          />
+          <circle
+            cx={endpoints[endpoints.length - 1][0]}
+            cy={endpoints[endpoints.length - 1][1]}
+            r={10}
+            fill={ORANGE}
+          />
+        </svg>
       ) : (
         <div
           style={{
             display: "flex",
+            flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
+            gap: "8px",
             height: `${mapH}px`,
             flexShrink: 0,
-            backgroundColor: "#111113",
+            backgroundColor: MAP_BG,
           }}
-        />
+        >
+          <span style={{ color: TEXT, fontSize: "120px", fontWeight: 800 }}>
+            {km}
+          </span>
+          <span
+            style={{ color: MUTED, fontSize: "24px", letterSpacing: "4px" }}
+          >
+            KILOMÈTRES
+          </span>
+        </div>
       )}
 
       {/* ── Extra stats (HR / cadence / calories) ──────────── */}
