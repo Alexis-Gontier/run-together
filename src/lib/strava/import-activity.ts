@@ -21,7 +21,7 @@ export async function importStravaActivity(
 ): Promise<void> {
   const account = await prisma.stravaAccount.findUnique({
     where: { userId },
-    include: { user: { select: { name: true } } },
+    include: { user: { select: { name: true, publishRunsToDiscord: true } } },
   })
   if (!account) throw new Error("Strava account not found")
 
@@ -56,7 +56,7 @@ export async function importStravaActivity(
     userName: account.user.name ?? "Inconnu",
     source: RunSource.STRAVA,
     stravaId: String(activityId),
-    notify: !options.silent,
+    notify: !options.silent && account.user.publishRunsToDiscord,
     replaceExisting: options.replaceExisting,
   })
 }

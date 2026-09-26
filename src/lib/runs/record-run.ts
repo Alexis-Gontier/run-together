@@ -1,6 +1,6 @@
 import type { Run, RunSource } from "@/generated/prisma/client"
 import { prisma } from "@/lib/db/prisma"
-import { sendRunNotification } from "@/lib/discord"
+import { notifyRunCreated } from "@/lib/discord/events"
 import { computePace } from "./pace"
 import {
   type NewPR,
@@ -88,17 +88,7 @@ export async function recordRun(
     console.error("[personal-records] update failed", run.id, err)
   }
 
-  if (options.notify) {
-    try {
-      await sendRunNotification({
-        runId: run.id,
-        userName: options.userName,
-        runName: run.name || "Course sans nom",
-      })
-    } catch (err) {
-      console.error("[discord] run notification failed", run.id, err)
-    }
-  }
+  if (options.notify) await notifyRunCreated(run.id, newPRs)
 
   return { run, newPRs }
 }
