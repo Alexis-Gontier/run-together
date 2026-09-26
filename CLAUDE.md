@@ -7,7 +7,7 @@
 - **Auth**: better-auth v1 (username + admin plugins) → @src/lib/auth/CLAUDE.md
 - **Server Actions**: next-safe-action v8 → @src/lib/safe-action/CLAUDE.md
 - **Forms**: React Hook Form + Zod v4 + `standardSchemaResolver` → @src/lib/schemas/CLAUDE.md
-- **UI**: shadcn/ui + Tailwind CSS v4 ; maps via shadcn-map (Leaflet, OpenStreetMap tiles) — `src/components/ui/run-map.tsx`, SVG thumbnails in lists (`route-thumbnail.tsx`)
+- **UI**: shadcn/ui + Tailwind CSS v4 ; maps via mapcn (MapLibre GL, free CARTO vector basemaps, light/dark) — `src/components/ui/run-map.tsx`, SVG thumbnails in lists (`route-thumbnail.tsx`)
 - **Stats**: week summary, highlights, streaks, milestones for the right panels → `src/lib/stats/`
 - **State**: Zustand (onboarding flow), nuqs (URL query params)
 - **Runs**: source-agnostic pipeline (`recordRun`), personal records, GPX/FIT parsing → @src/lib/runs/CLAUDE.md
@@ -46,7 +46,7 @@ Shared actions used across multiple routes live in `src/lib/actions/`.
 
 **Forms** — always use `standardSchemaResolver` from `@hookform/resolvers/standard-schema`. Zod v4 is incompatible with the `@hookform/resolvers/zod` typed overloads.
 
-**shadcn** — `pnpm dlx shadcn@latest add <x>` (answer « no » to overwrite prompts: `yes n | pnpm dlx …`). Recent registry items import `cn` from the `cn` npm package: rewrite to `@/lib/utils/cn` and `pnpm remove cn` afterwards.
+**shadcn** — `pnpm dlx shadcn@latest add <x>` (registries: `@mapcn`; answer « no » to overwrite prompts: `yes n | pnpm dlx …`). Recent registry items import `cn` from the `cn` npm package: rewrite to `@/lib/utils/cn` and `pnpm remove cn` afterwards.
 
 **Routing** — use `ROUTES.*` / `AUTH_ROUTES.*` / `ADMIN_ROUTES.*` / `API_ROUTES.*` from `src/lib/constants/routes.ts`. Helper functions: `runRoute(id)`, `profileRoute(username)`. Never hardcode paths.
 

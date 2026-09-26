@@ -67,7 +67,8 @@
         "rules": {
           "a11y": {
             "useSemanticElements": "off",
-            "useKeyWithClickEvents": "off"
+            "useKeyWithClickEvents": "off",
+            "noSvgWithoutTitle": "off"
           },
           "suspicious": {
             "noArrayIndexKey": "off",

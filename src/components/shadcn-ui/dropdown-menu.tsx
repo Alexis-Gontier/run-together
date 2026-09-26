@@ -34,16 +34,10 @@ function DropdownMenuContent({
   className,
   align = "start",
   sideOffset = 4,
-  container,
   ...props
-}: React.ComponentProps<typeof DropdownMenuPrimitive.Content> & {
-  // Requis par shadcn-map : le menu des calques doit s'ouvrir dans la carte (plein écran).
-  container?: React.ComponentProps<
-    typeof DropdownMenuPrimitive.Portal
-  >["container"]
-}) {
+}: React.ComponentProps<typeof DropdownMenuPrimitive.Content>) {
   return (
-    <DropdownMenuPrimitive.Portal container={container}>
+    <DropdownMenuPrimitive.Portal>
       <DropdownMenuPrimitive.Content
         data-slot="dropdown-menu-content"
         sideOffset={sideOffset}
