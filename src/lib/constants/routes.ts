@@ -30,6 +30,7 @@ export const profileRoute = (username: string) => `/profile/${username}`
 
 export const ADMIN_ROUTES = {
   USERS: "/admin",
+  DISCORD: "/admin/discord",
 } as const
 
 export const API_ROUTES = {
