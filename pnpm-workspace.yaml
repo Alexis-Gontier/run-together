@@ -4,3 +4,4 @@ allowBuilds:
   msw: false
   prisma: true
   sharp: true
+  lefthook: true
