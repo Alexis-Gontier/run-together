@@ -140,7 +140,7 @@ export async function GET(
 
       {/* ── Map ────────────────────────────────────────────── */}
       {mapUrl ? (
-        // eslint-disable-next-line @next/next/no-img-element
+        // biome-ignore lint/performance/noImgElement: image générée (OG / carte statique), next/image inutile ici
         <img
           src={mapUrl}
           width={1200}

@@ -11,7 +11,7 @@ export function MapboxPolyline({ encoded, className }: MapboxPolylineProps) {
   const url = `https://api.mapbox.com/styles/v1/mapbox/dark-v11/static/${path}/auto/550x220@2x?padding=40&access_token=${env.NEXT_PUBLIC_MAPBOX_TOKEN}`
 
   return (
-    // eslint-disable-next-line @next/next/no-img-element
+    // biome-ignore lint/performance/noImgElement: image générée (OG / carte statique), next/image inutile ici
     <img
       src={url}
       alt="Carte du parcours"
