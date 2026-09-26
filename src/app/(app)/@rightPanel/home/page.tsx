@@ -6,6 +6,8 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/components/shadcn-ui/avatar"
+import { WeekSummaryCard } from "@/components/ui/week-summary-card"
+import { getRequiredUser } from "@/lib/auth/auth-session"
 import { ROUTES } from "@/lib/constants/routes"
 import { cn } from "@/lib/utils/cn"
 import { getInitials } from "@/lib/utils/get-initials"
@@ -58,6 +60,7 @@ export default async function HomeRightPanel() {
   const now = new Date()
   const monthLabel = `${MONTH_NAMES[now.getMonth()]} ${now.getFullYear()}`
 
+  const user = await getRequiredUser()
   const result = await getLeaderboardAction({
     metric: "distance",
     period: "month",
@@ -65,7 +68,8 @@ export default async function HomeRightPanel() {
   const entries = (result?.data?.entries ?? []).slice(0, 5)
 
   return (
-    <div className="p-4">
+    <div className="space-y-4 p-4">
+      <WeekSummaryCard userId={user.id} />
       <div className="rounded-xl border bg-card p-4 shadow-sm">
         <div className="mb-3 flex items-center justify-between">
           <h2 className="font-semibold text-sm">Top du mois</h2>
