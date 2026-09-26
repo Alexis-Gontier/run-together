@@ -1,4 +1,5 @@
 import { ogBadgesRoute, profileRoute, ROUTES } from "@/lib/constants/routes"
+import { displayName } from "@/lib/utils/display-name"
 import type { DiscordMessage } from "../client"
 import { FOOTER, RECORD_COLOR } from "./common"
 
@@ -18,8 +19,8 @@ export function buildBadgeUnlockedMessage(
       {
         color: RECORD_COLOR,
         title: plural
-          ? `🏅 ${user.name} débloque ${badges.length} badges`
-          : `🏅 ${user.name} débloque un badge`,
+          ? `🏅 ${displayName(user)} débloque ${badges.length} badges`
+          : `🏅 ${displayName(user)} débloque un badge`,
         url: user.username
           ? base + profileRoute(user.username)
           : base + ROUTES.BADGES,

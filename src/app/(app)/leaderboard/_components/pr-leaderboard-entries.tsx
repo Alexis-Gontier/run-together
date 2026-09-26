@@ -7,6 +7,7 @@ import {
 import { YouBadge } from "@/components/ui/you-badge"
 import { runRoute } from "@/lib/constants/routes"
 import { cn } from "@/lib/utils/cn"
+import { displayName } from "@/lib/utils/display-name"
 import { getInitials } from "@/lib/utils/get-initials"
 import { formatRunDurationDisplay, formatRunPace } from "@/lib/utils/run"
 
@@ -62,14 +63,14 @@ export function PrLeaderboardEntries({ entries, currentUserId }: Props) {
           <Avatar className="h-8 w-8 shrink-0">
             <AvatarImage src={entry.user.image ?? undefined} />
             <AvatarFallback className="text-xs">
-              {getInitials(entry.user.name ?? "")}
+              {getInitials(displayName(entry.user))}
             </AvatarFallback>
           </Avatar>
 
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
               <span className="truncate font-medium text-sm">
-                {entry.user.name}
+                {displayName(entry.user)}
               </span>
               {entry.user.id === currentUserId && <YouBadge />}
             </div>

@@ -10,6 +10,7 @@ import { stravaEndpoints } from "@/lib/strava/constants"
 import { stravaActivityToRunInput } from "@/lib/strava/create-run-from-activity"
 import { stravaActivityDetailSchema } from "@/lib/strava/schemas"
 import { getValidAccessToken } from "@/lib/strava/token"
+import { displayName } from "@/lib/utils/display-name"
 
 const importSchema = z.object({
   ids: z.array(z.number()),
@@ -65,7 +66,7 @@ export const importStravaRunsAction = authActionClient
       try {
         await recordRun(stravaActivityToRunInput(a), {
           userId: user.id,
-          userName: user.name,
+          userName: displayName(user),
           source: RunSource.STRAVA,
           stravaId: String(a.id),
           notify: false,

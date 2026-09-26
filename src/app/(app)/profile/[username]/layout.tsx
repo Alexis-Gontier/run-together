@@ -12,9 +12,9 @@ export async function generateMetadata({
   const { username } = await params
   const user = await prisma.user.findUnique({
     where: { username: username.toLowerCase() },
-    select: { name: true },
+    select: { username: true, displayUsername: true },
   })
-  return { title: user?.name ?? username }
+  return { title: user?.displayUsername ?? user?.username ?? username }
 }
 
 export default function ProfileLayout({ children }: ProfileLayoutProps) {

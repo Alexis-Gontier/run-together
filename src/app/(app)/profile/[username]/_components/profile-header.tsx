@@ -12,7 +12,6 @@ import { getInitials } from "@/lib/utils/get-initials"
 import { formatRunDistance } from "@/lib/utils/run"
 
 type ProfileHeaderProps = {
-  name: string
   username: string
   displayUsername: string | null
   image: string | null
@@ -24,7 +23,6 @@ type ProfileHeaderProps = {
 }
 
 export function ProfileHeader({
-  name,
   username,
   displayUsername,
   image,
@@ -62,9 +60,9 @@ export function ProfileHeader({
       <div className="flex items-end justify-between px-5 pb-3">
         <div className="relative -mt-15">
           <Avatar className="size-30 border-4 border-background shadow-md">
-            <AvatarImage src={image ?? undefined} alt={name} />
+            <AvatarImage src={image ?? undefined} alt={handle} />
             <AvatarFallback className="font-bold text-2xl">
-              {getInitials(name)}
+              {getInitials(handle)}
             </AvatarFallback>
           </Avatar>
           {canEditImages && (
@@ -110,8 +108,7 @@ export function ProfileHeader({
 
       {/* Identity */}
       <div className="px-5">
-        <h1 className="font-black text-xl tracking-tight">{name}</h1>
-        <p className="text-muted-foreground text-sm">@{handle}</p>
+        <h1 className="font-black text-xl tracking-tight">{handle}</h1>
 
         {/* Stats */}
         <div className="mt-4 flex gap-5 pb-4 text-sm">

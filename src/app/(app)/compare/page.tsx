@@ -18,6 +18,7 @@ import { getRequiredUser } from "@/lib/auth/auth-session"
 import { prisma } from "@/lib/db/prisma"
 import { PR_DISTANCE_LABELS } from "@/lib/runs/pr-display"
 import { cn } from "@/lib/utils/cn"
+import { displayName } from "@/lib/utils/display-name"
 import { formatRunDurationDisplay, formatRunPace } from "@/lib/utils/run"
 import { CompareChart } from "./_components/compare-chart"
 import { MemberSelect } from "./_components/member-select"
@@ -87,7 +88,7 @@ export default async function ComparePage({ searchParams }: Props) {
   // Membres qui ont au moins une course, sauf soi-même.
   const members = await prisma.user.findMany({
     where: { id: { not: me.id }, runs: { some: {} }, username: { not: null } },
-    orderBy: { name: "asc" },
+    orderBy: { username: "asc" },
     select: { id: true, name: true, username: true },
   })
   const other = members.find((m) => m.username === withUsername?.toLowerCase())
@@ -98,7 +99,7 @@ export default async function ComparePage({ searchParams }: Props) {
         <MemberSelect
           members={members.map((m) => ({
             username: m.username ?? "",
-            name: m.name,
+            name: displayName(m),
           }))}
           value={other?.username ?? null}
         />
@@ -121,8 +122,8 @@ export default async function ComparePage({ searchParams }: Props) {
       ) : (
         <ComparisonView
           meId={me.id}
-          meName={me.name}
-          other={{ id: other.id, name: other.name }}
+          meName={displayName(me)}
+          other={{ id: other.id, name: displayName(other) }}
           period={period}
         />
       )}

@@ -31,7 +31,6 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
   return (
     <>
       <ProfileHeader
-        name={profileUser.name}
         username={profileUser.username ?? username}
         displayUsername={profileUser.displayUsername}
         image={profileUser.image}

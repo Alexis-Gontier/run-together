@@ -1,4 +1,5 @@
 import { profileRoute } from "@/lib/constants/routes"
+import { displayName } from "@/lib/utils/display-name"
 import type { DiscordMessage } from "../client"
 import { BRAND_COLOR, FOOTER } from "./common"
 
@@ -11,9 +12,9 @@ export function buildMemberJoinedMessage(
     embeds: [
       {
         color: BRAND_COLOR,
-        title: `👋 Bienvenue ${user.name} !`,
+        title: `👋 Bienvenue ${displayName(user)} !`,
         url: user.username ? base + profileRoute(user.username) : undefined,
-        description: `**${user.name}** vient de rejoindre Run Together. Première sortie à suivre !`,
+        description: `**${displayName(user)}** vient de rejoindre Run Together. Première sortie à suivre !`,
         footer: FOOTER,
         timestamp: new Date().toISOString(),
       },

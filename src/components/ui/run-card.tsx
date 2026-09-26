@@ -15,6 +15,7 @@ import type { PRDistance } from "@/generated/prisma/enums"
 import { profileRoute } from "@/lib/constants/routes"
 import { PR_DISTANCE_LABELS } from "@/lib/runs/pr-display"
 import { cn } from "@/lib/utils/cn"
+import { displayName } from "@/lib/utils/display-name"
 import { getInitials } from "@/lib/utils/get-initials"
 import {
   formatRunDateShort,
@@ -45,7 +46,7 @@ export function RunCardHeader({ run, prs, className }: RunCardHeaderProps) {
         <Avatar className="h-9 w-9">
           <AvatarImage src={run.user.image ?? undefined} />
           <AvatarFallback className="text-xs">
-            {getInitials(run.user.name)}
+            {getInitials(displayName(run.user))}
           </AvatarFallback>
         </Avatar>
       </Link>
@@ -56,7 +57,7 @@ export function RunCardHeader({ run, prs, className }: RunCardHeaderProps) {
             href={profileRoute(run.user.username!)}
             className="relative z-20 font-semibold text-sm hover:underline"
           >
-            {run.user.name}
+            {displayName(run.user)}
           </Link>
           <span className="text-muted-foreground text-xs">
             · {formatRunDateShort(run.date)}
