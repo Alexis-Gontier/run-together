@@ -1,26 +1,28 @@
 import { ImageResponse } from "next/og"
 
 import { prisma } from "@/lib/db/prisma"
+import { OG, OG_HEADER_H, OgHeader } from "@/lib/og/theme"
+import { PR_DISTANCE_LABELS, PR_DISTANCE_ORDER } from "@/lib/runs/pr-display"
 import { decodePolyline } from "@/lib/runs/track/decode-polyline"
 import { routeSvgPath } from "@/lib/runs/track/route-svg"
 
 export const runtime = "nodejs"
 
-const BG = "#09090b"
-const BORDER = "#27272a"
-const TEXT = "#fafafa"
-const MUTED = "#71717a"
-const ORANGE = "#FC4C02"
-const ROUTE = "#10b981"
-const MAP_BG = "#111113"
+const BG = OG.bg
+const BORDER = OG.border
+const TEXT = OG.text
+const MUTED = OG.muted
+const ORANGE = OG.accent
+const ROUTE = OG.brand
+const MAP_BG = OG.panel
 const MAP_PADDING = 48
 // Assez de points pour un tracé lisse, assez peu pour garder le SVG léger.
 const MAX_ROUTE_POINTS = 400
 
 // Heights
-const HEADER_H = 88
 const STATS_H = 120
-const MAP_H = 630 - HEADER_H - STATS_H // 422
+const RECORDS_H = 56
+const MAP_H = OG.height - OG_HEADER_H - STATS_H // 422
 
 function formatDuration(seconds: number): string {
   const h = Math.floor(seconds / 3600)
@@ -58,6 +60,7 @@ export async function GET(
       summaryPolyline: true,
       polyline: true,
       user: { select: { name: true } },
+      personalRecords: { select: { distance: true, duration: true } },
     },
   })
 
@@ -81,7 +84,13 @@ export async function GET(
 
   const hasExtra = !!(run.heartRateAvg || run.cadenceAvg || run.calories)
   const extraH = hasExtra ? 52 : 0
-  const mapH = MAP_H - extraH
+  const records = [...run.personalRecords].sort(
+    (a, b) =>
+      PR_DISTANCE_ORDER.indexOf(a.distance) -
+      PR_DISTANCE_ORDER.indexOf(b.distance),
+  )
+  const recordsH = records.length > 0 ? RECORDS_H : 0
+  const mapH = MAP_H - extraH - recordsH
 
   // Tracé dessiné en SVG à partir de la polyline : aucun service de carte externe.
   const encoded = run.polyline ?? run.summaryPolyline
@@ -107,52 +116,45 @@ export async function GET(
         fontFamily: "sans-serif",
       }}
     >
-      {/* ── Header ─────────────────────────────────────────── */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          height: `${HEADER_H}px`,
-          padding: "0 32px",
-          borderBottom: `1px solid ${BORDER}`,
-          flexShrink: 0,
-        }}
-      >
-        {/* Left: user + run name */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-          <span style={{ color: TEXT, fontSize: "22px", fontWeight: 700 }}>
-            {run.user.name ?? "Inconnu"}
-          </span>
-          <span style={{ color: MUTED, fontSize: "16px" }}>
-            {run.name ?? "Course sans nom"}
-          </span>
-        </div>
+      <OgHeader
+        title={run.user.name ?? "Inconnu"}
+        subtitle={run.name ?? "Course sans nom"}
+        right={formattedDate}
+      />
 
-        {/* Right: date + brand */}
+      {/* ── Records personnels battus par cette course ───── */}
+      {records.length > 0 && (
         <div
           style={{
             display: "flex",
-            flexDirection: "column",
-            alignItems: "flex-end",
-            gap: "4px",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "16px",
+            height: `${recordsH}px`,
+            flexShrink: 0,
+            backgroundColor: `${OG.gold}1f`,
+            borderBottom: `1px solid ${OG.gold}55`,
           }}
         >
-          <span
-            style={{
-              color: ORANGE,
-              fontSize: "13px",
-              fontWeight: 800,
-              letterSpacing: "3px",
-            }}
-          >
-            RUN TOGETHER
+          <span style={{ color: OG.gold, fontSize: "20px", fontWeight: 800 }}>
+            🏆 {records.length > 1 ? "RECORDS PERSO" : "RECORD PERSO"}
           </span>
-          <span style={{ color: MUTED, fontSize: "15px" }}>
-            {formattedDate}
-          </span>
+          {records.map((r) => (
+            <span
+              key={r.distance}
+              style={{ display: "flex", gap: "8px", fontSize: "20px" }}
+            >
+              <span style={{ color: MUTED }}>·</span>
+              <span style={{ color: TEXT, fontWeight: 700 }}>
+                {PR_DISTANCE_LABELS[r.distance]}
+              </span>
+              <span style={{ color: OG.gold }}>
+                {formatDuration(r.duration)}
+              </span>
+            </span>
+          ))}
         </div>
-      </div>
+      )}
 
       {/* ── Map ────────────────────────────────────────────── */}
       {routePath && endpoints ? (

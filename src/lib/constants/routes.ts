@@ -44,3 +44,9 @@ export const API_ROUTES = {
   STRAVA_WEBHOOK: "/api/strava/webhook",
   EXPORT: "/api/export",
 } as const
+
+// Images OG (embeds Discord)
+export const ogRunRoute = (runId: string) => `/api/og/run/${runId}`
+export const ogBadgesRoute = (runId: string) => `/api/og/badges/${runId}`
+/** `week` = lundi de la semaine, `yyyy-MM-dd` (UTC). */
+export const ogRecapRoute = (week: string) => `/api/og/recap/${week}`

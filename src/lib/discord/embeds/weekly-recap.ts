@@ -1,6 +1,7 @@
 import { format, subDays } from "date-fns"
 import { fr } from "date-fns/locale"
 import type { PRDistance } from "@/generated/prisma/enums"
+import { ogRecapRoute } from "@/lib/constants/routes"
 import { PR_DISTANCE_LABELS } from "@/lib/runs/pr-display"
 import { formatRunDurationDisplay, formatRunPace } from "@/lib/utils/run"
 import type { DiscordEmbed, DiscordMessage } from "../client"
@@ -42,7 +43,11 @@ export function formatWeekRange(start: Date, end: Date): string {
   return `du ${from} au ${day(last)} ${format(last, "MMMM", { locale: fr })}`
 }
 
-export function buildWeeklyRecapMessage(data: WeeklyRecapData): DiscordMessage {
+export function buildWeeklyRecapMessage(
+  data: WeeklyRecapData,
+  appUrl: string,
+): DiscordMessage {
+  const base = appUrl.replace(/\/$/, "")
   const fields: NonNullable<DiscordEmbed["fields"]> = []
 
   if (data.topDistance.length > 0)
@@ -86,6 +91,9 @@ export function buildWeeklyRecapMessage(data: WeeklyRecapData): DiscordMessage {
         title: `📊 Récap de la semaine ${formatWeekRange(data.weekStart, data.weekEnd)}`,
         description: `**${data.runners}** coureur${data.runners > 1 ? "s" : ""} · **${data.totalRuns}** course${data.totalRuns > 1 ? "s" : ""} · **${km(data.totalDistance)} km** au total`,
         fields,
+        image: {
+          url: base + ogRecapRoute(data.weekStart.toISOString().slice(0, 10)),
+        },
         footer: FOOTER,
         timestamp: data.weekEnd.toISOString(),
       },

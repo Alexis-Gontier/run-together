@@ -80,7 +80,12 @@ export async function notifyBadgesUnlocked(
     await notify({
       type: "badge.unlocked",
       dedupeKey: `badge.unlocked:${runId}`,
-      message: buildBadgeUnlockedMessage(user, badges, env.NEXT_PUBLIC_APP_URL),
+      message: buildBadgeUnlockedMessage(
+        user,
+        badges,
+        runId,
+        env.NEXT_PUBLIC_APP_URL,
+      ),
     })
   } catch (err) {
     console.error("[discord] badge.unlocked failed", runId, err)

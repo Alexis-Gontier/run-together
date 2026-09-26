@@ -46,8 +46,12 @@ describe("formatWeekRange", () => {
 
 describe("buildWeeklyRecapMessage", () => {
   it("résume la semaine du groupe", () => {
-    const e = buildWeeklyRecapMessage(data).embeds[0]
+    const e = buildWeeklyRecapMessage(data, "https://run-together.app/")
+      .embeds[0]
     expect(e.title).toBe("📊 Récap de la semaine du 21 au 27 septembre")
+    expect(e.image?.url).toBe(
+      "https://run-together.app/api/og/recap/2026-09-21",
+    )
     expect(e.description).toBe(
       "**3** coureurs · **9** courses · **84,30 km** au total",
     )
@@ -63,11 +67,14 @@ describe("buildWeeklyRecapMessage", () => {
   })
 
   it("omet les sections vides", () => {
-    const e = buildWeeklyRecapMessage({
-      ...data,
-      bestPace: null,
-      records: [],
-    }).embeds[0]
+    const e = buildWeeklyRecapMessage(
+      {
+        ...data,
+        bestPace: null,
+        records: [],
+      },
+      "https://run-together.app",
+    ).embeds[0]
     expect(e.fields?.map((f) => f.name)).toEqual(["Distance", "Régularité"])
   })
 })

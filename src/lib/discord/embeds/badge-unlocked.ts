@@ -1,4 +1,4 @@
-import { profileRoute, ROUTES } from "@/lib/constants/routes"
+import { ogBadgesRoute, profileRoute, ROUTES } from "@/lib/constants/routes"
 import type { DiscordMessage } from "../client"
 import { FOOTER, RECORD_COLOR } from "./common"
 
@@ -8,6 +8,7 @@ type UnlockedBadge = { emoji: string; name: string; description: string }
 export function buildBadgeUnlockedMessage(
   user: { name: string; username: string | null },
   badges: UnlockedBadge[],
+  runId: string,
   appUrl: string,
 ): DiscordMessage {
   const base = appUrl.replace(/\/$/, "")
@@ -26,6 +27,7 @@ export function buildBadgeUnlockedMessage(
           name: `${b.emoji} ${b.name}`,
           value: b.description,
         })),
+        image: { url: base + ogBadgesRoute(runId) },
         footer: FOOTER,
         timestamp: new Date().toISOString(),
       },

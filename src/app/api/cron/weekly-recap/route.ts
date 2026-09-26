@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
   const data = await getWeeklyRecapData(start, end)
   if (!data) return NextResponse.json({ status: "empty", start, end })
 
-  const message = buildWeeklyRecapMessage(data)
+  const message = buildWeeklyRecapMessage(data, env.NEXT_PUBLIC_APP_URL)
   if (dry) return NextResponse.json({ status: "dry", message })
 
   const status = await notify({

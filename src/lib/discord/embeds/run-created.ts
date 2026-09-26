@@ -1,4 +1,4 @@
-import { profileRoute, runRoute } from "@/lib/constants/routes"
+import { ogRunRoute, profileRoute, runRoute } from "@/lib/constants/routes"
 import type { NewPR } from "@/lib/runs/personal-records"
 import { PR_DISTANCE_LABELS } from "@/lib/runs/pr-display"
 import { formatRunDurationDisplay, formatRunPace } from "@/lib/utils/run"
@@ -83,7 +83,7 @@ export function buildRunCreatedMessage(
         url: base + runRoute(data.runId),
         description: `**${data.userName}** a couru **${km(data.distance)} km** en **${formatRunDurationDisplay(data.duration)}**${SPORT_SUFFIX[data.sportType ?? ""] ?? ""}`,
         fields,
-        image: { url: `${base}/api/og/run/${data.runId}` },
+        image: { url: base + ogRunRoute(data.runId) },
         timestamp: data.date.toISOString(),
         footer: FOOTER,
       },
