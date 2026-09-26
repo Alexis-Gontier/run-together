@@ -3,6 +3,7 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/components/shadcn-ui/avatar"
+import { Button } from "@/components/shadcn-ui/button"
 import {
   Card,
   CardContent,
@@ -10,6 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/shadcn-ui/card"
+import { ProfileImageDialog } from "@/components/ui/profile-image-dialog"
 import { getInitials } from "@/lib/utils/get-initials"
 import { EditProfileDialog } from "./edit-profile-dialog"
 
@@ -18,6 +20,8 @@ type ProfileCardProps = {
   email: string
   username: string | null | undefined
   image: string | null | undefined
+  bannerImage: string | null | undefined
+  canEditImages: boolean
 }
 
 function ProfileRow({ label, value }: { label: string; value: string }) {
@@ -34,6 +38,8 @@ export function ProfileCard({
   email,
   username,
   image,
+  bannerImage,
+  canEditImages,
 }: ProfileCardProps) {
   return (
     <Card>
@@ -52,12 +58,29 @@ export function ProfileCard({
               {getInitials(name)}
             </AvatarFallback>
           </Avatar>
-          <div>
+          <div className="min-w-0 flex-1">
             <p className="font-semibold">{name}</p>
             {username && (
               <p className="text-muted-foreground text-sm">@{username}</p>
             )}
           </div>
+          {canEditImages && (
+            <div className="flex flex-wrap justify-end gap-2">
+              <ProfileImageDialog kind="avatar" currentUrl={image ?? null}>
+                <Button variant="outline" size="sm">
+                  Photo
+                </Button>
+              </ProfileImageDialog>
+              <ProfileImageDialog
+                kind="banner"
+                currentUrl={bannerImage ?? null}
+              >
+                <Button variant="outline" size="sm">
+                  Bannière
+                </Button>
+              </ProfileImageDialog>
+            </div>
+          )}
         </div>
         <div className="divide-y divide-border rounded-lg border px-4">
           <ProfileRow label="Nom" value={name} />

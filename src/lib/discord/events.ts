@@ -11,7 +11,9 @@ export async function notifyRunCreated(runId: string, newPRs: NewPR[]) {
   try {
     const run = await prisma.run.findUniqueOrThrow({
       where: { id: runId },
-      include: { user: { select: { name: true, username: true } } },
+      include: {
+        user: { select: { name: true, username: true, image: true } },
+      },
     })
     await notify({
       type: "run.created",
@@ -22,6 +24,7 @@ export async function notifyRunCreated(runId: string, newPRs: NewPR[]) {
           runName: run.name || "Course sans nom",
           userName: run.user.name,
           username: run.user.username,
+          userImage: run.user.image,
           distance: run.distance,
           duration: run.duration,
           pace: run.pace,

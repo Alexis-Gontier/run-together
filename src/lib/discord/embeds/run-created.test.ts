@@ -25,6 +25,7 @@ describe("buildRunCreatedMessage", () => {
     expect(e.description).toBe("**Alice** a couru **10,50 km** en **52'30\"**")
     expect(e.url).toBe("https://run-together.app/runs/run1")
     expect(e.author?.url).toBe("https://run-together.app/profile/alice")
+    expect(e.author?.icon_url).toBeUndefined()
     expect(e.image?.url).toBe("https://run-together.app/api/og/run/run1")
     expect(e.color).toBe(BRAND_COLOR)
     expect(e.fields?.map((f) => f.name)).toEqual([
@@ -32,6 +33,14 @@ describe("buildRunCreatedMessage", () => {
       "Allure",
       "Durée",
     ])
+  })
+
+  it("affiche l'avatar à côté du nom", () => {
+    const e = embed({
+      ...data,
+      userImage: "https://x.blob.vercel-storage.com/a.webp",
+    })
+    expect(e.author?.icon_url).toBe("https://x.blob.vercel-storage.com/a.webp")
   })
 
   it("ajoute D+, FC et le type quand ils existent", () => {

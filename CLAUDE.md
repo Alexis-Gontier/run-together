@@ -9,6 +9,7 @@
 - **Forms**: React Hook Form + Zod v4 + `standardSchemaResolver` → @src/lib/schemas/CLAUDE.md
 - **UI**: shadcn/ui + Tailwind CSS v4 ; maps via mapcn (MapLibre GL, free CARTO vector basemaps, light/dark) — `src/components/ui/run-map.tsx`, list thumbnails = Esri raster tiles + SVG route (`route-thumbnail.tsx`, `src/lib/maps/raster-tiles.ts`)
 - **Badges**: catalog in code, `UserBadge` table, evaluated by `recordRun` → @src/lib/badges/CLAUDE.md
+- **Profile images**: avatar (`User.image`) + banner (`User.bannerImage`), cropped in the browser (`react-easy-crop` → WebP), stored in Vercel Blob (`BLOB_READ_WRITE_TOKEN`, optional: upload hidden without it) → `src/lib/profile-images/`, actions in `src/lib/actions/profile/`
 - **Stats**: week summary, highlights, streaks, milestones for the right panels → `src/lib/stats/`
 - **State**: Zustand (onboarding flow), nuqs (URL query params)
 - **Runs**: source-agnostic pipeline (`recordRun`), personal records, GPX/FIT parsing → @src/lib/runs/CLAUDE.md
