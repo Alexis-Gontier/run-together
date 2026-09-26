@@ -4,7 +4,6 @@ import { revalidatePath } from "next/cache"
 import { headers } from "next/headers"
 import { z } from "zod"
 import { auth } from "@/lib/auth"
-import { ROUTES } from "@/lib/constants/routes"
 import { prisma } from "@/lib/db/prisma"
 import {
   PROFILE_IMAGE_KINDS,
@@ -43,8 +42,8 @@ async function setImage(
     headers: await headers(),
   })
   await deleteProfileImage(previous)
-  revalidatePath(ROUTES.SETTINGS)
-  revalidatePath("/profile/[username]", "page")
+  // L'avatar apparaît partout (fil, classement, profils…) : tout le layout de l'app.
+  revalidatePath("/", "layout")
 }
 
 export const uploadProfileImageAction = authActionClient
