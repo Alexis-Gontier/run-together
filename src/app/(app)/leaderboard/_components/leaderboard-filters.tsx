@@ -1,8 +1,12 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { Button } from "@/components/shadcn-ui/button"
+import { useTransition } from "react"
 import { Tabs, TabsList, TabsTrigger } from "@/components/shadcn-ui/tabs"
+import {
+  ToggleGroup,
+  ToggleGroupItem,
+} from "@/components/shadcn-ui/toggle-group"
 import { ROUTES } from "@/lib/constants/routes"
 import type {
   LeaderboardMetric,
@@ -14,12 +18,12 @@ const METRICS: { value: LeaderboardMetric; label: string }[] = [
   { value: "distance", label: "Distance" },
   { value: "runs", label: "Courses" },
   { value: "pace", label: "Allure" },
-  { value: "pr", label: "Records PR" },
+  { value: "pr", label: "Records" },
 ]
 
 const PERIODS: { value: LeaderboardPeriod; label: string }[] = [
-  { value: "week", label: "7 jours" },
-  { value: "month", label: "30 jours" },
+  { value: "week", label: "7 j" },
+  { value: "month", label: "30 j" },
   { value: "3m", label: "3 mois" },
   { value: "6m", label: "6 mois" },
   { value: "1y", label: "1 an" },
@@ -40,81 +44,67 @@ interface Props {
   prDist: PrDist
 }
 
+/** Métrique en onglets (navigation principale), période / distance en ToggleGroup. */
 export function LeaderboardFilters({ metric, period, prDist }: Props) {
   const router = useRouter()
+  const [isPending, startTransition] = useTransition()
+  const go = (query: string) =>
+    startTransition(() => router.push(`${ROUTES.LEADERBOARD}?${query}`))
 
-  function setMetric(newMetric: LeaderboardMetric) {
-    if (newMetric === "pr") {
-      router.push(`${ROUTES.LEADERBOARD}?metric=pr&dist=${prDist}`)
-    } else {
-      router.push(`${ROUTES.LEADERBOARD}?metric=${newMetric}&period=${period}`)
-    }
-  }
-
-  function setPeriod(newPeriod: string) {
-    router.push(`${ROUTES.LEADERBOARD}?metric=${metric}&period=${newPeriod}`)
-  }
-
-  function setPrDist(newDist: string) {
-    router.push(`${ROUTES.LEADERBOARD}?metric=pr&dist=${newDist}`)
-  }
+  const options = metric === "pr" ? PR_DISTANCES : PERIODS
+  const value = metric === "pr" ? prDist : period
 
   return (
-    <div className="flex flex-col gap-4 px-4 pt-4">
-      <div className="flex flex-col gap-2">
-        <p className="font-medium text-muted-foreground text-sm">Métrique :</p>
-        <div className="flex flex-wrap gap-2">
+    <div className="space-y-3 px-4 pt-4">
+      <Tabs
+        value={metric}
+        onValueChange={(m) =>
+          go(
+            m === "pr"
+              ? `metric=pr&dist=${prDist}`
+              : `metric=${m}&period=${period}`,
+          )
+        }
+      >
+        <TabsList variant="line" className="w-full">
           {METRICS.map((m) => (
-            <Button
+            <TabsTrigger
               key={m.value}
-              variant={metric === m.value ? "default" : "outline"}
-              size="sm"
-              className="cursor-pointer"
-              onClick={() => setMetric(m.value)}
+              value={m.value}
+              className="flex-1 cursor-pointer"
             >
               {m.label}
-            </Button>
+            </TabsTrigger>
           ))}
-        </div>
-      </div>
+        </TabsList>
+      </Tabs>
 
-      {metric === "pr" ? (
-        <div className="flex flex-col gap-2">
-          <p className="font-medium text-muted-foreground text-sm">
-            Distance :
-          </p>
-          <Tabs value={prDist} onValueChange={setPrDist}>
-            <TabsList>
-              {PR_DISTANCES.map((d) => (
-                <TabsTrigger
-                  key={d.value}
-                  value={d.value}
-                  className="flex-1 cursor-pointer"
-                >
-                  {d.label}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
-        </div>
-      ) : (
-        <div className="flex flex-col gap-2">
-          <p className="font-medium text-muted-foreground text-sm">Période :</p>
-          <Tabs value={period} onValueChange={setPeriod}>
-            <TabsList>
-              {PERIODS.map((p) => (
-                <TabsTrigger
-                  key={p.value}
-                  value={p.value}
-                  className="flex-1 cursor-pointer"
-                >
-                  {p.label}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
-        </div>
-      )}
+      <ToggleGroup
+        type="single"
+        variant="outline"
+        size="sm"
+        value={value}
+        onValueChange={(v) => {
+          if (!v) return
+          go(
+            metric === "pr"
+              ? `metric=pr&dist=${v}`
+              : `metric=${metric}&period=${v}`,
+          )
+        }}
+        aria-label={metric === "pr" ? "Distance" : "Période"}
+        className={isPending ? "flex-wrap opacity-60" : "flex-wrap"}
+      >
+        {options.map((o) => (
+          <ToggleGroupItem
+            key={o.value}
+            value={o.value}
+            className="cursor-pointer px-3"
+          >
+            {o.label}
+          </ToggleGroupItem>
+        ))}
+      </ToggleGroup>
     </div>
   )
 }
