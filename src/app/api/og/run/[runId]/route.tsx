@@ -237,7 +237,7 @@ export async function GET(
           borderTop: `1px solid ${BORDER}`,
         }}
       >
-        {stats.map((s) => (
+        {stats.map((s, i) => (
           <div
             key={s.unit}
             style={{
