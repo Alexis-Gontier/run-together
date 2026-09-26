@@ -38,4 +38,5 @@ export const API_ROUTES = {
   STRAVA_CALLBACK: "/api/strava/callback",
   STRAVA_DISCONNECT: "/api/strava/disconnect",
   STRAVA_WEBHOOK: "/api/strava/webhook",
+  EXPORT: "/api/export",
 } as const

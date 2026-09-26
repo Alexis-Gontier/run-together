@@ -1,4 +1,4 @@
-import { Download, KeyRound, LogOut, Mail } from "lucide-react"
+import { Download, KeyRound, LogOut } from "lucide-react"
 import { Button } from "@/components/shadcn-ui/button"
 import {
   Card,
@@ -7,6 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/shadcn-ui/card"
+import { API_ROUTES } from "@/lib/constants/routes"
 import { ChangePasswordDialog } from "./change-password-dialog"
 import { SignOutButton } from "./sign-out-button"
 
@@ -48,16 +49,6 @@ export function AccountCard() {
       </CardHeader>
       <CardContent className="divide-y divide-border">
         <AccountRow
-          icon={Mail}
-          label="Adresse e-mail"
-          description="Modifiez votre adresse e-mail."
-          action={
-            <Button variant="outline" size="sm" disabled>
-              Modifier
-            </Button>
-          }
-        />
-        <AccountRow
           icon={KeyRound}
           label="Mot de passe"
           description="Modifiez votre mot de passe de connexion."
@@ -66,10 +57,12 @@ export function AccountCard() {
         <AccountRow
           icon={Download}
           label="Exporter mes données"
-          description="Téléchargez une copie de toutes vos données."
+          description="Téléchargez vos courses, splits et records (JSON)."
           action={
-            <Button variant="outline" size="sm" disabled>
-              Exporter
+            <Button variant="outline" size="sm" asChild>
+              <a href={API_ROUTES.EXPORT} download>
+                Exporter
+              </a>
             </Button>
           }
         />

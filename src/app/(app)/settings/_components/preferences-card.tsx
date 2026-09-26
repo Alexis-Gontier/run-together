@@ -48,18 +48,6 @@ export function PreferencesCard({
           <ThemeToggle />
         </PreferenceRow>
         <PreferenceRow
-          label="Langue"
-          description="Langue d'affichage de l'interface."
-        >
-          <span className="text-muted-foreground text-sm">Français</span>
-        </PreferenceRow>
-        <PreferenceRow
-          label="Unité de distance"
-          description="Kilomètres ou miles pour vos activités."
-        >
-          <span className="text-muted-foreground text-sm">Kilomètres</span>
-        </PreferenceRow>
-        <PreferenceRow
           label="Publier mes courses sur Discord"
           description="Valeur par défaut à chaque nouvelle course, modifiable course par course."
         >

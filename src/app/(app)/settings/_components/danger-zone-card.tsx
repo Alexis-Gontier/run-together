@@ -1,4 +1,3 @@
-import { Button } from "@/components/shadcn-ui/button"
 import {
   Card,
   CardContent,
@@ -6,6 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/shadcn-ui/card"
+import { DeleteAccountDialog } from "./delete-account-dialog"
 
 export function DangerZoneCard() {
   return (
@@ -26,9 +26,7 @@ export function DangerZoneCard() {
               Supprime définitivement votre compte et toutes vos données.
             </p>
           </div>
-          <Button variant="destructive" size="sm" disabled>
-            Supprimer
-          </Button>
+          <DeleteAccountDialog />
         </div>
       </CardContent>
     </Card>

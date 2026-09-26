@@ -7,7 +7,6 @@ import { DangerZoneCard } from "./_components/danger-zone-card"
 import { PreferencesCard } from "./_components/preferences-card"
 import { ProfileCard } from "./_components/profile-card"
 import { StravaCard } from "./_components/strava-card"
-import { WeeklyGoalCard } from "./_components/weekly-goal-card"
 
 export default async function SettingsPage() {
   const [user, stravaResult] = await Promise.all([
@@ -32,7 +31,6 @@ export default async function SettingsPage() {
       <PreferencesCard
         publishRunsToDiscord={user.publishRunsToDiscord ?? true}
       />
-      <WeeklyGoalCard />
       <AccountCard />
       <DangerZoneCard />
     </div>

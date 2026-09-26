@@ -32,6 +32,8 @@ export const auth = betterAuth({
     disableSignUp: env.NODE_ENV === "production",
   },
   user: {
+    // Suppression de compte depuis les paramètres, confirmée par mot de passe.
+    deleteUser: { enabled: true },
     additionalFields: {
       onboardingCompleted: {
         type: "boolean",
