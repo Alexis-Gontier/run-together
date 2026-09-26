@@ -70,7 +70,7 @@ export type EditableRun = {
   track: TrackData | null
 }
 
-type RunFormProps = { run?: EditableRun }
+type RunFormProps = { run?: EditableRun; defaultPublish?: boolean }
 
 const str = (v: number | null | undefined) => (v == null ? "" : String(v))
 
@@ -125,7 +125,7 @@ const EMPTY: RunFormInput = {
   track: null,
 }
 
-export function RunForm({ run }: RunFormProps) {
+export function RunForm({ run, defaultPublish = true }: RunFormProps) {
   const router = useRouter()
   const isEdit = !!run
   const locked = run?.isStrava ?? false
@@ -134,7 +134,7 @@ export function RunForm({ run }: RunFormProps) {
 
   const form = useForm<RunFormInput, unknown, RunFormValues>({
     resolver: standardSchemaResolver(runFormSchema),
-    defaultValues: EMPTY,
+    defaultValues: { ...EMPTY, publishToDiscord: defaultPublish },
   })
 
   // Valeurs initiales calculées au montage : la date doit être lue dans le fuseau du navigateur,

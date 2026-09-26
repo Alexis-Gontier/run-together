@@ -29,7 +29,9 @@ export default async function SettingsPage() {
       {env.STRAVA_ENABLED && (
         <StravaCard connection={stravaAccount} webhookActive={webhookActive} />
       )}
-      <PreferencesCard />
+      <PreferencesCard
+        publishRunsToDiscord={user.publishRunsToDiscord ?? true}
+      />
       <WeeklyGoalCard />
       <AccountCard />
       <DangerZoneCard />

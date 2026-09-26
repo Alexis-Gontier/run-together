@@ -5,7 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/shadcn-ui/card"
-import { Switch } from "@/components/shadcn-ui/switch"
+import { DiscordPreferenceSwitch } from "./discord-preference-switch"
 import { ThemeToggle } from "./theme-toggle"
 
 function PreferenceRow({
@@ -30,7 +30,11 @@ function PreferenceRow({
   )
 }
 
-export function PreferencesCard() {
+export function PreferencesCard({
+  publishRunsToDiscord,
+}: {
+  publishRunsToDiscord: boolean
+}) {
   return (
     <Card>
       <CardHeader>
@@ -56,10 +60,10 @@ export function PreferencesCard() {
           <span className="text-muted-foreground text-sm">Kilomètres</span>
         </PreferenceRow>
         <PreferenceRow
-          label="Notifications"
-          description="Recevez des alertes pour les nouvelles activités."
+          label="Publier mes courses sur Discord"
+          description="Valeur par défaut à chaque nouvelle course, modifiable course par course."
         >
-          <Switch className="cursor-pointer" disabled />
+          <DiscordPreferenceSwitch defaultChecked={publishRunsToDiscord} />
         </PreferenceRow>
       </CardContent>
     </Card>

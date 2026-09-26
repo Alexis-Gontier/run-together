@@ -7,11 +7,11 @@ export const metadata: Metadata = {
 }
 
 export default async function NewRunPage() {
-  await getRequiredUser()
+  const user = await getRequiredUser()
 
   return (
     <div className="p-4">
-      <RunForm />
+      <RunForm defaultPublish={user.publishRunsToDiscord ?? true} />
     </div>
   )
 }
