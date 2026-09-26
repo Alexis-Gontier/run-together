@@ -1,7 +1,7 @@
 import { Activity, Gauge, Map as MapIcon, Mountain } from "lucide-react"
+import type { StatCardProps } from "@/components/ui/stat-card"
 import { formatPace } from "@/lib/utils/run"
 import type { getRunsStatsAction } from "../_actions/get-runs-stats-action"
-import type { StatCardProps } from "../_components/stat-card"
 
 export type GlobalStats = NonNullable<
   Awaited<ReturnType<typeof getRunsStatsAction>>["data"]

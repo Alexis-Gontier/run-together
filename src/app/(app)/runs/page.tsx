@@ -1,6 +1,6 @@
+import { StatCard } from "@/components/ui/stat-card"
 import { getRunsStatsAction } from "./_actions/get-runs-stats-action"
 import { MonthAccordionList } from "./_components/month-accordion-list"
-import { StatCard } from "./_components/stat-card"
 import { YearSelector } from "./_components/year-selector"
 import { buildStatCards } from "./_utils/stats"
 
