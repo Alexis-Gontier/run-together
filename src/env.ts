@@ -12,6 +12,8 @@ export const env = createEnv({
     DISCORD_WEBHOOK_URL: z.string(),
     // L'app Strava est inactive depuis le 19/08/2026 : UI, OAuth et webhook coupés par défaut.
     STRAVA_ENABLED: z.stringbool().default(false),
+    // Secret partagé avec Vercel Cron (récap hebdo Discord). Absent : la route répond 503.
+    CRON_SECRET: z.string().min(16).optional(),
   },
   client: {
     NEXT_PUBLIC_APP_URL: z.url(),
