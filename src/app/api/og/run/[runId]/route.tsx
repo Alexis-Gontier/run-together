@@ -1,7 +1,12 @@
 import { ImageResponse } from "next/og"
 
 import { prisma } from "@/lib/db/prisma"
-import { MAP_ATTRIBUTION, mapViewport } from "@/lib/maps/raster-tiles"
+import {
+  MAP_ATTRIBUTION,
+  type MapTile,
+  mapViewport,
+  tileUrl,
+} from "@/lib/maps/raster-tiles"
 import { fetchTiles } from "@/lib/og/fetch-tiles"
 import { OG, OG_HEADER_H, OgHeader } from "@/lib/og/theme"
 import { PR_DISTANCE_LABELS, PR_DISTANCE_ORDER } from "@/lib/runs/pr-display"
@@ -39,6 +44,24 @@ function formatPace(paceSecondsPerKm: number): string {
   const m = Math.floor(paceSecondsPerKm / 60)
   const s = paceSecondsPerKm % 60
   return `${m}:${String(s).padStart(2, "0")}`
+}
+
+function TileLayer({ tiles, srcs }: { tiles: MapTile[]; srcs: string[] }) {
+  return (
+    <>
+      {tiles.map((t, i) => (
+        // biome-ignore lint/performance/noImgElement: rendu par Satori
+        <img
+          key={`${t.z}-${t.x}-${t.y}`}
+          src={srcs[i]}
+          alt=""
+          width={t.size}
+          height={t.size}
+          style={{ position: "absolute", left: t.left, top: t.top }}
+        />
+      ))}
+    </>
+  )
 }
 
 export async function GET(
@@ -103,7 +126,16 @@ export async function GET(
 
   // Fond de carte en tuiles raster sous le tracé ; sans tuiles, tracé seul en SVG.
   const viewport = mapViewport(points, OG.width, mapH, MAP_PADDING)
-  const tiles = viewport ? await fetchTiles(viewport.tiles) : null
+  const [tiles, labels] = viewport
+    ? await Promise.all([
+        fetchTiles(viewport.tiles.map((t) => tileUrl(t.z, t.x, t.y))),
+        fetchTiles(
+          viewport.labelTiles.map((t) =>
+            tileUrl(t.z, t.x, t.y, "dark", "labels"),
+          ),
+        ),
+      ])
+    : [null, null]
   let route: {
     path: string
     start: { x: number; y: number }
@@ -186,18 +218,9 @@ export async function GET(
             backgroundColor: MAP_BG,
           }}
         >
-          {tiles &&
-            viewport?.tiles.map((t, i) => (
-              // biome-ignore lint/performance/noImgElement: rendu par Satori
-              <img
-                key={`${t.x}-${t.y}`}
-                src={tiles[i]}
-                alt=""
-                width={256}
-                height={256}
-                style={{ position: "absolute", left: t.left, top: t.top }}
-              />
-            ))}
+          {tiles && viewport && (
+            <TileLayer tiles={viewport.tiles} srcs={tiles} />
+          )}
           {tiles && (
             // Assombrit le fond pour faire ressortir le tracé.
             <div
@@ -235,6 +258,9 @@ export async function GET(
             <circle cx={route.start.x} cy={route.start.y} r={10} fill={TEXT} />
             <circle cx={route.end.x} cy={route.end.y} r={10} fill={ORANGE} />
           </svg>
+          {tiles && labels && viewport && (
+            <TileLayer tiles={viewport.labelTiles} srcs={labels} />
+          )}
           {tiles && (
             <span
               style={{

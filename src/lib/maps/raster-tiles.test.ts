@@ -19,18 +19,20 @@ describe("mapViewport", () => {
     }
   })
 
-  it("couvre toute l'image de tuiles", () => {
-    const v = mapViewport(route, 1200, 400, 48)
-    const tiles = v?.tiles ?? []
-    expect(Math.min(...tiles.map((t) => t.left))).toBeLessThanOrEqual(0)
-    expect(Math.min(...tiles.map((t) => t.top))).toBeLessThanOrEqual(0)
-    expect(Math.max(...tiles.map((t) => t.left + 256))).toBeGreaterThanOrEqual(
-      1200,
-    )
-    expect(Math.max(...tiles.map((t) => t.top + 256))).toBeGreaterThanOrEqual(
-      400,
-    )
-  })
+  it.each(["tiles", "labelTiles"] as const)(
+    "couvre toute l'image (%s)",
+    (layer) => {
+      const tiles = mapViewport(route, 1200, 400, 48)?.[layer] ?? []
+      expect(Math.min(...tiles.map((t) => t.left))).toBeLessThanOrEqual(0)
+      expect(Math.min(...tiles.map((t) => t.top))).toBeLessThanOrEqual(0)
+      expect(
+        Math.max(...tiles.map((t) => t.left + t.size)),
+      ).toBeGreaterThanOrEqual(1200)
+      expect(
+        Math.max(...tiles.map((t) => t.top + t.size)),
+      ).toBeGreaterThanOrEqual(400)
+    },
+  )
 
   it("renvoie null sans tracé", () => {
     expect(mapViewport([route[0]], 1200, 400, 48)).toBeNull()

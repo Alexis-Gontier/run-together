@@ -1,17 +1,15 @@
-import type { MapViewport } from "@/lib/maps/raster-tiles"
-
 /**
  * Télécharge les tuiles en data URLs (Satori ne gère pas bien les échecs réseau).
  * `null` si l'une échoue : l'image retombe alors sur le tracé seul.
  */
 export async function fetchTiles(
-  tiles: MapViewport["tiles"],
+  urls: string[],
   timeoutMs = 4000,
 ): Promise<string[] | null> {
   try {
     return await Promise.all(
-      tiles.map(async (t) => {
-        const res = await fetch(t.url, {
+      urls.map(async (url) => {
+        const res = await fetch(url, {
           signal: AbortSignal.timeout(timeoutMs),
           next: { revalidate: 60 * 60 * 24 * 30 },
         })

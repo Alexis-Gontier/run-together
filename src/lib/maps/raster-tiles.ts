@@ -2,18 +2,25 @@ const TILE = 256
 const MAX_ZOOM = 16
 
 // Fonds de carte gris d'Esri : raster, gratuits, sans clé (attribution requise).
-const BASEMAPS = {
-  dark: "World_Dark_Gray_Base",
-  light: "World_Light_Gray_Base",
+// `labels` = noms de lieux et de rues sur fond transparent, à superposer au fond.
+const LAYERS = {
+  dark: { base: "World_Dark_Gray_Base", labels: "World_Dark_Gray_Reference" },
+  light: {
+    base: "World_Light_Gray_Base",
+    labels: "World_Light_Gray_Reference",
+  },
 } as const
+
+export type TileStyle = keyof typeof LAYERS
 
 export const tileUrl = (
   z: number,
   x: number,
   y: number,
-  style: keyof typeof BASEMAPS = "dark",
+  style: TileStyle = "dark",
+  layer: "base" | "labels" = "base",
 ) =>
-  `https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/${BASEMAPS[style]}/MapServer/tile/${z}/${y}/${x}`
+  `https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/${LAYERS[style][layer]}/MapServer/tile/${z}/${y}/${x}`
 export const MAP_ATTRIBUTION = "© Esri, HERE, Garmin, © OpenStreetMap"
 
 /** Web Mercator : [lat, lng] → pixels monde au zoom donné. */
@@ -26,9 +33,24 @@ function project([lat, lng]: [number, number], zoom: number) {
   }
 }
 
+export type MapTile = {
+  z: number
+  x: number
+  y: number
+  /** Position et taille dans le repère de l'image. */
+  left: number
+  top: number
+  size: number
+}
+
 export type MapViewport = {
   zoom: number
-  tiles: { x: number; y: number; left: number; top: number; url: string }[]
+  tiles: MapTile[]
+  /**
+   * Tuiles de noms un zoom en dessous, affichées en 2× : le texte garde une taille lisible
+   * quand l'image est rendue à moitié de sa résolution (miniatures haute densité).
+   */
+  labelTiles: MapTile[]
   /** Attribut `d` du tracé, dans le repère de l'image. */
   path: string
   start: { x: number; y: number }
@@ -73,35 +95,14 @@ export function mapViewport(
   // Coin haut-gauche de l'image, en pixels monde.
   const originX = (b.minX + b.maxX) / 2 - width / 2
   const originY = (b.minY + b.maxY) / 2 - height / 2
-  const count = 2 ** zoom
-
-  const tiles: MapViewport["tiles"] = []
-  for (
-    let ty = Math.floor(originY / TILE);
-    ty <= Math.floor((originY + height) / TILE);
-    ty++
-  ) {
-    if (ty < 0 || ty >= count) continue
-    for (
-      let tx = Math.floor(originX / TILE);
-      tx <= Math.floor((originX + width) / TILE);
-      tx++
-    ) {
-      const x = ((tx % count) + count) % count
-      tiles.push({
-        x,
-        y: ty,
-        left: Math.round(tx * TILE - originX),
-        top: Math.round(ty * TILE - originY),
-        url: tileUrl(zoom, x, ty),
-      })
-    }
-  }
-
   const local = px.map((p) => ({ x: p.x - originX, y: p.y - originY }))
   return {
     zoom,
-    tiles,
+    tiles: coverTiles(zoom, originX, originY, width, height),
+    labelTiles:
+      zoom > 1
+        ? coverTiles(zoom - 1, originX / 2, originY / 2, width, height, 2)
+        : [],
     path: local
       .map(
         (p, i) => `${i === 0 ? "M" : "L"}${p.x.toFixed(1)} ${p.y.toFixed(1)}`,
@@ -110,4 +111,36 @@ export function mapViewport(
     start: local[0],
     end: local[local.length - 1],
   }
+}
+
+/**
+ * Tuiles couvrant l'image au zoom `z`. `originX/Y` en pixels monde de ce zoom ; `scale` =
+ * taille d'affichage d'un pixel de tuile dans le repère de l'image.
+ */
+function coverTiles(
+  z: number,
+  originX: number,
+  originY: number,
+  width: number,
+  height: number,
+  scale = 1,
+): MapTile[] {
+  const count = 2 ** z
+  const w = width / scale
+  const h = height / scale
+  const tiles: MapTile[] = []
+  for (let ty = Math.floor(originY / TILE); ty * TILE < originY + h; ty++) {
+    if (ty < 0 || ty >= count) continue
+    for (let tx = Math.floor(originX / TILE); tx * TILE < originX + w; tx++) {
+      tiles.push({
+        z,
+        x: ((tx % count) + count) % count,
+        y: ty,
+        left: Math.round((tx * TILE - originX) * scale),
+        top: Math.round((ty * TILE - originY) * scale),
+        size: TILE * scale,
+      })
+    }
+  }
+  return tiles
 }

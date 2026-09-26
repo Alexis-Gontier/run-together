@@ -6,7 +6,6 @@ import { cn } from "@/lib/utils/cn"
 const WIDTH = 1200
 const HEIGHT = 440
 const PADDING = 48
-const TILE = 256
 const pct = (v: number, of: number) => `${(v / of) * 100}%`
 
 /**
@@ -28,28 +27,32 @@ export function RouteThumbnail({
     <div
       className={cn("relative aspect-600/220 w-full bg-muted/40", className)}
     >
-      {(["light", "dark"] as const).map((style) =>
-        view.tiles.map((t) => (
-          // biome-ignore lint/performance/noImgElement: tuiles externes, pas d'optimisation Next utile
-          <img
-            key={`${style}-${t.x}-${t.y}`}
-            src={tileUrl(view.zoom, t.x, t.y, style)}
-            alt=""
-            loading="lazy"
-            decoding="async"
-            draggable={false}
-            className={cn(
-              "absolute max-w-none select-none",
-              style === "light" ? "dark:hidden" : "hidden dark:block",
-            )}
-            style={{
-              left: pct(t.left, WIDTH),
-              top: pct(t.top, HEIGHT),
-              width: pct(TILE, WIDTH),
-              height: pct(TILE, HEIGHT),
-            }}
-          />
-        )),
+      {(["light", "dark"] as const).flatMap((style) =>
+        (["base", "labels"] as const).flatMap((layer) =>
+          (layer === "base" ? view.tiles : view.labelTiles).map((t) => (
+            // biome-ignore lint/performance/noImgElement: tuiles externes, pas d'optimisation Next utile
+            <img
+              key={`${style}-${layer}-${t.z}-${t.x}-${t.y}`}
+              src={tileUrl(t.z, t.x, t.y, style, layer)}
+              alt=""
+              loading="lazy"
+              decoding="async"
+              draggable={false}
+              className={cn(
+                "absolute max-w-none select-none",
+                // Les noms passent au-dessus du tracé : sous lui, il les masquerait.
+                layer === "labels" && "z-10",
+                style === "light" ? "dark:hidden" : "hidden dark:block",
+              )}
+              style={{
+                left: pct(t.left, WIDTH),
+                top: pct(t.top, HEIGHT),
+                width: pct(t.size, WIDTH),
+                height: pct(t.size, HEIGHT),
+              }}
+            />
+          )),
+        ),
       )}
       <svg
         viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
