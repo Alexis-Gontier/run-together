@@ -46,6 +46,7 @@ model User {
 
   // Préférences
   publishRunsToDiscord Boolean @default(true)
+  weeklyGoalKm         Int? // objectif hebdomadaire en km, null = aucun
 
   // Admin plugin
   role       String?   @default("user")

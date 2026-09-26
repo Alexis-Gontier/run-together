@@ -45,6 +45,10 @@ export const auth = betterAuth({
         required: false,
         defaultValue: true,
       },
+      weeklyGoalKm: {
+        type: "number",
+        required: false,
+      },
     },
   },
   plugins: [

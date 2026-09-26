@@ -1,4 +1,5 @@
-import { Flame } from "lucide-react"
+import { Flame, Target } from "lucide-react"
+import { Progress } from "@/components/shadcn-ui/progress"
 import { PanelCard, PanelStat } from "@/components/ui/panel-card"
 import { ROUTES } from "@/lib/constants/routes"
 import { getWeekSummary } from "@/lib/stats/queries"
@@ -39,6 +40,20 @@ export async function WeekSummaryCard({
         />
         <PanelStat value={`${week.elevation} m`} label="D+" />
       </div>
+      {week.goalKm ? (
+        <div className="mt-3 space-y-1.5">
+          <Progress
+            value={Math.min(100, (week.distanceKm / week.goalKm) * 100)}
+            className="h-2"
+          />
+          <p className="flex items-center gap-1.5 text-muted-foreground text-xs">
+            <Target className="size-3.5 text-emerald-500" />
+            {week.distanceKm >= week.goalKm
+              ? `Objectif de ${week.goalKm} km atteint 🎉`
+              : `${fmt(Math.round((week.goalKm - week.distanceKm) * 10) / 10)} km pour l'objectif de ${week.goalKm} km`}
+          </p>
+        </div>
+      ) : null}
       {week.currentStreak > 1 && (
         <p className="mt-3 flex items-center gap-1.5 text-muted-foreground text-xs">
           <Flame className="size-3.5 text-orange-500" />

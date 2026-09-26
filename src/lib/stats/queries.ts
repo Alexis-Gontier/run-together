@@ -10,7 +10,7 @@ export async function getWeekSummary(userId: string) {
   const weekStart = startOfWeek(now, { weekStartsOn: 1 })
   const prevWeekStart = subWeeks(weekStart, 1)
 
-  const [runs, recentDates] = await Promise.all([
+  const [runs, recentDates, user] = await Promise.all([
     prisma.run.findMany({
       where: { userId, date: { gte: prevWeekStart } },
       select: { date: true, distance: true, elevation: true },
@@ -19,6 +19,10 @@ export async function getWeekSummary(userId: string) {
     prisma.run.findMany({
       where: { userId, date: { gte: subDays(now, 366) } },
       select: { date: true },
+    }),
+    prisma.user.findUnique({
+      where: { id: userId },
+      select: { weeklyGoalKm: true },
     }),
   ])
 
@@ -30,6 +34,7 @@ export async function getWeekSummary(userId: string) {
     runs: current.length,
     elevation: current.reduce((s, r) => s + r.elevation, 0),
     previousDistanceKm: km(previous.reduce((s, r) => s + r.distance, 0)),
+    goalKm: user?.weeklyGoalKm ?? null,
     currentStreak: computeCurrentStreak(
       new Set(recentDates.map((r) => toDateStr(r.date))),
     ),
