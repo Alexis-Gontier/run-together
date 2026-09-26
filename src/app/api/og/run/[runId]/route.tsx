@@ -22,7 +22,7 @@ const MUTED = OG.muted
 const ORANGE = OG.accent
 const ROUTE = OG.brand
 const MAP_BG = OG.panel
-const MAP_TINT = "rgba(16, 36, 84, 0.5)"
+const MAP_TINT = "rgba(9, 9, 11, 0.4)"
 const MAP_PADDING = 48
 // Assez de points pour un tracé lisse, assez peu pour garder le SVG léger.
 const MAX_ROUTE_POINTS = 400
@@ -223,7 +223,7 @@ export async function GET(
             <TileLayer tiles={viewport.tiles} srcs={tiles} />
           )}
           {tiles && (
-            // Teinte bleu nuit sur le gris Esri (et assombrit pour faire ressortir le tracé).
+            // Assombrit le gris Esri pour faire ressortir le tracé.
             <div
               style={{
                 position: "absolute",
