@@ -6,6 +6,9 @@ import { Button } from "@/components/shadcn-ui/button"
 import { ROUTE_LABELS, ROUTES } from "@/lib/constants/routes"
 
 function getTitle(pathname: string): string {
+  if (pathname === ROUTES.RUN_NEW) return "Ajouter une course"
+  if (/^\/runs\/[^/]+\/edit$/.test(pathname)) return "Modifier la course"
+  if (/^\/runs\/[^/]+$/.test(pathname)) return "Course"
   for (const [route, title] of Object.entries(ROUTE_LABELS)) {
     if (
       pathname === route ||

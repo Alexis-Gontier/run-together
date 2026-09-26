@@ -56,7 +56,7 @@ export function RunCardHeader({ run, prs, className }: RunCardHeaderProps) {
             href={profileRoute(run.user.username!)}
             className="relative z-20 font-semibold text-sm hover:underline"
           >
-            {run.user.username}
+            {run.user.name}
           </Link>
           <span className="text-muted-foreground text-xs">
             · {formatRunDateShort(run.date)}

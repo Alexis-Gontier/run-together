@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { prisma } from "@/lib/db/prisma"
 
 type ProfileLayoutProps = {
   children: React.ReactNode
@@ -9,7 +10,11 @@ export async function generateMetadata({
   params,
 }: ProfileLayoutProps): Promise<Metadata> {
   const { username } = await params
-  return { title: username }
+  const user = await prisma.user.findUnique({
+    where: { username: username.toLowerCase() },
+    select: { name: true },
+  })
+  return { title: user?.name ?? username }
 }
 
 export default function ProfileLayout({ children }: ProfileLayoutProps) {

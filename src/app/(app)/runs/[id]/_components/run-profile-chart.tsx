@@ -104,6 +104,7 @@ export function RunProfileChart({ splits }: { splits: Split[] }) {
             tick={{ fontSize: 11 }}
             tickFormatter={(v) => formatRunPace(v)}
             reversed
+            domain={[(min: number) => min - 30, (max: number) => max + 30]}
             width={44}
           />
           <ChartTooltip
