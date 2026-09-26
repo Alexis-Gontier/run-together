@@ -7,7 +7,9 @@ import {
   type ProfileImageKind,
 } from "./config"
 
-export const profileImagesEnabled = () => !!env.BLOB_READ_WRITE_TOKEN
+// Le SDK choisit l'auth seul : token read-write, sinon OIDC Vercel + BLOB_STORE_ID.
+export const profileImagesEnabled = () =>
+  !!(env.BLOB_READ_WRITE_TOKEN || env.BLOB_STORE_ID)
 
 /** Erreur attendue (fichier invalide) : message FR montré tel quel. */
 export class ProfileImageError extends Error {}
@@ -35,7 +37,6 @@ export async function storeProfileImage(
       // Suffixe aléatoire : nouvelle URL à chaque envoi, donc pas de cache CDN périmé.
       addRandomSuffix: true,
       cacheControlMaxAge: 60 * 60 * 24 * 365,
-      token: env.BLOB_READ_WRITE_TOKEN,
     },
   )
   return url
@@ -45,7 +46,7 @@ export async function storeProfileImage(
 export async function deleteProfileImage(url: string | null | undefined) {
   if (!url?.includes(".blob.vercel-storage.com/")) return
   try {
-    await del(url, { token: env.BLOB_READ_WRITE_TOKEN })
+    await del(url)
   } catch (err) {
     console.error("[profile-images] delete failed", url, err)
   }
