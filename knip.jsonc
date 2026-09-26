@@ -8,10 +8,7 @@
   "ignore": [
     // Généré par shadcn : exporte volontairement plus que ce qu'on consomme ; élaguer casserait
     // la prochaine régénération.
-    "src/components/shadcn-ui/**",
-    // Skills tierces copiées (voir .claude/SKILLS.md) : docs et scripts qui ne font pas partie
-    // du code du projet.
-    ".claude/skills/**"
+    "src/components/shadcn-ui/**"
   ],
 
   // Un schéma Zod exporté mais consommé seulement par son propre fichier (via `z.infer` ou
