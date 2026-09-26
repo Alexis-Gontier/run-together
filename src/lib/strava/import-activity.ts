@@ -1,11 +1,11 @@
+import { RunSource } from "@/generated/prisma/client"
 import { prisma } from "@/lib/db/prisma"
-import { sendRunNotification } from "@/lib/discord"
-import { updatePersonalRecords } from "@/lib/runs/personal-records"
+import { recordRun } from "@/lib/runs/record-run"
 import { stravaApiFetch } from "@/lib/strava/client"
 import { STRAVA_RUN_TYPES, stravaEndpoints } from "@/lib/strava/constants"
 import { stravaActivityDetailSchema } from "@/lib/strava/schemas"
 import { getValidAccessToken } from "@/lib/strava/token"
-import { createRunFromActivity } from "./create-run-from-activity"
+import { stravaActivityToRunInput } from "./create-run-from-activity"
 
 interface ImportOptions {
   // When true, non-run activities are silently skipped instead of throwing
@@ -51,36 +51,12 @@ export async function importStravaActivity(
     if (existing) return
   }
 
-  const run = await prisma.$transaction(async (tx) => {
-    if (options.replaceExisting) {
-      await tx.run.deleteMany({
-        where: { stravaId: String(activityId), userId },
-      })
-    }
-    return createRunFromActivity(tx, userId, activity)
+  await recordRun(stravaActivityToRunInput(activity), {
+    userId,
+    userName: account.user.name ?? "Inconnu",
+    source: RunSource.STRAVA,
+    stravaId: String(activityId),
+    notify: !options.silent,
+    replaceExisting: options.replaceExisting,
   })
-
-  const splits = (activity.splits_metric ?? []).map((s) => ({
-    kilometer: s.split,
-    distance: s.distance,
-    duration: s.moving_time,
-    pace: s.distance > 0 ? Math.round((s.moving_time / s.distance) * 1000) : 0,
-  }))
-
-  try {
-    await updatePersonalRecords(userId, run, splits)
-  } catch (err) {
-    console.error("[personal-records] update failed", run.id, err)
-  }
-
-  if (!options.silent) {
-    const userName = account.user.name ?? "Inconnu"
-    const runName = run.name || "Course sans nom"
-
-    try {
-      await sendRunNotification({ runId: run.id, userName, runName })
-    } catch (err) {
-      console.error("[discord] run notification failed", err)
-    }
-  }
 }

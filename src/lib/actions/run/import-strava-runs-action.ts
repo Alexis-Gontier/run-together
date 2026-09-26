@@ -1,11 +1,13 @@
 "use server"
 
 import { z } from "zod"
+import { RunSource } from "@/generated/prisma/client"
 import { prisma } from "@/lib/db/prisma"
+import { recordRun } from "@/lib/runs/record-run"
 import { authActionClient } from "@/lib/safe-action/auth-action-client"
 import { stravaApiFetch } from "@/lib/strava/client"
 import { stravaEndpoints } from "@/lib/strava/constants"
-import { createRunFromActivity } from "@/lib/strava/create-run-from-activity"
+import { stravaActivityToRunInput } from "@/lib/strava/create-run-from-activity"
 import { stravaActivityDetailSchema } from "@/lib/strava/schemas"
 import { getValidAccessToken } from "@/lib/strava/token"
 
@@ -56,13 +58,22 @@ export const importStravaRunsAction = authActionClient
 
     if (newActivities.length === 0) return { count: 0 }
 
-    // Write each activity in its own transaction so one failure doesn't block others
-    const writeResults = await Promise.allSettled(
-      newActivities.map((a) =>
-        prisma.$transaction((tx) => createRunFromActivity(tx, user.id, a)),
-      ),
-    )
-
-    const count = writeResults.filter((r) => r.status === "fulfilled").length
+    // Séquentiel : chaque course met à jour les records perso, qu'on ne veut pas voir se
+    // concurrencer. Un échec n'empêche pas les suivantes.
+    let count = 0
+    for (const a of newActivities) {
+      try {
+        await recordRun(stravaActivityToRunInput(a), {
+          userId: user.id,
+          userName: user.name,
+          source: RunSource.STRAVA,
+          stravaId: String(a.id),
+          notify: false,
+        })
+        count++
+      } catch (err) {
+        console.error("[strava] bulk import failed", a.id, err)
+      }
+    }
     return { count }
   })
