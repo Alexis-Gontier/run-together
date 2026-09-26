@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { mapViewport } from "./map-tiles"
+import { mapViewport } from "./raster-tiles"
 
 const route: [number, number][] = [
   [48.8584, 2.2945],

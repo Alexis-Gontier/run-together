@@ -1,14 +1,18 @@
+import { MAP_ATTRIBUTION, mapViewport, tileUrl } from "@/lib/maps/raster-tiles"
 import { decodePolyline } from "@/lib/runs/track/decode-polyline"
-import { routeSvgPath } from "@/lib/runs/track/route-svg"
 import { cn } from "@/lib/utils/cn"
 
-const WIDTH = 600
-const HEIGHT = 220
-const PADDING = 20
+// Repère en 2× de l'affichage (≈ 600 × 220) : tuiles nettes sur écran haute densité.
+const WIDTH = 1200
+const HEIGHT = 440
+const PADDING = 48
+const TILE = 256
+const pct = (v: number, of: number) => `${(v / of) * 100}%`
 
 /**
- * Miniature du tracé en SVG pur : aucune tuile de carte, rien à charger — adaptée aux listes
- * (fil, profil) où des dizaines de cartes interactives seraient trop lourdes.
+ * Miniature du tracé : tuiles raster statiques (Esri gris, clair/sombre selon le thème,
+ * chargées en différé) + tracé SVG. Pas de carte interactive — adaptée aux listes
+ * (fil, profil) où des dizaines de MapLibre seraient trop lourdes.
  */
 export function RouteThumbnail({
   polyline,
@@ -17,37 +21,68 @@ export function RouteThumbnail({
   polyline: string
   className?: string
 }) {
-  const points = decodePolyline(polyline)
-  const d = routeSvgPath(points, WIDTH, HEIGHT, PADDING)
-  if (!d) return null
-
-  const [start] = d.slice(1).split(" L")
-  const [x, y] = start.split(" ").map(Number)
+  const view = mapViewport(decodePolyline(polyline), WIDTH, HEIGHT, PADDING)
+  if (!view) return null
 
   return (
-    <svg
-      viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
-      className={cn("h-auto w-full bg-muted/40", className)}
-      role="img"
-      aria-label="Tracé du parcours"
+    <div
+      className={cn("relative aspect-600/220 w-full bg-muted/40", className)}
     >
-      <path
-        d={d}
-        fill="none"
-        className="stroke-emerald-500/25"
-        strokeWidth={10}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d={d}
-        fill="none"
-        className="stroke-emerald-500"
-        strokeWidth={3.5}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <circle cx={x} cy={y} r={6} className="fill-foreground" />
-    </svg>
+      {(["light", "dark"] as const).map((style) =>
+        view.tiles.map((t) => (
+          // biome-ignore lint/performance/noImgElement: tuiles externes, pas d'optimisation Next utile
+          <img
+            key={`${style}-${t.x}-${t.y}`}
+            src={tileUrl(view.zoom, t.x, t.y, style)}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            draggable={false}
+            className={cn(
+              "absolute max-w-none select-none",
+              style === "light" ? "dark:hidden" : "hidden dark:block",
+            )}
+            style={{
+              left: pct(t.left, WIDTH),
+              top: pct(t.top, HEIGHT),
+              width: pct(TILE, WIDTH),
+              height: pct(TILE, HEIGHT),
+            }}
+          />
+        )),
+      )}
+      <svg
+        viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
+        className="absolute inset-0 size-full"
+        role="img"
+        aria-label="Tracé du parcours"
+      >
+        <path
+          d={view.path}
+          fill="none"
+          className="stroke-emerald-500/25"
+          strokeWidth={20}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d={view.path}
+          fill="none"
+          className="stroke-emerald-500"
+          strokeWidth={7}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <circle
+          cx={view.start.x}
+          cy={view.start.y}
+          r={11}
+          className="fill-foreground"
+        />
+      </svg>
+      <span className="absolute right-1.5 bottom-1 text-[9px] text-muted-foreground/70">
+        {MAP_ATTRIBUTION}
+      </span>
+    </div>
   )
 }

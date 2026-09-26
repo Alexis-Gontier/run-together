@@ -1,9 +1,19 @@
 const TILE = 256
 const MAX_ZOOM = 16
 
-// Fond de carte gris foncé d'Esri : raster, gratuit, sans clé (attribution requise).
-const TILE_URL = (z: number, x: number, y: number) =>
-  `https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/${z}/${y}/${x}`
+// Fonds de carte gris d'Esri : raster, gratuits, sans clé (attribution requise).
+const BASEMAPS = {
+  dark: "World_Dark_Gray_Base",
+  light: "World_Light_Gray_Base",
+} as const
+
+export const tileUrl = (
+  z: number,
+  x: number,
+  y: number,
+  style: keyof typeof BASEMAPS = "dark",
+) =>
+  `https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/${BASEMAPS[style]}/MapServer/tile/${z}/${y}/${x}`
 export const MAP_ATTRIBUTION = "© Esri, HERE, Garmin, © OpenStreetMap"
 
 /** Web Mercator : [lat, lng] → pixels monde au zoom donné. */
@@ -83,7 +93,7 @@ export function mapViewport(
         y: ty,
         left: Math.round(tx * TILE - originX),
         top: Math.round(ty * TILE - originY),
-        url: TILE_URL(zoom, x, ty),
+        url: tileUrl(zoom, x, ty),
       })
     }
   }
@@ -99,32 +109,5 @@ export function mapViewport(
       .join(" "),
     start: local[0],
     end: local[local.length - 1],
-  }
-}
-
-/**
- * Télécharge les tuiles en data URLs (Satori ne gère pas bien les échecs réseau).
- * `null` si l'une échoue : l'image retombe alors sur le tracé seul.
- */
-export async function fetchTiles(
-  tiles: MapViewport["tiles"],
-  timeoutMs = 4000,
-): Promise<string[] | null> {
-  try {
-    return await Promise.all(
-      tiles.map(async (t) => {
-        const res = await fetch(t.url, {
-          signal: AbortSignal.timeout(timeoutMs),
-          next: { revalidate: 60 * 60 * 24 * 30 },
-        })
-        if (!res.ok) throw new Error(`tile ${res.status}`)
-        const type = res.headers.get("content-type") ?? "image/jpeg"
-        const data = Buffer.from(await res.arrayBuffer()).toString("base64")
-        return `data:${type};base64,${data}`
-      }),
-    )
-  } catch (err) {
-    console.error("[og] map tiles failed", err)
-    return null
   }
 }

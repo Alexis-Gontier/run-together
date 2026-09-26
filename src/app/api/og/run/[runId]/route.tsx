@@ -1,7 +1,8 @@
 import { ImageResponse } from "next/og"
 
 import { prisma } from "@/lib/db/prisma"
-import { fetchTiles, MAP_ATTRIBUTION, mapViewport } from "@/lib/og/map-tiles"
+import { MAP_ATTRIBUTION, mapViewport } from "@/lib/maps/raster-tiles"
+import { fetchTiles } from "@/lib/og/fetch-tiles"
 import { OG, OG_HEADER_H, OgHeader } from "@/lib/og/theme"
 import { PR_DISTANCE_LABELS, PR_DISTANCE_ORDER } from "@/lib/runs/pr-display"
 import { decodePolyline } from "@/lib/runs/track/decode-polyline"

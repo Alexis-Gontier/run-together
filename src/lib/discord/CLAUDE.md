@@ -34,7 +34,7 @@ Embed images (`next/og`, 1200×630, shared theme in `src/lib/og/theme.tsx`, URLs
 `ogRunRoute` / `ogBadgesRoute` / `ogRecapRoute` in `routes.ts`):
 
 - `/api/og/run/[runId]` — route drawn as SVG over Esri « Dark Gray » raster tiles (free, no
-  key, attribution drawn; `src/lib/og/map-tiles.ts`) + gold strip when the run holds personal
+  key, attribution drawn; `src/lib/maps/raster-tiles.ts`) + gold strip when the run holds personal
   records. Tiles failing → route alone on a plain background.
 - `/api/og/badges/[runId]` — medals of the badges unlocked by that run (`UserBadge.runId`).
 - `/api/og/recap/[yyyy-MM-dd]` — group totals + distance podium (Monday UTC of the week).

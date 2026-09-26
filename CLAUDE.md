@@ -7,7 +7,7 @@
 - **Auth**: better-auth v1 (username + admin plugins) → @src/lib/auth/CLAUDE.md
 - **Server Actions**: next-safe-action v8 → @src/lib/safe-action/CLAUDE.md
 - **Forms**: React Hook Form + Zod v4 + `standardSchemaResolver` → @src/lib/schemas/CLAUDE.md
-- **UI**: shadcn/ui + Tailwind CSS v4 ; maps via mapcn (MapLibre GL, free CARTO vector basemaps, light/dark) — `src/components/ui/run-map.tsx`, SVG thumbnails in lists (`route-thumbnail.tsx`)
+- **UI**: shadcn/ui + Tailwind CSS v4 ; maps via mapcn (MapLibre GL, free CARTO vector basemaps, light/dark) — `src/components/ui/run-map.tsx`, list thumbnails = Esri raster tiles + SVG route (`route-thumbnail.tsx`, `src/lib/maps/raster-tiles.ts`)
 - **Badges**: catalog in code, `UserBadge` table, evaluated by `recordRun` → @src/lib/badges/CLAUDE.md
 - **Stats**: week summary, highlights, streaks, milestones for the right panels → `src/lib/stats/`
 - **State**: Zustand (onboarding flow), nuqs (URL query params)
