@@ -70,7 +70,7 @@ export default async function HomeRightPanel() {
   return (
     <div className="space-y-4 p-4">
       <WeekSummaryCard userId={user.id} />
-      <div className="rounded-xl border bg-card p-4 shadow-sm">
+      <div className="rounded-xl border bg-background p-4 shadow-sm">
         <div className="mb-3 flex items-center justify-between">
           <h2 className="font-semibold text-sm">Top du mois</h2>
           <span className="text-muted-foreground text-xs">{monthLabel}</span>

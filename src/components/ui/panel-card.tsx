@@ -18,7 +18,7 @@ export function PanelCard({
 }) {
   return (
     <section
-      className={cn("rounded-xl border bg-card p-4 shadow-sm", className)}
+      className={cn("rounded-xl border bg-background p-4 shadow-sm", className)}
     >
       <div className="mb-3 flex items-center justify-between gap-2">
         <h2 className="font-semibold text-sm">{title}</h2>

@@ -15,7 +15,7 @@ import { decodePolyline } from "@/lib/runs/track/decode-polyline"
 import { cn } from "@/lib/utils/cn"
 
 // Les fonds CARTO (défaut de shadcn-map) exigent désormais une clé : tuiles OpenStreetMap, sans
-// clé, assombries en CSS en mode sombre. L'attribution OSM est obligatoire (affichée en bas).
+// clé, passées en niveaux de gris (inversées en mode sombre). L'attribution OSM est obligatoire.
 const OSM_TILES = "https://tile.openstreetmap.org/{z}/{x}/{y}.png"
 
 /**
@@ -76,7 +76,7 @@ export default function RunMap({
         <MapTileLayer
           url={OSM_TILES}
           darkUrl={OSM_TILES}
-          className="dark:filter-[invert(1)_hue-rotate(180deg)_brightness(0.95)_contrast(0.9)]"
+          className="filter-[grayscale(1)_contrast(0.9)] dark:filter-[grayscale(1)_invert(1)_brightness(0.85)_contrast(0.9)]"
         />
         <FitBounds bounds={bounds} />
         <MapZoomControl />
