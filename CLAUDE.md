@@ -9,8 +9,9 @@
 - **Forms**: React Hook Form + Zod v4 + `standardSchemaResolver` → @src/lib/schemas/CLAUDE.md
 - **UI**: shadcn/ui + Tailwind CSS v4
 - **State**: Zustand (onboarding flow), nuqs (URL query params)
-- **Strava integration**: OAuth 2 + webhook + auto token refresh → @src/lib/strava/CLAUDE.md
-- **Discord notifications**: run import events → @src/lib/discord/CLAUDE.md
+- **Runs**: source-agnostic pipeline (`recordRun`), personal records, GPX/FIT parsing → @src/lib/runs/CLAUDE.md
+- **Strava integration** (disabled by `STRAVA_ENABLED=false`): OAuth 2 + webhook + auto token refresh → @src/lib/strava/CLAUDE.md
+- **Discord notifications**: new run events (from `recordRun`) → @src/lib/discord/CLAUDE.md
 - **Run formatting utils**: pace, distance, duration, dates → @src/lib/utils/CLAUDE.md
 - **Tooling**: Node 24 (`.nvmrc`), pnpm 11, Biome, lefthook, knip, Vitest, React Compiler. Claude Code config in `.claude/` (see `.claude/SKILLS.md`)
 - **Env validation**: `@t3-oss/env-nextjs` — never use `process.env` directly, always go through `src/env.ts`
@@ -24,7 +25,7 @@ src/app/
 ├── (admin)/       # Protected — role === "admin" required
 ├── (auth)/        # Public (login, register)
 ├── (onboarding)/  # Post-signup onboarding flow
-└── api/           # auth/[...all], strava/*, runs/[id]/gpx, og/run/[runId]
+└── api/           # auth/[...all], strava/* (404 unless STRAVA_ENABLED), og/run/[runId]
 ```
 
 Each route follows:
@@ -52,7 +53,7 @@ Shared actions used across multiple routes live in `src/lib/actions/`.
 
 **Commits** — conventional commits enforced by commitlint via lefthook: `feat | fix | chore | refactor | docs | style | test | perf | ci` (body lines ≤ 100 chars). Pre-commit runs `biome check --write` on staged files; pre-push runs `typecheck`, `test` and `knip`.
 
-**Strava** — the Strava API app is **inactive** since 2026-08-19. No run arrives through Strava; do not debug import failures as code bugs. Manual entry + GPX/FIT import replace it (phase 2 of `docs/superpowers/specs/2026-09-26-refonte-roadmap-design.md`).
+**Strava** — the Strava API app is **inactive** since 2026-08-19. No run arrives through Strava; do not debug import failures as code bugs. Manual entry + GPX/FIT import (`/runs/new`) replace it; the whole integration is behind `STRAVA_ENABLED` (default `false`).
 
 ## Scripts
 
