@@ -38,6 +38,11 @@ export const auth = betterAuth({
         required: false,
         defaultValue: false,
       },
+      publishRunsToDiscord: {
+        type: "boolean",
+        required: false,
+        defaultValue: true,
+      },
     },
   },
   plugins: [
