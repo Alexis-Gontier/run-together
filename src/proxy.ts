@@ -68,7 +68,9 @@ export const config = {
      * - _next/static (fichiers statiques)
      * - _next/image (optimisation d'images)
      * - favicon.ico, etc.
+     * - images/ (fichiers de public/ : sans cette exclusion, l'illustration de la page de
+     *   connexion était redirigée vers /login et ne s'affichait jamais)
      */
-    "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
+    "/((?!api|_next/static|_next/image|images/|favicon.ico|sitemap.xml|robots.txt).*)",
   ],
 }
