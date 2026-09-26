@@ -18,7 +18,8 @@ function getTitle(pathname: string): string {
 }
 
 function isRunDetailPage(pathname: string): boolean {
-  return /^\/runs\/[^/]+$/.test(pathname)
+  // Détail, création (/runs/new) et édition d'une course : flèche retour
+  return /^\/runs\/[^/]+(\/edit)?$/.test(pathname)
 }
 
 export function PageHeader() {
