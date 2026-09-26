@@ -1,6 +1,6 @@
-import { cn } from "@/lib/utils/cn"
-import { TrendingDown, TrendingUp, Minus } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
+import { Minus, TrendingDown, TrendingUp } from "lucide-react"
+import { cn } from "@/lib/utils/cn"
 
 export interface StatCardProps {
   label: string
@@ -30,17 +30,17 @@ export function StatCard({
     <div className="flex flex-col gap-2.5 rounded-xl border bg-card px-4 py-4">
       <div className="flex items-center gap-1.5 text-muted-foreground">
         <Icon className="size-3.5 shrink-0" />
-        <span className="truncate text-xs font-medium tracking-wider uppercase">
+        <span className="truncate font-medium text-xs uppercase tracking-wider">
           {label}
         </span>
       </div>
 
       <div className="flex min-w-0 items-baseline gap-1.5">
-        <span className="truncate text-3xl leading-none font-bold tracking-tight tabular-nums">
+        <span className="truncate font-bold text-3xl tabular-nums leading-none tracking-tight">
           {value}
         </span>
         {unit && (
-          <span className="shrink-0 text-sm font-medium text-muted-foreground">
+          <span className="shrink-0 font-medium text-muted-foreground text-sm">
             {unit}
           </span>
         )}
@@ -48,7 +48,7 @@ export function StatCard({
 
       <div
         className={cn(
-          "flex items-center gap-1 text-xs font-medium",
+          "flex items-center gap-1 font-medium text-xs",
           deltaPositive === true && "text-emerald-600 dark:text-emerald-400",
           deltaPositive === false && "text-red-500 dark:text-red-400",
           deltaPositive === null && "text-muted-foreground",

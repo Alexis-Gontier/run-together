@@ -1,15 +1,15 @@
 "use client"
 
+import { Home, Route, Settings, Trophy, User } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, Route, Trophy, Settings, User } from "lucide-react"
 
 import { Badge } from "@/components/shadcn-ui/badge"
 import { Button } from "@/components/shadcn-ui/button"
-import { cn } from "@/lib/utils/cn"
 import { ROUTE_LABELS, ROUTES } from "@/lib/constants/routes"
-import { isNavActive } from "@/lib/utils/route"
+import { cn } from "@/lib/utils/cn"
 import { isNavItemNew } from "@/lib/utils/date"
+import { isNavActive } from "@/lib/utils/route"
 
 type NavItem = {
   label: string
@@ -84,7 +84,7 @@ export function MobileNav({ username }: { username?: string | null }) {
   const profileHref = username ? `/profile/${username}` : null
 
   return (
-    <nav className="fixed right-0 bottom-0 left-0 z-50 flex border-t border-border bg-background md:hidden">
+    <nav className="fixed right-0 bottom-0 left-0 z-50 flex border-border border-t bg-background md:hidden">
       {NAV_ITEMS.filter((item) => item.mobile).map(
         ({ Icon, href, newUntil }) => {
           const isActive = isNavActive(pathname, href)

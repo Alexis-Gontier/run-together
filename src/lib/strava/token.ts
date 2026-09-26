@@ -1,5 +1,5 @@
-import type { StravaAccount } from "@/generated/prisma/client"
 import { env } from "@/env"
+import type { StravaAccount } from "@/generated/prisma/client"
 import { prisma } from "@/lib/db/prisma"
 import { stravaOAuthFetch } from "@/lib/strava/client"
 import { stravaOAuthPaths } from "@/lib/strava/constants"

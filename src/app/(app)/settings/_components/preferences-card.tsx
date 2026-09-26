@@ -5,8 +5,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/shadcn-ui/card"
-import { ThemeToggle } from "./theme-toggle"
 import { Switch } from "@/components/shadcn-ui/switch"
+import { ThemeToggle } from "./theme-toggle"
 
 function PreferenceRow({
   label,
@@ -20,9 +20,9 @@ function PreferenceRow({
   return (
     <div className="flex items-center justify-between gap-4 py-3">
       <div className="space-y-0.5">
-        <p className="text-sm font-medium">{label}</p>
+        <p className="font-medium text-sm">{label}</p>
         {description && (
-          <p className="text-xs text-muted-foreground">{description}</p>
+          <p className="text-muted-foreground text-xs">{description}</p>
         )}
       </div>
       {children}
@@ -47,13 +47,13 @@ export function PreferencesCard() {
           label="Langue"
           description="Langue d'affichage de l'interface."
         >
-          <span className="text-sm text-muted-foreground">Français</span>
+          <span className="text-muted-foreground text-sm">Français</span>
         </PreferenceRow>
         <PreferenceRow
           label="Unité de distance"
           description="Kilomètres ou miles pour vos activités."
         >
-          <span className="text-sm text-muted-foreground">Kilomètres</span>
+          <span className="text-muted-foreground text-sm">Kilomètres</span>
         </PreferenceRow>
         <PreferenceRow
           label="Notifications"

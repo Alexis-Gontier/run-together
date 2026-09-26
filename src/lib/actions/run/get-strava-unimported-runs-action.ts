@@ -1,11 +1,10 @@
 "use server"
 
 import { z } from "zod"
-
-import { authActionClient } from "@/lib/safe-action/auth-action-client"
 import { prisma } from "@/lib/db/prisma"
+import { authActionClient } from "@/lib/safe-action/auth-action-client"
 import { stravaApiFetch } from "@/lib/strava/client"
-import { stravaEndpoints, STRAVA_RUN_TYPES } from "@/lib/strava/constants"
+import { STRAVA_RUN_TYPES, stravaEndpoints } from "@/lib/strava/constants"
 import { stravaActivitySchema } from "@/lib/strava/schemas"
 import { getValidAccessToken } from "@/lib/strava/token"
 

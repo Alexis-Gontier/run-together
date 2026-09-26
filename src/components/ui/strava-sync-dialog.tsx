@@ -1,17 +1,11 @@
 "use client"
 
-import { useState, useTransition } from "react"
+import { Footprints, Mountain, RefreshCw } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { Mountain, RefreshCw, Footprints } from "lucide-react"
+import { useState, useTransition } from "react"
 import { toast } from "sonner"
-
-import {
-  Empty,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from "@/components/shadcn-ui/empty"
+import { Button } from "@/components/shadcn-ui/button"
+import { Checkbox } from "@/components/shadcn-ui/checkbox"
 import {
   Dialog,
   DialogContent,
@@ -20,19 +14,24 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/shadcn-ui/dialog"
-import { Button } from "@/components/shadcn-ui/button"
-import { Checkbox } from "@/components/shadcn-ui/checkbox"
-import { Skeleton } from "@/components/shadcn-ui/skeleton"
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/shadcn-ui/empty"
 import { ScrollArea } from "@/components/shadcn-ui/scroll-area"
+import { Skeleton } from "@/components/shadcn-ui/skeleton"
 import { LoadingButton } from "@/components/ui/loading-button"
-import { cn } from "@/lib/utils/cn"
 import { getStravaUnimportedRunsAction } from "@/lib/actions/run/get-strava-unimported-runs-action"
 import { importStravaRunsAction } from "@/lib/actions/run/import-strava-runs-action"
 import type { StravaActivitySummary } from "@/lib/strava/types"
+import { cn } from "@/lib/utils/cn"
 import {
+  formatDistanceShort,
   formatDuration,
   formatRunDate,
-  formatDistanceShort,
 } from "@/lib/utils/run"
 
 export function StravaSyncDialog() {
@@ -123,11 +122,11 @@ export function StravaSyncDialog() {
             />
             <label
               htmlFor="select-all"
-              className="cursor-pointer text-xs font-medium text-muted-foreground select-none"
+              className="cursor-pointer select-none font-medium text-muted-foreground text-xs"
             >
               {allSelected ? "Tout désélectionner" : "Tout sélectionner"}
             </label>
-            <span className="ml-auto text-xs text-muted-foreground">
+            <span className="ml-auto text-muted-foreground text-xs">
               {activities.length} course{activities.length > 1 ? "s" : ""}
             </span>
           </div>
@@ -141,6 +140,7 @@ export function StravaSyncDialog() {
           {loading && (
             <div className="flex flex-col divide-y px-2">
               {Array.from({ length: 6 }).map((_, i) => (
+                // biome-ignore lint/suspicious/noArrayIndexKey: squelettes de chargement identiques
                 <div key={i} className="flex items-center gap-3 px-4 py-3">
                   <Skeleton className="size-4 shrink-0 rounded" />
                   <div className="flex flex-1 items-center justify-between gap-4">
@@ -175,6 +175,7 @@ export function StravaSyncDialog() {
           {!loading && activities && activities.length > 0 && (
             <div className="divide-y">
               {activities.map((a) => (
+                // biome-ignore lint/a11y/noLabelWithoutControl: le Checkbox Radix est un bouton, le label l'enveloppe
                 <label
                   key={a.id}
                   className="flex cursor-pointer items-center gap-3 px-6 py-3 transition-colors hover:bg-muted/50"
@@ -186,11 +187,11 @@ export function StravaSyncDialog() {
                   <div className="flex flex-1 items-center justify-between gap-4 text-sm">
                     <div className="flex min-w-0 flex-col">
                       <span className="truncate font-medium">{a.name}</span>
-                      <span className="text-xs text-muted-foreground">
+                      <span className="text-muted-foreground text-xs">
                         {formatRunDate(new Date(a.start_date_local))}
                       </span>
                     </div>
-                    <div className="flex shrink-0 items-center gap-3 text-xs text-muted-foreground">
+                    <div className="flex shrink-0 items-center gap-3 text-muted-foreground text-xs">
                       <span className="font-mono font-semibold text-foreground tabular-nums">
                         {formatDistanceShort(a.distance / 1000)}
                         <span className="ml-0.5 font-normal text-muted-foreground">
@@ -215,7 +216,7 @@ export function StravaSyncDialog() {
         </ScrollArea>
 
         <div className="flex items-center justify-between border-t px-6 py-4">
-          <span className="text-sm text-muted-foreground">
+          <span className="text-muted-foreground text-sm">
             {selected.size > 0
               ? `${selected.size} sélectionnée${selected.size > 1 ? "s" : ""}`
               : "Aucune sélection"}

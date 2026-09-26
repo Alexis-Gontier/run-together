@@ -26,7 +26,7 @@ export function UserNav({ name, username, email, image }: UserInfo) {
   return (
     <Link
       href={href}
-      className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg p-2 transition-colors outline-none hover:bg-accent lg:justify-start"
+      className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg p-2 outline-none transition-colors hover:bg-accent lg:justify-start"
     >
       <Avatar className="size-8 rounded-lg">
         <AvatarImage src={image ?? undefined} />
@@ -37,7 +37,7 @@ export function UserNav({ name, username, email, image }: UserInfo) {
       <div className="hidden min-w-0 flex-1 text-left text-sm leading-tight lg:grid">
         <span className="truncate font-medium">{displayName}</span>
         {displaySub && (
-          <span className="truncate text-xs text-muted-foreground">
+          <span className="truncate text-muted-foreground text-xs">
             {displaySub}
           </span>
         )}

@@ -1,7 +1,7 @@
 "use client"
 
-import { useCallback, useEffect, useRef, useState } from "react"
 import { useAction } from "next-safe-action/hooks"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { FeedCard } from "@/components/ui/feed-card"
 import {
   RunCardHeader,
@@ -68,7 +68,7 @@ export function FeedList({ initialRuns, initialNextCursor }: FeedListProps) {
       {cursor && (
         <div
           ref={sentinelRef}
-          className="py-4 text-center text-sm text-muted-foreground"
+          className="py-4 text-center text-muted-foreground text-sm"
         >
           {isPending ? "Chargement..." : null}
         </div>

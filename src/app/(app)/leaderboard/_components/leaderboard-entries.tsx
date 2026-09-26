@@ -1,13 +1,13 @@
-import { TrendingDown, TrendingUp, Minus } from "lucide-react"
+import { Minus, TrendingDown, TrendingUp } from "lucide-react"
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
 } from "@/components/shadcn-ui/avatar"
+import { YouBadge } from "@/components/ui/you-badge"
 import { cn } from "@/lib/utils/cn"
 import { getInitials } from "@/lib/utils/get-initials"
 import { formatRunPace } from "@/lib/utils/run"
-import { YouBadge } from "@/components/ui/you-badge"
 import type { LeaderboardMetric } from "../_schemas/leaderboard-schema"
 
 type Entry = {
@@ -43,7 +43,7 @@ function MetricValue({
     return (
       <>
         {entry.totalDistanceKm.toFixed(1)}
-        <span className="ml-1 text-xs text-muted-foreground">km</span>
+        <span className="ml-1 text-muted-foreground text-xs">km</span>
       </>
     )
   }
@@ -51,7 +51,7 @@ function MetricValue({
     return (
       <>
         {entry.totalRuns}
-        <span className="ml-1 text-xs text-muted-foreground">
+        <span className="ml-1 text-muted-foreground text-xs">
           {entry.totalRuns === 1 ? "course" : "courses"}
         </span>
       </>
@@ -63,18 +63,18 @@ function MetricValue({
   return (
     <>
       {formatRunPace(entry.avgPaceSecPerKm)}
-      <span className="ml-1 text-xs text-muted-foreground">/km</span>
+      <span className="ml-1 text-muted-foreground text-xs">/km</span>
     </>
   )
 }
 
 function EvolutionBadge({ evolution }: { evolution: number | null }) {
   if (evolution === null) {
-    return <span className="text-xs text-muted-foreground">—</span>
+    return <span className="text-muted-foreground text-xs">—</span>
   }
   if (evolution === 0) {
     return (
-      <span className="flex items-center gap-0.5 text-xs text-muted-foreground">
+      <span className="flex items-center gap-0.5 text-muted-foreground text-xs">
         <Minus className="size-3" />
       </span>
     )
@@ -83,7 +83,7 @@ function EvolutionBadge({ evolution }: { evolution: number | null }) {
   return (
     <span
       className={cn(
-        "flex items-center gap-0.5 text-xs font-medium",
+        "flex items-center gap-0.5 font-medium text-xs",
         positive ? "text-green-500" : "text-red-500",
       )}
     >
@@ -100,7 +100,7 @@ function EvolutionBadge({ evolution }: { evolution: number | null }) {
 export function LeaderboardEntries({ entries, metric, currentUserId }: Props) {
   if (entries.length === 0) {
     return (
-      <p className="py-16 text-center text-sm text-muted-foreground">
+      <p className="py-16 text-center text-muted-foreground text-sm">
         Aucune donnée pour cette période
       </p>
     )
@@ -120,7 +120,7 @@ export function LeaderboardEntries({ entries, metric, currentUserId }: Props) {
             {entry.rank <= 3 ? (
               <span className="text-base">{RANK_MEDALS[entry.rank - 1]}</span>
             ) : (
-              <span className="text-sm font-medium text-muted-foreground">
+              <span className="font-medium text-muted-foreground text-sm">
                 {entry.rank}
               </span>
             )}
@@ -135,20 +135,20 @@ export function LeaderboardEntries({ entries, metric, currentUserId }: Props) {
 
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
-              <span className="truncate text-sm font-medium">
+              <span className="truncate font-medium text-sm">
                 {entry.user.name}
               </span>
               {entry.user.id === currentUserId && <YouBadge />}
             </div>
             {entry.user.username && (
-              <p className="truncate text-xs text-muted-foreground">
+              <p className="truncate text-muted-foreground text-xs">
                 @{entry.user.username}
               </p>
             )}
           </div>
 
           <div className="flex items-center gap-3">
-            <span className="text-sm font-semibold tabular-nums">
+            <span className="font-semibold text-sm tabular-nums">
               <MetricValue entry={entry} metric={metric} />
             </span>
             <div className="flex w-14 justify-end">

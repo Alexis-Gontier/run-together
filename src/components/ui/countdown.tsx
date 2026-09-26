@@ -26,7 +26,7 @@ export function Countdown({ target }: CountdownProps) {
   }, [target])
 
   if (!timeLeft)
-    return <p className="text-4xl font-bold">Le site est en ligne !</p>
+    return <p className="font-bold text-4xl">Le site est en ligne !</p>
 
   const units = [
     { id: "days", label: "Jours", value: timeLeft.days ?? 0 },
@@ -39,10 +39,10 @@ export function Countdown({ target }: CountdownProps) {
     <div className="flex flex-col items-center gap-6 sm:flex-row sm:gap-10 md:gap-16">
       {units.map(({ id, label, value }) => (
         <div key={id} className="flex flex-col items-center gap-3 sm:gap-4">
-          <span className="text-6xl font-black tabular-nums md:text-7xl lg:text-8xl">
+          <span className="font-black text-6xl tabular-nums md:text-7xl lg:text-8xl">
             {String(value).padStart(2, "0")}
           </span>
-          <span className="text-base font-semibold tracking-widest text-muted-foreground uppercase sm:text-lg md:text-xl">
+          <span className="font-semibold text-base text-muted-foreground uppercase tracking-widest sm:text-lg md:text-xl">
             {label}
           </span>
         </div>

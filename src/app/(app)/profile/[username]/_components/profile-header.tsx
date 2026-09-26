@@ -1,10 +1,10 @@
 import Link from "next/link"
-import { Button } from "@/components/shadcn-ui/button"
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
 } from "@/components/shadcn-ui/avatar"
+import { Button } from "@/components/shadcn-ui/button"
 import { Skeleton } from "@/components/shadcn-ui/skeleton"
 import { ROUTES } from "@/lib/constants/routes"
 import { getInitials } from "@/lib/utils/get-initials"
@@ -40,7 +40,7 @@ export function ProfileHeader({
       <div className="flex items-end justify-between px-5 pb-3">
         <Avatar className="-mt-15 size-30 border-4 border-background shadow-md">
           <AvatarImage src={image ?? undefined} alt={name} />
-          <AvatarFallback className="text-2xl font-bold">
+          <AvatarFallback className="font-bold text-2xl">
             {getInitials(name)}
           </AvatarFallback>
         </Avatar>
@@ -58,8 +58,8 @@ export function ProfileHeader({
 
       {/* Identity */}
       <div className="px-5">
-        <h1 className="text-xl font-black tracking-tight">{name}</h1>
-        <p className="text-sm text-muted-foreground">@{handle}</p>
+        <h1 className="font-black text-xl tracking-tight">{name}</h1>
+        <p className="text-muted-foreground text-sm">@{handle}</p>
 
         {/* Stats */}
         <div className="mt-4 flex gap-5 pb-4 text-sm">

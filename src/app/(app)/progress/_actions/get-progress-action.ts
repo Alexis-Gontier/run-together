@@ -79,7 +79,7 @@ export const getProgressAction = authActionClient
     const firstWeek = getWeekStart(currentStart)
     const lastWeek = getWeekStart(currentEnd)
     const rawWeeks: { weekStart: string; distanceKm: number }[] = []
-    const cursor = new Date(firstWeek + "T00:00:00Z")
+    const cursor = new Date(`${firstWeek}T00:00:00Z`)
     while (toDateStr(cursor) <= lastWeek) {
       const key = toDateStr(cursor)
       rawWeeks.push({

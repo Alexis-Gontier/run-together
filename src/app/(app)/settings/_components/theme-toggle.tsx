@@ -1,7 +1,7 @@
 "use client"
 
-import { useSyncExternalStore } from "react"
 import { useTheme } from "next-themes"
+import { useSyncExternalStore } from "react"
 import {
   Select,
   SelectContent,

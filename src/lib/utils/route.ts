@@ -1,4 +1,4 @@
-import { ROUTES, AUTH_ROUTES, ADMIN_ROUTES } from "@/lib/constants/routes"
+import { ADMIN_ROUTES, AUTH_ROUTES, ROUTES } from "@/lib/constants/routes"
 
 export function isNavActive(pathname: string, href: string): boolean {
   return (
@@ -19,7 +19,7 @@ export function getRouteType(pathname: string): RouteType {
   if (onboardingRoutes.includes(pathname)) return "onboarding"
   if (
     adminRoutes.some(
-      (route) => pathname === route || pathname.startsWith(route + "/"),
+      (route) => pathname === route || pathname.startsWith(`${route}/`),
     )
   )
     return "admin"

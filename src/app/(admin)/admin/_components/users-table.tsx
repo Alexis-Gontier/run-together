@@ -1,31 +1,10 @@
 "use client"
 
-import { useState, useTransition } from "react"
+import { MoreHorizontal } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useAction } from "next-safe-action/hooks"
+import { useState, useTransition } from "react"
 import { toast } from "sonner"
-
-import { banUserAction } from "../_actions/ban-user-action"
-import { unbanUserAction } from "../_actions/unban-user-action"
-import { deleteUserAction } from "../_actions/delete-user-action"
-import { setRoleAction } from "../_actions/set-role-action"
-import { impersonateUserAction } from "../_actions/impersonate-user-action"
-import { setOnboardingAction } from "../_actions/set-onboarding-action"
-import { revokeSessionsAction } from "../_actions/revoke-sessions-action"
-import { changePasswordAction } from "../_actions/change-password-action"
-
-import { Button } from "@/components/shadcn-ui/button"
-import { Badge } from "@/components/shadcn-ui/badge"
-import { Input } from "@/components/shadcn-ui/input"
-import { Label } from "@/components/shadcn-ui/label"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/shadcn-ui/dropdown-menu"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -36,6 +15,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/shadcn-ui/alert-dialog"
+import { Badge } from "@/components/shadcn-ui/badge"
+import { Button } from "@/components/shadcn-ui/button"
 import {
   Dialog,
   DialogContent,
@@ -44,8 +25,25 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/shadcn-ui/dialog"
-import { MoreHorizontal } from "lucide-react"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/shadcn-ui/dropdown-menu"
+import { Input } from "@/components/shadcn-ui/input"
+import { Label } from "@/components/shadcn-ui/label"
 import { ROUTES } from "@/lib/constants/routes"
+import { banUserAction } from "../_actions/ban-user-action"
+import { changePasswordAction } from "../_actions/change-password-action"
+import { deleteUserAction } from "../_actions/delete-user-action"
+import { impersonateUserAction } from "../_actions/impersonate-user-action"
+import { revokeSessionsAction } from "../_actions/revoke-sessions-action"
+import { setOnboardingAction } from "../_actions/set-onboarding-action"
+import { setRoleAction } from "../_actions/set-role-action"
+import { unbanUserAction } from "../_actions/unban-user-action"
 
 type AdminUser = {
   id: string
@@ -237,7 +235,7 @@ export function UsersTable({
                       {user.displayUsername ?? user.name}
                     </p>
                     {user.username && (
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-muted-foreground text-xs">
                         @{user.username}
                       </p>
                     )}
@@ -348,7 +346,7 @@ export function UsersTable({
                             Changer le mot de passe
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
+                          <DropdownMenuLabel className="font-normal text-muted-foreground text-xs">
                             Diagnostic
                           </DropdownMenuLabel>
                           {user.onboardingCompleted ? (
@@ -404,7 +402,7 @@ export function UsersTable({
             </tbody>
           </table>
           {filtered.length === 0 && (
-            <p className="py-8 text-center text-sm text-muted-foreground">
+            <p className="py-8 text-center text-muted-foreground text-sm">
               Aucun utilisateur trouvé.
             </p>
           )}
@@ -522,7 +520,7 @@ export function UsersTable({
           <AlertDialogFooter>
             <AlertDialogCancel>Annuler</AlertDialogCancel>
             <AlertDialogAction
-              className="text-destructive-foreground bg-destructive hover:bg-destructive/90"
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={() => executeDelete({ userId: deleteDialog.userId })}
             >
               Supprimer définitivement

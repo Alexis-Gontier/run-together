@@ -1,7 +1,7 @@
-import { Activity, Map, Gauge, Mountain } from "lucide-react"
-import type { StatCardProps } from "../_components/stat-card"
+import { Activity, Gauge, Map as MapIcon, Mountain } from "lucide-react"
 import { formatPace } from "@/lib/utils/run"
 import type { getRunsStatsAction } from "../_actions/get-runs-stats-action"
+import type { StatCardProps } from "../_components/stat-card"
 
 export type GlobalStats = NonNullable<
   Awaited<ReturnType<typeof getRunsStatsAction>>["data"]
@@ -45,7 +45,7 @@ export function buildStatCards(stats: GlobalStats): StatCardProps[] {
       unit: "km",
       delta: dist.text,
       deltaPositive: dist.positive,
-      icon: Map,
+      icon: MapIcon,
     },
     {
       label: "Allure moy.",

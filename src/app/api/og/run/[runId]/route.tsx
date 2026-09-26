@@ -237,9 +237,9 @@ export async function GET(
           borderTop: `1px solid ${BORDER}`,
         }}
       >
-        {stats.map((s, i) => (
+        {stats.map((s) => (
           <div
-            key={i}
+            key={s.unit}
             style={{
               display: "flex",
               flexDirection: "column",

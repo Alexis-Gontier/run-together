@@ -3,13 +3,13 @@ import { FeedCard } from "@/components/ui/feed-card"
 import {
   RunCardHeader,
   RunCardMap,
-  RunCardStats,
   RunCardSplits,
+  RunCardStats,
 } from "@/components/ui/run-card"
+import { getUser } from "@/lib/auth/auth-session"
+import { getRunAction } from "./_actions/get-run-action"
 import { DeleteRunButton } from "./_components/delete-run-button"
 import { RunProfileChart } from "./_components/run-profile-chart"
-import { getRunAction } from "./_actions/get-run-action"
-import { getUser } from "@/lib/auth/auth-session"
 
 type RunDetailPageProps = {
   params: Promise<{ id: string }>

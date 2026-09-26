@@ -1,7 +1,5 @@
 import { Download, KeyRound, LogOut, Mail } from "lucide-react"
 import { Button } from "@/components/shadcn-ui/button"
-import { ChangePasswordDialog } from "./change-password-dialog"
-import { SignOutButton } from "./sign-out-button"
 import {
   Card,
   CardContent,
@@ -9,6 +7,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/shadcn-ui/card"
+import { ChangePasswordDialog } from "./change-password-dialog"
+import { SignOutButton } from "./sign-out-button"
 
 function AccountRow({
   icon: Icon,
@@ -28,8 +28,8 @@ function AccountRow({
           <Icon size={15} />
         </div>
         <div className="space-y-0.5">
-          <p className="text-sm font-medium">{label}</p>
-          <p className="text-xs text-muted-foreground">{description}</p>
+          <p className="font-medium text-sm">{label}</p>
+          <p className="text-muted-foreground text-xs">{description}</p>
         </div>
       </div>
       {action}

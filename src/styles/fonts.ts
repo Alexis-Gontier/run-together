@@ -1,4 +1,4 @@
-import { Inter, Geist } from "next/font/google"
+import { Geist, Inter } from "next/font/google"
 
 const geistHeading = Geist({
   subsets: ["latin"],

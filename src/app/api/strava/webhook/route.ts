@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server"
+import { type NextRequest, NextResponse } from "next/server"
 
 import { env } from "@/env"
 import { prisma } from "@/lib/db/prisma"

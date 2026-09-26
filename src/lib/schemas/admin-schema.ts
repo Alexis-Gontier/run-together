@@ -1,9 +1,9 @@
 import { z } from "zod"
 import {
-  usernameSchema,
-  nameSchema,
   emailSchema,
+  nameSchema,
   passwordSchema,
+  usernameSchema,
 } from "@/lib/schemas/auth-schema"
 
 export const banUserSchema = z.object({

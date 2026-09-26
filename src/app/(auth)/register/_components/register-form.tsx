@@ -9,7 +9,7 @@ import { Field, FieldError, FieldLabel } from "@/components/shadcn-ui/field"
 import { Input } from "@/components/shadcn-ui/input"
 import { LoadingButton } from "@/components/ui/loading-button"
 import { PasswordInput } from "@/components/ui/password-input"
-import { signUpSchema, type SignUpType } from "@/lib/schemas/auth-schema"
+import { type SignUpType, signUpSchema } from "@/lib/schemas/auth-schema"
 import { registerAction } from "../_actions/register-action"
 
 export function RegisterForm() {

@@ -4,8 +4,8 @@ import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 
 import { auth } from "@/lib/auth"
-import { actionClient } from "@/lib/safe-action/action-client"
 import { ROUTES } from "@/lib/constants/routes"
+import { actionClient } from "@/lib/safe-action/action-client"
 import { signUpSchema } from "@/lib/schemas/auth-schema"
 
 export const registerAction = actionClient

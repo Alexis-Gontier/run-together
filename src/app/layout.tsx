@@ -1,9 +1,9 @@
 import type { Metadata } from "next"
 import "@/styles/globals.css"
-import { fonts } from "@/styles/fonts"
-import { cn } from "@/lib/utils/cn"
 
 import { Providers } from "@/app/providers"
+import { cn } from "@/lib/utils/cn"
+import { fonts } from "@/styles/fonts"
 
 export const metadata: Metadata = {
   title: {

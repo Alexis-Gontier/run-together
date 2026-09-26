@@ -1,27 +1,27 @@
+import { Activity, Flame, Heart } from "lucide-react"
 import Link from "next/link"
-import type { Run, Split, User } from "@/generated/prisma/client"
-import type { PRDistance } from "@/generated/prisma/enums"
-import { cn } from "@/lib/utils/cn"
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
 } from "@/components/shadcn-ui/avatar"
 import { Badge } from "@/components/shadcn-ui/badge"
+import { Progress } from "@/components/shadcn-ui/progress"
 import { Skeleton } from "@/components/shadcn-ui/skeleton"
 import { DeviceBadge } from "@/components/ui/device-badge"
 import { MapboxPolyline } from "@/components/ui/mapbox-polyline"
-import { getInitials } from "@/lib/utils/get-initials"
+import type { Run, Split, User } from "@/generated/prisma/client"
+import type { PRDistance } from "@/generated/prisma/enums"
 import { profileRoute } from "@/lib/constants/routes"
-import { Heart, Flame, Activity } from "lucide-react"
-import { Progress } from "@/components/shadcn-ui/progress"
-import {
-  formatRunDistance,
-  formatRunPace,
-  formatRunDurationDisplay,
-  formatRunDateShort,
-} from "@/lib/utils/run"
 import { PR_DISTANCE_LABELS } from "@/lib/strava/pr-display"
+import { cn } from "@/lib/utils/cn"
+import { getInitials } from "@/lib/utils/get-initials"
+import {
+  formatRunDateShort,
+  formatRunDistance,
+  formatRunDurationDisplay,
+  formatRunPace,
+} from "@/lib/utils/run"
 
 export type RunWithUser = Run & {
   user: Pick<User, "name" | "username" | "image">
@@ -54,16 +54,16 @@ export function RunCardHeader({ run, prs, className }: RunCardHeaderProps) {
         <div className="flex items-center gap-1.5">
           <Link
             href={profileRoute(run.user.username!)}
-            className="relative z-20 text-sm font-semibold hover:underline"
+            className="relative z-20 font-semibold text-sm hover:underline"
           >
             {run.user.username}
           </Link>
-          <span className="text-xs text-muted-foreground">
+          <span className="text-muted-foreground text-xs">
             · {formatRunDateShort(run.date)}
           </span>
         </div>
         <div className="flex items-center gap-1.5">
-          <p className="truncate text-xs text-muted-foreground">{run.name}</p>
+          <p className="truncate text-muted-foreground text-xs">{run.name}</p>
           {prs && prs.length > 0 && (
             <div className="relative z-20 flex shrink-0 gap-1">
               {prs.map((pr) => (
@@ -153,7 +153,7 @@ export function RunCardStats({
         <div className="grid grid-cols-4 divide-x">
           {main.map(({ value, unit }) => (
             <div key={unit} className="flex flex-col items-center gap-0.5 py-3">
-              <span className="text-sm font-semibold tabular-nums">
+              <span className="font-semibold text-sm tabular-nums">
                 {value}
               </span>
               <span className="text-[11px] text-muted-foreground">{unit}</span>
@@ -164,20 +164,20 @@ export function RunCardStats({
         {hasExtra && (
           <div className="flex items-center justify-around border-t px-4 py-2.5">
             {run.heartRateAvg && (
-              <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1.5 text-muted-foreground text-xs">
                 <Heart className="h-3.5 w-3.5 text-rose-500" />
                 {run.heartRateAvg}
                 {run.heartRateMax ? `/${run.heartRateMax}` : ""} bpm
               </span>
             )}
             {run.cadenceAvg && (
-              <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1.5 text-muted-foreground text-xs">
                 <Activity className="h-3.5 w-3.5 text-blue-500" />
                 {run.cadenceAvg} spm
               </span>
             )}
             {run.calories && (
-              <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1.5 text-muted-foreground text-xs">
                 <Flame className="h-3.5 w-3.5 text-orange-500" />
                 {run.calories} kcal
               </span>
@@ -247,7 +247,7 @@ export function RunCardSplits({ splits, className }: RunCardSplitsProps) {
     <div className={cn("overflow-hidden rounded-lg border", className)}>
       <div className="flex items-center justify-between px-4 py-3">
         <p className="font-semibold">Splits (km)</p>
-        <div className="flex items-center gap-3 text-xs text-muted-foreground">
+        <div className="flex items-center gap-3 text-muted-foreground text-xs">
           {(["fast", "medium", "slow"] as const).map((cat) => (
             <span key={cat} className="flex items-center gap-1">
               <span
@@ -264,7 +264,7 @@ export function RunCardSplits({ splits, className }: RunCardSplitsProps) {
 
       <div className="border-t">
         <div
-          className="grid px-4 py-2 text-[11px] font-medium tracking-wide text-muted-foreground uppercase"
+          className="grid px-4 py-2 font-medium text-[11px] text-muted-foreground uppercase tracking-wide"
           style={{ gridTemplateColumns: gridTemplate }}
         >
           <span>Km</span>
@@ -289,11 +289,11 @@ export function RunCardSplits({ splits, className }: RunCardSplitsProps) {
               className="grid items-center border-t px-4 py-2.5"
               style={{ gridTemplateColumns: gridTemplate }}
             >
-              <span className="text-sm font-medium">{split.kilometer}</span>
+              <span className="font-medium text-sm">{split.kilometer}</span>
               <div className="flex items-center gap-2 pr-2">
                 <span
                   className={cn(
-                    "shrink-0 rounded px-1.5 py-0.5 text-xs font-semibold tabular-nums",
+                    "shrink-0 rounded px-1.5 py-0.5 font-semibold text-xs tabular-nums",
                     badge,
                   )}
                 >
@@ -314,7 +314,7 @@ export function RunCardSplits({ splits, className }: RunCardSplitsProps) {
                   className={cn("h-2 flex-1", progress)}
                 />
               </div>
-              <span className="text-right text-sm text-muted-foreground tabular-nums">
+              <span className="text-right text-muted-foreground text-sm tabular-nums">
                 {formatRunDurationDisplay(split.duration)}
               </span>
               {hasHR && (
@@ -330,7 +330,7 @@ export function RunCardSplits({ splits, className }: RunCardSplitsProps) {
                 </span>
               )}
               {hasElevation && (
-                <span className="text-right text-sm text-muted-foreground tabular-nums">
+                <span className="text-right text-muted-foreground text-sm tabular-nums">
                   {split.elevation != null
                     ? `${Math.round(split.elevation) >= 0 ? "+" : ""}${Math.round(split.elevation)}m`
                     : "—"}

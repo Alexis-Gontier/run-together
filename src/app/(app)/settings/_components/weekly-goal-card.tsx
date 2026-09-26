@@ -22,7 +22,7 @@ export function WeeklyGoalCard() {
         </div>
       </CardHeader>
       <CardContent>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           Cette fonctionnalité sera disponible prochainement.
         </p>
       </CardContent>

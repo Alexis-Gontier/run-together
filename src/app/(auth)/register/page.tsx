@@ -1,5 +1,5 @@
-import Link from "next/link"
 import type { Metadata } from "next"
+import Link from "next/link"
 
 import { AUTH_ROUTES } from "@/lib/constants/routes"
 import { RegisterForm } from "./_components/register-form"
@@ -14,15 +14,15 @@ export default function RegisterPage() {
   return (
     <>
       <div className="space-y-2">
-        <h2 className="text-4xl font-semibold tracking-tight">
+        <h2 className="font-semibold text-4xl tracking-tight">
           Créer un compte
         </h2>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           Rejoignez la communauté RunTogether
         </p>
       </div>
       <RegisterForm />
-      <p className="text-center text-sm text-muted-foreground">
+      <p className="text-center text-muted-foreground text-sm">
         Vous avez déjà un compte ?{" "}
         <Link
           href={AUTH_ROUTES.LOGIN}

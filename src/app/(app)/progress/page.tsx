@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation"
-import { env } from "@/env"
 import { DebugJson } from "@/components/ui/debug-json"
+import { env } from "@/env"
 import { getProgressAction } from "./_actions/get-progress-action"
 import type { ProgressPeriod } from "./_schemas/progress-schema"
 

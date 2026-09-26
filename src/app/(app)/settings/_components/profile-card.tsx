@@ -22,8 +22,8 @@ type ProfileCardProps = {
 function ProfileRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center justify-between py-3">
-      <span className="text-sm text-muted-foreground">{label}</span>
-      <span className="text-sm font-medium">{value}</span>
+      <span className="text-muted-foreground text-sm">{label}</span>
+      <span className="font-medium text-sm">{value}</span>
     </div>
   )
 }
@@ -51,7 +51,7 @@ export function ProfileCard({
           <div>
             <p className="font-semibold">{name}</p>
             {username && (
-              <p className="text-sm text-muted-foreground">@{username}</p>
+              <p className="text-muted-foreground text-sm">@{username}</p>
             )}
           </div>
         </div>

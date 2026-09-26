@@ -9,10 +9,10 @@ import {
   YAxis,
 } from "recharts"
 import {
+  type ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-  type ChartConfig,
 } from "@/components/shadcn-ui/chart"
 import type { Split } from "@/generated/prisma/client"
 import { formatRunPace } from "@/lib/utils/run"
@@ -48,11 +48,11 @@ export function RunProfileChart({ splits }: { splits: Split[] }) {
       <div className="flex items-start justify-between px-4 py-3">
         <div>
           <p className="font-semibold">Profil de la course</p>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-muted-foreground text-xs">
             Dénivelé et allure par km
           </p>
         </div>
-        <div className="flex items-center gap-4 text-xs text-muted-foreground">
+        <div className="flex items-center gap-4 text-muted-foreground text-xs">
           {hasElevation && (
             <span className="flex items-center gap-1.5">
               <span className="inline-block h-2.5 w-2.5 rounded-sm bg-amber-500" />

@@ -1,8 +1,8 @@
 "use server"
 
 import { z } from "zod"
-import { actionClient } from "@/lib/safe-action/action-client"
 import { prisma } from "@/lib/db/prisma"
+import { actionClient } from "@/lib/safe-action/action-client"
 
 const schema = z.object({ username: z.string() })
 

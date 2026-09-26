@@ -1,6 +1,6 @@
+import { ArrowRight, Minus, TrendingDown, TrendingUp } from "lucide-react"
 import Link from "next/link"
-import { ArrowRight, TrendingUp, TrendingDown, Minus } from "lucide-react"
-
+import { getLeaderboardAction } from "@/app/(app)/leaderboard/_actions/get-leaderboard-action"
 import {
   Avatar,
   AvatarFallback,
@@ -9,7 +9,6 @@ import {
 import { ROUTES } from "@/lib/constants/routes"
 import { cn } from "@/lib/utils/cn"
 import { getInitials } from "@/lib/utils/get-initials"
-import { getLeaderboardAction } from "@/app/(app)/leaderboard/_actions/get-leaderboard-action"
 
 const MONTH_NAMES = [
   "Janvier",
@@ -32,7 +31,7 @@ function EvolutionBadge({ evolution }: { evolution: number | null }) {
   if (evolution === null) return null
   if (evolution === 0) {
     return (
-      <span className="flex items-center text-xs text-muted-foreground">
+      <span className="flex items-center text-muted-foreground text-xs">
         <Minus className="size-3" />
       </span>
     )
@@ -41,7 +40,7 @@ function EvolutionBadge({ evolution }: { evolution: number | null }) {
   return (
     <span
       className={cn(
-        "flex items-center gap-0.5 text-xs font-medium tabular-nums",
+        "flex items-center gap-0.5 font-medium text-xs tabular-nums",
         positive ? "text-green-500" : "text-red-500",
       )}
     >
@@ -69,12 +68,12 @@ export default async function HomeRightPanel() {
     <div className="p-4">
       <div className="rounded-xl border bg-card p-4 shadow-sm">
         <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-sm font-semibold">Top du mois</h2>
-          <span className="text-xs text-muted-foreground">{monthLabel}</span>
+          <h2 className="font-semibold text-sm">Top du mois</h2>
+          <span className="text-muted-foreground text-xs">{monthLabel}</span>
         </div>
 
         {entries.length === 0 ? (
-          <p className="py-4 text-center text-xs text-muted-foreground">
+          <p className="py-4 text-center text-muted-foreground text-xs">
             Aucune donnée ce mois-ci
           </p>
         ) : (
@@ -90,7 +89,7 @@ export default async function HomeRightPanel() {
                       {RANK_MEDALS[entry.rank - 1]}
                     </span>
                   ) : (
-                    <span className="text-xs font-medium text-muted-foreground">
+                    <span className="font-medium text-muted-foreground text-xs">
                       {entry.rank}
                     </span>
                   )}
@@ -104,10 +103,10 @@ export default async function HomeRightPanel() {
                 </Avatar>
 
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm leading-tight font-medium">
+                  <p className="truncate font-medium text-sm leading-tight">
                     {entry.user.name}
                   </p>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-muted-foreground text-xs">
                     {entry.totalDistanceKm.toFixed(1)}{" "}
                     <span className="text-[10px]">km</span>
                   </p>
@@ -122,7 +121,7 @@ export default async function HomeRightPanel() {
         <div className="mt-3 border-t pt-3">
           <Link
             href={ROUTES.LEADERBOARD}
-            className="flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+            className="flex items-center gap-1 font-medium text-primary text-xs hover:underline"
           >
             Voir le classement complet
             <ArrowRight className="size-3" />

@@ -1,8 +1,8 @@
 "use server"
 
 import { headers } from "next/headers"
-import { authActionClient } from "@/lib/safe-action/auth-action-client"
 import { auth } from "@/lib/auth"
+import { authActionClient } from "@/lib/safe-action/auth-action-client"
 import { changePasswordSchema } from "@/lib/schemas/auth-schema"
 
 export const changePasswordAction = authActionClient

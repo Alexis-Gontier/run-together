@@ -1,6 +1,6 @@
 "use client"
 
-import { useQueryState, parseAsInteger } from "nuqs"
+import { parseAsInteger, useQueryState } from "nuqs"
 import { Button } from "@/components/shadcn-ui/button"
 
 interface YearSelectorProps {

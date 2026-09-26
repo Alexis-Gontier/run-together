@@ -1,5 +1,5 @@
-import { sendRunNotification } from "@/lib/discord"
 import { prisma } from "@/lib/db/prisma"
+import { sendRunNotification } from "@/lib/discord"
 import { stravaApiFetch } from "@/lib/strava/client"
 import { STRAVA_RUN_TYPES, stravaEndpoints } from "@/lib/strava/constants"
 import { stravaActivityDetailSchema } from "@/lib/strava/schemas"

@@ -1,5 +1,5 @@
-import type { ProgressPeriod } from "../_schemas/progress-schema"
 import { getPeriodRange as sharedGetPeriodRange } from "@/lib/utils/date"
+import type { ProgressPeriod } from "../_schemas/progress-schema"
 
 const PROGRESS_DAYS: Record<string, number> = {
   "3m": 91,
@@ -46,8 +46,8 @@ export function computeBestStreak(activeDateSet: Set<string>): number {
   let running = best
   for (let i = 1; i < sortedDays.length; i++) {
     const diffDays = Math.round(
-      (new Date(sortedDays[i] + "T00:00:00Z").getTime() -
-        new Date(sortedDays[i - 1] + "T00:00:00Z").getTime()) /
+      (new Date(`${sortedDays[i]}T00:00:00Z`).getTime() -
+        new Date(`${sortedDays[i - 1]}T00:00:00Z`).getTime()) /
         (1000 * 60 * 60 * 24),
     )
     if (diffDays === 1) {
@@ -62,7 +62,7 @@ export function computeBestStreak(activeDateSet: Set<string>): number {
 
 export function computeCurrentStreak(allDateSet: Set<string>): number {
   let streak = 0
-  const cursor = new Date(toDateStr(new Date()) + "T00:00:00Z")
+  const cursor = new Date(`${toDateStr(new Date())}T00:00:00Z`)
   while (allDateSet.has(toDateStr(cursor))) {
     streak++
     cursor.setUTCDate(cursor.getUTCDate() - 1)

@@ -1,15 +1,14 @@
 import { cookies } from "next/headers"
-import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
-
+import { NextResponse } from "next/server"
+import { z } from "zod"
 import { env } from "@/env"
 import { getUser } from "@/lib/auth/auth-session"
-import { prisma } from "@/lib/db/prisma"
 import { AUTH_ROUTES, ROUTES } from "@/lib/constants/routes"
+import { prisma } from "@/lib/db/prisma"
 import { stravaApiFetch, stravaOAuthFetch } from "@/lib/strava/client"
 import { stravaEndpoints, stravaOAuthPaths } from "@/lib/strava/constants"
 import { stravaTokenExchangeSchema } from "@/lib/strava/schemas"
-import { z } from "zod"
 
 function redirectTo(path: string) {
   return NextResponse.redirect(new URL(path, env.NEXT_PUBLIC_APP_URL))
@@ -50,7 +49,7 @@ export async function GET(request: NextRequest) {
   }
 
   // Exchange authorization code for tokens
-  let tokenData
+  let tokenData: z.infer<typeof stravaTokenExchangeSchema>
   try {
     tokenData = await stravaOAuthFetch(stravaOAuthPaths.token, {
       method: "POST",

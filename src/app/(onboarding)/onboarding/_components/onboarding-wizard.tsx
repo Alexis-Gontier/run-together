@@ -54,14 +54,14 @@ export function OnboardingWizard({
       {step > 0 && (
         <div className="flex flex-col items-center gap-2">
           <StepIndicator current={step} total={3} />
-          <p className="text-xs text-muted-foreground">Étape {step} sur 3</p>
+          <p className="text-muted-foreground text-xs">Étape {step} sur 3</p>
         </div>
       )}
 
       <div
         key={step}
         className={cn(
-          "animate-in duration-250 fade-in-0 fill-mode-both",
+          "fade-in-0 animate-in fill-mode-both duration-250",
           direction === "forward"
             ? "slide-in-from-right-4"
             : "slide-in-from-left-4",

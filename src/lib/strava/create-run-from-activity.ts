@@ -1,6 +1,6 @@
+import type { z } from "zod"
 import type { Prisma } from "@/generated/prisma/client"
 import { RunSource } from "@/generated/prisma/client"
-import type { z } from "zod"
 
 import type { stravaActivityDetailSchema } from "./schemas"
 

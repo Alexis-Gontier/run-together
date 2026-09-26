@@ -1,22 +1,22 @@
 "use client"
 
-import { useCallback, useEffect, useRef, useState } from "react"
-import { useAction } from "next-safe-action/hooks"
 import { Footprints } from "lucide-react"
-import { FeedCard } from "@/components/ui/feed-card"
-import {
-  RunCardHeader,
-  RunCardMap,
-  RunCardStats,
-} from "@/components/ui/run-card"
-import type { RunWithUser } from "@/components/ui/run-card"
-import { runRoute } from "@/lib/constants/routes"
+import { useAction } from "next-safe-action/hooks"
+import { useCallback, useEffect, useRef, useState } from "react"
 import {
   Empty,
   EmptyDescription,
   EmptyHeader,
   EmptyMedia,
 } from "@/components/shadcn-ui/empty"
+import { FeedCard } from "@/components/ui/feed-card"
+import type { RunWithUser } from "@/components/ui/run-card"
+import {
+  RunCardHeader,
+  RunCardMap,
+  RunCardStats,
+} from "@/components/ui/run-card"
+import { runRoute } from "@/lib/constants/routes"
 import { getProfileRunsAction } from "../_actions/get-profile-runs-action"
 
 type Run = NonNullable<
@@ -94,7 +94,7 @@ export function ProfileRunsList({
       {cursor && (
         <div
           ref={sentinelRef}
-          className="py-4 text-center text-sm text-muted-foreground"
+          className="py-4 text-center text-muted-foreground text-sm"
         >
           {isPending ? "Chargement..." : null}
         </div>

@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
+import { NextResponse } from "next/server"
 import { getUser } from "@/lib/auth/auth-session"
+import { AUTH_ROUTES, ROUTES } from "@/lib/constants/routes"
 import { getRouteType } from "@/lib/utils/route"
-import { ROUTES, AUTH_ROUTES } from "@/lib/constants/routes"
 
 const FORBIDDEN_URL = "/forbidden"
 

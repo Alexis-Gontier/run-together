@@ -62,7 +62,7 @@ export function LeaderboardFilters({ metric, period, prDist }: Props) {
   return (
     <div className="flex flex-col gap-4 px-4 pt-4">
       <div className="flex flex-col gap-2">
-        <p className="text-sm font-medium text-muted-foreground">Métrique :</p>
+        <p className="font-medium text-muted-foreground text-sm">Métrique :</p>
         <div className="flex flex-wrap gap-2">
           {METRICS.map((m) => (
             <Button
@@ -80,7 +80,7 @@ export function LeaderboardFilters({ metric, period, prDist }: Props) {
 
       {metric === "pr" ? (
         <div className="flex flex-col gap-2">
-          <p className="text-sm font-medium text-muted-foreground">
+          <p className="font-medium text-muted-foreground text-sm">
             Distance :
           </p>
           <Tabs value={prDist} onValueChange={setPrDist}>
@@ -99,7 +99,7 @@ export function LeaderboardFilters({ metric, period, prDist }: Props) {
         </div>
       ) : (
         <div className="flex flex-col gap-2">
-          <p className="text-sm font-medium text-muted-foreground">Période :</p>
+          <p className="font-medium text-muted-foreground text-sm">Période :</p>
           <Tabs value={period} onValueChange={setPeriod}>
             <TabsList>
               {PERIODS.map((p) => (
