@@ -1,6 +1,7 @@
 import { ImageResponse } from "next/og"
 
 import { prisma } from "@/lib/db/prisma"
+import { fetchTiles, MAP_ATTRIBUTION, mapViewport } from "@/lib/og/map-tiles"
 import { OG, OG_HEADER_H, OgHeader } from "@/lib/og/theme"
 import { PR_DISTANCE_LABELS, PR_DISTANCE_ORDER } from "@/lib/runs/pr-display"
 import { decodePolyline } from "@/lib/runs/track/decode-polyline"
@@ -92,18 +93,34 @@ export async function GET(
   const recordsH = records.length > 0 ? RECORDS_H : 0
   const mapH = MAP_H - extraH - recordsH
 
-  // Tracé dessiné en SVG à partir de la polyline : aucun service de carte externe.
   const encoded = run.polyline ?? run.summaryPolyline
   const decoded = encoded ? decodePolyline(encoded) : []
   const step = Math.max(1, Math.ceil(decoded.length / MAX_ROUTE_POINTS))
   const points = decoded.filter(
     (_, i) => i % step === 0 || i === decoded.length - 1,
   )
-  const routePath = routeSvgPath(points, 1200, mapH, MAP_PADDING)
-  const endpoints = routePath
-    ?.split(" L")
-    .filter((_, i, all) => i === 0 || i === all.length - 1)
-    .map((p) => p.replace("M", "").split(" ").map(Number))
+
+  // Fond de carte en tuiles raster sous le tracé ; sans tuiles, tracé seul en SVG.
+  const viewport = mapViewport(points, OG.width, mapH, MAP_PADDING)
+  const tiles = viewport ? await fetchTiles(viewport.tiles) : null
+  let route: {
+    path: string
+    start: { x: number; y: number }
+    end: { x: number; y: number }
+  } | null = tiles && viewport ? viewport : null
+  if (!route) {
+    const path = routeSvgPath(points, OG.width, mapH, MAP_PADDING)
+    const ends = path
+      ?.split(" L")
+      .filter((_, i, all) => i === 0 || i === all.length - 1)
+      .map((pt) => pt.replace("M", "").split(" ").map(Number))
+    if (path && ends)
+      route = {
+        path,
+        start: { x: ends[0][0], y: ends[0][1] },
+        end: { x: ends[ends.length - 1][0], y: ends[ends.length - 1][1] },
+      }
+  }
 
   return new ImageResponse(
     <div
@@ -157,44 +174,80 @@ export async function GET(
       )}
 
       {/* ── Map ────────────────────────────────────────────── */}
-      {routePath && endpoints ? (
-        // biome-ignore lint/a11y/noSvgWithoutTitle: rendu par Satori, qui afficherait <title> comme du texte
-        <svg
-          width={1200}
-          height={mapH}
-          viewBox={`0 0 1200 ${mapH}`}
-          style={{ flexShrink: 0, backgroundColor: MAP_BG }}
+      {route ? (
+        <div
+          style={{
+            display: "flex",
+            position: "relative",
+            height: `${mapH}px`,
+            flexShrink: 0,
+            overflow: "hidden",
+            backgroundColor: MAP_BG,
+          }}
         >
-          <path
-            d={routePath}
-            fill="none"
-            stroke={ROUTE}
-            strokeOpacity={0.25}
-            strokeWidth={16}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          <path
-            d={routePath}
-            fill="none"
-            stroke={ROUTE}
-            strokeWidth={6}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          <circle
-            cx={endpoints[0][0]}
-            cy={endpoints[0][1]}
-            r={10}
-            fill={TEXT}
-          />
-          <circle
-            cx={endpoints[endpoints.length - 1][0]}
-            cy={endpoints[endpoints.length - 1][1]}
-            r={10}
-            fill={ORANGE}
-          />
-        </svg>
+          {tiles &&
+            viewport?.tiles.map((t, i) => (
+              // biome-ignore lint/performance/noImgElement: rendu par Satori
+              <img
+                key={`${t.x}-${t.y}`}
+                src={tiles[i]}
+                alt=""
+                width={256}
+                height={256}
+                style={{ position: "absolute", left: t.left, top: t.top }}
+              />
+            ))}
+          {tiles && (
+            // Assombrit le fond pour faire ressortir le tracé.
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                backgroundColor: "rgba(9, 9, 11, 0.35)",
+              }}
+            />
+          )}
+          {/* biome-ignore lint/a11y/noSvgWithoutTitle: rendu par Satori, qui afficherait <title> comme du texte */}
+          <svg
+            width={OG.width}
+            height={mapH}
+            viewBox={`0 0 ${OG.width} ${mapH}`}
+            style={{ position: "absolute", left: 0, top: 0 }}
+          >
+            <path
+              d={route.path}
+              fill="none"
+              stroke={ROUTE}
+              strokeOpacity={0.25}
+              strokeWidth={16}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d={route.path}
+              fill="none"
+              stroke={ROUTE}
+              strokeWidth={6}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <circle cx={route.start.x} cy={route.start.y} r={10} fill={TEXT} />
+            <circle cx={route.end.x} cy={route.end.y} r={10} fill={ORANGE} />
+          </svg>
+          {tiles && (
+            <span
+              style={{
+                position: "absolute",
+                right: 8,
+                bottom: 6,
+                color: MUTED,
+                fontSize: "11px",
+              }}
+            >
+              {MAP_ATTRIBUTION}
+            </span>
+          )}
+        </div>
       ) : (
         <div
           style={{
