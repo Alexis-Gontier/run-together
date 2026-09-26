@@ -1,11 +1,17 @@
 import {
+  ArrowLeftRight,
   CalendarCheck,
   Car,
   Church,
+  Clock,
   Crown,
+  Fish,
   Flag,
+  Flame,
   Footprints,
+  Ghost,
   Gift,
+  Globe,
   Hand,
   Landmark,
   type LucideIcon,
@@ -19,10 +25,17 @@ import {
   Repeat,
   Rocket,
   Route,
+  Shield,
+  Skull,
   Snail,
   Sparkles,
   Sunrise,
+  Target,
+  Timer,
   Trophy,
+  Users,
+  Wine,
+  Zap,
 } from "lucide-react"
 import type { BadgeCategory, BadgeIcon } from "@/lib/badges/catalog"
 import { cn } from "@/lib/utils/cn"
@@ -51,6 +64,19 @@ const ICONS: Record<BadgeIcon, LucideIcon> = {
   rocket: Rocket,
   repeat: Repeat,
   sparkles: Sparkles,
+  timer: Timer,
+  arrows: ArrowLeftRight,
+  skull: Skull,
+  fish: Fish,
+  ghost: Ghost,
+  wine: Wine,
+  clock: Clock,
+  target: Target,
+  zap: Zap,
+  flame: Flame,
+  shield: Shield,
+  users: Users,
+  globe: Globe,
 }
 
 // Une teinte par catégorie, pour reconnaître la famille d'un badge d'un coup d'œil.
@@ -63,6 +89,7 @@ const TONES: Record<BadgeCategory, string> = {
   moments: "bg-pink-500/15 text-pink-500 ring-pink-500/40",
   records: "bg-amber-500/15 text-amber-500 ring-amber-500/40",
   fun: "bg-fuchsia-500/15 text-fuchsia-500 ring-fuchsia-500/40",
+  group: "bg-indigo-500/15 text-indigo-400 ring-indigo-500/40",
 }
 
 /** Médaille ronde d'un badge ; grisée tant qu'il n'est pas débloqué. */

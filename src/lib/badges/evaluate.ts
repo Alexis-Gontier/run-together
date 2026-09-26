@@ -9,14 +9,27 @@ import {
 import { type BadgeStats, computeBadgeStats } from "./stats"
 
 async function loadStats(userId: string): Promise<BadgeStats> {
-  const [runs, records] = await Promise.all([
+  const [runs, recordsByRun, group] = await Promise.all([
     prisma.run.findMany({
       where: { userId },
       select: { date: true, distance: true, duration: true, elevation: true },
     }),
-    prisma.personalRecord.count({ where: { userId } }),
+    prisma.personalRecord.groupBy({
+      by: ["runId"],
+      where: { userId },
+      _count: true,
+    }),
+    prisma.run.aggregate({ _sum: { distance: true, elevation: true } }),
   ])
-  return computeBadgeStats(runs, records)
+  return computeBadgeStats(runs, {
+    recordDistances: recordsByRun.reduce((s, r) => s + r._count, 0),
+    maxRecordsOnOneRun: Math.max(
+      0,
+      ...recordsByRun.filter((r) => r.runId).map((r) => r._count),
+    ),
+    groupKm: (group._sum.distance ?? 0) / 1000,
+    groupElevation: group._sum.elevation ?? 0,
+  })
 }
 
 /**

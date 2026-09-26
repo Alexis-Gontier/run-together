@@ -9,6 +9,7 @@ export type BadgeCategory =
   | "moments"
   | "records"
   | "fun"
+  | "group"
 
 export type BadgeIcon =
   | "route"
@@ -34,6 +35,19 @@ export type BadgeIcon =
   | "rocket"
   | "repeat"
   | "sparkles"
+  | "timer"
+  | "arrows"
+  | "skull"
+  | "fish"
+  | "ghost"
+  | "wine"
+  | "clock"
+  | "target"
+  | "zap"
+  | "flame"
+  | "shield"
+  | "users"
+  | "globe"
 
 export type BadgeDef = {
   key: string
@@ -56,6 +70,7 @@ export const BADGE_CATEGORIES: { key: BadgeCategory; label: string }[] = [
   { key: "moments", label: "Moments" },
   { key: "records", label: "Records" },
   { key: "fun", label: "Pour rire" },
+  { key: "group", label: "Ensemble" },
 ]
 
 // Même tolérance GPS que les records perso : un 4,9 km compte pour un 5 km.
@@ -367,6 +382,162 @@ export const BADGES: BadgeDef[] = [
     target: 1,
     unit: "fois",
     value: (s) => s.slowRuns,
+  },
+  {
+    key: "week-on-fire",
+    name: "Semaine de feu",
+    description: "Courir 50 km dans la même semaine.",
+    category: "distance",
+    icon: "flame",
+    emoji: "🔥",
+    target: 50,
+    unit: "km",
+    value: (s) => s.maxWeekKm,
+  },
+  {
+    key: "centurion",
+    name: "Centurion",
+    description: "Courir 100 km dans le même mois.",
+    category: "distance",
+    icon: "shield",
+    emoji: "🛡️",
+    target: 100,
+    unit: "km",
+    value: (s) => s.maxMonthKm,
+  },
+  {
+    key: "metronome",
+    name: "Métronome",
+    description:
+      "Courir deux fois à la même allure, à la seconde près (3 km ou plus).",
+    category: "fun",
+    icon: "timer",
+    emoji: "⏱️",
+    target: 1,
+    unit: "fois",
+    value: (s) => s.samePaceRuns,
+  },
+  {
+    key: "palindrome",
+    name: "Palindrome",
+    description: "Un chrono qui se lit dans les deux sens, comme 45:54.",
+    category: "fun",
+    icon: "arrows",
+    emoji: "🔄",
+    target: 1,
+    unit: "fois",
+    value: (s) => s.palindromeRuns,
+  },
+  {
+    key: "friday-13",
+    name: "Vendredi 13",
+    description: "Courir un vendredi 13. Même pas peur.",
+    category: "fun",
+    icon: "skull",
+    emoji: "💀",
+    target: 1,
+    unit: "fois",
+    value: (s) => s.friday13Runs,
+  },
+  {
+    key: "april-fool",
+    name: "Poisson d'avril",
+    description: "Courir un 1er avril. Ce n'est pas une blague.",
+    category: "fun",
+    icon: "fish",
+    emoji: "🐟",
+    target: 1,
+    unit: "fois",
+    value: (s) => s.aprilFoolRuns,
+  },
+  {
+    key: "halloween",
+    name: "Halloween",
+    description: "Courir un 31 octobre.",
+    category: "fun",
+    icon: "ghost",
+    emoji: "🎃",
+    target: 1,
+    unit: "fois",
+    value: (s) => s.halloweenRuns,
+  },
+  {
+    key: "new-year-eve",
+    name: "Saint-Sylvestre",
+    description: "Courir un 31 décembre, pour finir l'année en beauté.",
+    category: "fun",
+    icon: "wine",
+    emoji: "🥂",
+    target: 1,
+    unit: "fois",
+    value: (s) => s.newYearEveRuns,
+  },
+  {
+    key: "on-the-hour",
+    name: "Heure pile",
+    description: "Partir à l'heure pile : 7:00, 18:00…",
+    category: "fun",
+    icon: "clock",
+    emoji: "🕐",
+    target: 1,
+    unit: "fois",
+    value: (s) => s.onTheHourRuns,
+  },
+  {
+    key: "round-km",
+    name: "Pile poil",
+    description: "Une distance au kilomètre rond, à 10 m près (3 km ou plus).",
+    category: "fun",
+    icon: "target",
+    emoji: "🎯",
+    target: 1,
+    unit: "fois",
+    value: (s) => s.roundKmRuns,
+  },
+  {
+    key: "record-storm",
+    name: "Pluie de records",
+    description: "Détenir 3 records grâce à une même course.",
+    category: "records",
+    icon: "zap",
+    emoji: "⚡",
+    target: 3,
+    unit: "records",
+    value: (s) => s.maxRecordsOnOneRun,
+  },
+  {
+    key: "group-10000",
+    name: "10 000 km ensemble",
+    description:
+      "Le groupe cumule 10 000 km. Badge pour tous ceux qui ont couru.",
+    category: "group",
+    icon: "users",
+    emoji: "🤝",
+    target: 10000,
+    unit: "km",
+    value: (s) => s.groupKm,
+  },
+  {
+    key: "group-world",
+    name: "Tour du monde",
+    description: "Le groupe cumule 40 075 km, la circonférence de la Terre.",
+    category: "group",
+    icon: "globe",
+    emoji: "🌍",
+    target: 40075,
+    unit: "km",
+    value: (s) => s.groupKm,
+  },
+  {
+    key: "group-himalaya",
+    name: "Himalaya",
+    description: "Le groupe cumule 88 490 m de D+ : dix fois l'Everest.",
+    category: "group",
+    icon: "mountain-snow",
+    emoji: "🏔️",
+    target: 88490,
+    unit: "m",
+    value: (s) => s.groupElevation,
   },
 ]
 

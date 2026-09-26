@@ -20,6 +20,9 @@
   `notify` est vrai : un message par course (`badge.unlocked:{runId}`).
 - Heures locales en `Europe/Paris` ; semaines consécutives calculées en semaines locales.
 - Badges « sur une course » : tolérance GPS de 97 %, comme les records perso.
+- Badges collectifs (catégorie « Ensemble ») : seuils sur le total du groupe, accordés aux
+  seuls membres qui ont au moins une course. Ils se débloquent pour tous lors de la prochaine
+  évaluation de chacun (ou du recalcul admin).
 - Rattrapage de l'historique : bouton admin « Recalculer les badges » (aucune notification).
 
 ## UI
