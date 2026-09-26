@@ -26,7 +26,6 @@ export default defineConfig({
       STRAVA_WEBHOOK_VERIFY_TOKEN: "test",
       DISCORD_WEBHOOK_URL: "https://discord.test/webhook",
       NEXT_PUBLIC_APP_URL: "http://localhost:3000",
-      NEXT_PUBLIC_MAPBOX_TOKEN: "test",
     },
   },
 })

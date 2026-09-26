@@ -9,7 +9,7 @@ import { Badge } from "@/components/shadcn-ui/badge"
 import { Progress } from "@/components/shadcn-ui/progress"
 import { Skeleton } from "@/components/shadcn-ui/skeleton"
 import { DeviceBadge } from "@/components/ui/device-badge"
-import { MapboxPolyline } from "@/components/ui/mapbox-polyline"
+import { RouteThumbnail } from "@/components/ui/route-thumbnail"
 import type { Run, Split, User } from "@/generated/prisma/client"
 import type { PRDistance } from "@/generated/prisma/enums"
 import { profileRoute } from "@/lib/constants/routes"
@@ -99,7 +99,7 @@ export function RunCardMap({ polyline, className }: RunCardMapProps) {
     <div className={cn("px-4 pt-1", className)}>
       <div className="overflow-hidden rounded-t-lg border border-b-0">
         {polyline ? (
-          <MapboxPolyline encoded={polyline} className="rounded-none" />
+          <RouteThumbnail polyline={polyline} />
         ) : (
           <Skeleton className="h-55 w-full rounded-none" />
         )}

@@ -70,10 +70,14 @@
             "useKeyWithClickEvents": "off"
           },
           "suspicious": {
-            "noArrayIndexKey": "off"
+            "noArrayIndexKey": "off",
+            "noShadowRestrictedNames": "off"
           },
           "security": {
             "noDangerouslySetInnerHtml": "off"
+          },
+          "correctness": {
+            "useExhaustiveDependencies": "off"
           }
         }
       }
