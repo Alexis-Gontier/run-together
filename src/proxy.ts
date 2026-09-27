@@ -4,8 +4,6 @@ import { getUser } from "@/lib/auth/auth-session"
 import { AUTH_ROUTES, ROUTES } from "@/lib/constants/routes"
 import { getRouteType } from "@/lib/utils/route"
 
-const FORBIDDEN_URL = "/forbidden"
-
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
@@ -40,9 +38,8 @@ export async function proxy(request: NextRequest) {
       loginUrl.searchParams.set("callbackUrl", pathname)
       return NextResponse.redirect(loginUrl)
     }
-    if (user.role !== "admin") {
-      return NextResponse.redirect(new URL(FORBIDDEN_URL, request.url))
-    }
+    // Connecté mais pas admin : le layout admin appelle `getRequiredAdmin()` → `forbidden()`,
+    // qui rend `forbidden.tsx` en 403. Pas de redirection : `/forbidden` n'est pas une route.
     return NextResponse.next()
   }
 

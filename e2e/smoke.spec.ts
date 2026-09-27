@@ -24,10 +24,11 @@ test.describe("pages principales", () => {
   }
 })
 
+// Pas d'assertion sur le statut HTTP : `app/loading.tsx` fait streamer la réponse, le 200 est
+// envoyé avant que le layout admin n'appelle `forbidden()`.
 test("un utilisateur non admin est refusé sur /admin", async ({ page }) => {
-  // Bug connu : `src/proxy.ts` redirige vers `/forbidden`, qui n'est pas une route
-  // (`forbidden.tsx` n'est rendu que par `forbidden()`) → 404. À retirer une fois corrigé.
-  test.fail()
   await page.goto(ADMIN_ROUTES.USERS)
+  await expect(page).toHaveURL(ADMIN_ROUTES.USERS)
   await expect(page.getByText("Accès interdit")).toBeVisible()
+  await expect(page.getByText("Administration")).toBeHidden()
 })
