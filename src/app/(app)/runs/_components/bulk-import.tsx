@@ -3,7 +3,7 @@
 import { CheckCircle2, Copy, FilesIcon, Loader2, XCircle } from "lucide-react"
 import Link from "next/link"
 import { useAction } from "next-safe-action/hooks"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import { Progress } from "@/components/shadcn-ui/progress"
 import { runRoute } from "@/lib/constants/routes"
@@ -17,7 +17,7 @@ const ACCEPTED = /\.(gpx|tcx|fit)(\.gz)?$/i
 type Row = { name: string } & (
   | { status: "pending" | "running" }
   | { status: "imported"; runId: string; date: Date; distance: number }
-  | { status: "duplicate"; date: Date }
+  | { status: "duplicate" }
   | { status: "error"; message: string }
 )
 
@@ -30,6 +30,14 @@ export function BulkImport() {
   const [running, setRunning] = useState(false)
   const [dragging, setDragging] = useState(false)
   const { executeAsync } = useAction(importTrackFileAction)
+
+  // Quitter la page interrompt l'import : on prévient tant qu'il tourne.
+  useEffect(() => {
+    if (!running) return
+    const warn = (e: BeforeUnloadEvent) => e.preventDefault()
+    window.addEventListener("beforeunload", warn)
+    return () => window.removeEventListener("beforeunload", warn)
+  }, [running])
 
   const done = rows.filter(
     (r) => r.status !== "pending" && r.status !== "running",

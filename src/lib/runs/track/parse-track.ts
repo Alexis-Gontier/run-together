@@ -5,6 +5,8 @@ import { parseTcx } from "./parse-tcx"
 import { summarizeTrack } from "./summarize-track"
 import { TrackParseError, type TrackSummary } from "./types"
 
+const MAX_UNZIPPED = 100 * 1024 * 1024
+
 /**
  * Point d'entrée : fichier .gpx, .tcx ou .fit → résumé prêt à pré-remplir le formulaire.
  * Accepte aussi leur version compressée (`.fit.gz`…), telle que l'archive Strava la fournit.
@@ -16,9 +18,12 @@ export function parseTrackFile(
   let name = fileName.toLowerCase()
   if (name.endsWith(".gz")) {
     try {
-      bytes = new Uint8Array(gunzipSync(bytes))
+      // Plafond : un .gz de 15 Mo pourrait sinon se décompresser en plusieurs Go.
+      bytes = new Uint8Array(
+        gunzipSync(bytes, { maxOutputLength: MAX_UNZIPPED }),
+      )
     } catch {
-      throw new TrackParseError("Archive .gz illisible.")
+      throw new TrackParseError("Archive .gz illisible ou trop volumineuse.")
     }
     name = name.slice(0, -3)
   }

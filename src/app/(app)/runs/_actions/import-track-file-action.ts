@@ -49,7 +49,7 @@ export const importTrackFileAction = authActionClient
     const values = parsed.data
 
     if (await findDuplicateRun(user.id, values)) {
-      return { status: "duplicate" as const, date: values.date }
+      return { status: "duplicate" as const }
     }
 
     const { run } = await recordRun(values, {

@@ -64,4 +64,11 @@ describe("parseTrackFile", () => {
       parseTrackFile("course.fit.gz", new TextEncoder().encode("nope")),
     ).toThrow(".gz illisible")
   })
+
+  it("refuse une archive qui se décompresse au-delà du plafond", () => {
+    const bomb = new Uint8Array(gzipSync(Buffer.alloc(101 * 1024 * 1024)))
+    expect(() => parseTrackFile("course.fit.gz", bomb)).toThrow(
+      "trop volumineuse",
+    )
+  })
 })
