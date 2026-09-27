@@ -38,6 +38,13 @@ describe("parseGpx", () => {
     expect(t.deviceName).toBe("Garmin Connect")
   })
 
+  it("refuse un autre sport déclaré, accepte un type absent ou inconnu", () => {
+    expect(() => parseGpx(GPX.replace("trail_running", "cycling"))).toThrow(
+      "pas une course",
+    )
+    expect(parseGpx(GPX.replace("trail_running", "9")).sportType).toBeNull()
+  })
+
   it("refuse un document qui n'est pas du GPX", () => {
     expect(() => parseGpx("<html></html>")).toThrow("GPX invalide")
   })

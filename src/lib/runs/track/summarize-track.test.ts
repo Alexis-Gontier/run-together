@@ -31,6 +31,23 @@ const parsed = (points: TrackPoint[]): ParsedTrack => ({
 })
 
 describe("summarizeTrack", () => {
+  it("ne prend pas une distance rafraîchie toutes les 2 s pour des pauses", () => {
+    // Une seconde par point, 3 m/s, mais la montre ne met la distance à jour qu'une fois sur deux.
+    const t0 = Date.UTC(2026, 8, 20, 7, 0, 0)
+    const pts: TrackPoint[] = Array.from({ length: 601 }, (_, i) => ({
+      lat: null,
+      lng: null,
+      ele: null,
+      time: new Date(t0 + i * 1000),
+      hr: null,
+      cad: null,
+      dist: Math.floor(i / 2) * 6,
+    }))
+    const s = summarizeTrack(parsed(pts))
+    expect(s.distance).toBe(1800)
+    expect(s.duration).toBeGreaterThanOrEqual(599)
+  })
+
   it("distance, durée et splits d'une ligne de 3 km", () => {
     const s = summarizeTrack(parsed(line(101)))
     expect(s.distance).toBeGreaterThan(2990)

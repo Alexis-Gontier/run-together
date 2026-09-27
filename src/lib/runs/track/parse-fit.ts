@@ -1,6 +1,11 @@
 import { Decoder, Stream } from "@garmin/fitsdk"
 import type { RunSportType } from "../schemas"
-import { type ParsedTrack, TrackParseError, type TrackPoint } from "./types"
+import {
+  NotARunError,
+  type ParsedTrack,
+  TrackParseError,
+  type TrackPoint,
+} from "./types"
 
 // Les positions FIT sont en semicercles : 2³¹ semicercles = 180°.
 const SEMICIRCLE_TO_DEG = 180 / 2 ** 31
@@ -28,8 +33,7 @@ const deg = (v: number | undefined) =>
 function fitSportType(session: FitSession | undefined): RunSportType {
   const sport = session?.sport
   const sub = session?.subSport ?? ""
-  if (sport !== "running")
-    throw new TrackParseError("Ce fichier n'est pas une course à pied.")
+  if (sport !== "running") throw new NotARunError()
   if (sub.includes("trail")) return "TrailRun"
   if (sub.includes("treadmill") || sub.includes("virtual")) return "VirtualRun"
   return "Run"
@@ -59,7 +63,7 @@ export function parseFit(bytes: Uint8Array): ParsedTrack {
   const points: TrackPoint[] = []
   for (const r of (messages.recordMesgs as FitRecord[] | undefined) ?? []) {
     if (!r.timestamp) continue
-    points.push({
+    const point: TrackPoint = {
       lat: deg(r.positionLat),
       lng: deg(r.positionLong),
       ele: r.enhancedAltitude ?? r.altitude ?? null,
@@ -67,7 +71,18 @@ export function parseFit(bytes: Uint8Array): ParsedTrack {
       hr: r.heartRate ?? null,
       cad: r.cadence ?? null,
       dist: r.distance ?? null,
-    })
+    }
+    // Amazfit écrit deux records par seconde (position, puis distance) : on les fusionne,
+    // sinon aucun segment n'a à la fois un temps et une distance.
+    const prev = points.at(-1)
+    if (prev?.time.getTime() === point.time.getTime()) {
+      for (const key of Object.keys(point) as (keyof TrackPoint)[]) {
+        if (key !== "time" && point[key] != null)
+          Object.assign(prev, { [key]: point[key] })
+      }
+      continue
+    }
+    points.push(point)
   }
 
   return {

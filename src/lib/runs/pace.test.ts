@@ -26,4 +26,14 @@ describe("defaultRunName", () => {
   ])("%ih → %s", (h, name) => {
     expect(defaultRunName(at(h))).toBe(name)
   })
+
+  it("lit l'heure dans le fuseau demandé", () => {
+    // 20:30 UTC = 22:30 à Paris en été ; 10:30 UTC = 12:30.
+    expect(
+      defaultRunName(new Date("2026-06-02T20:30:00Z"), "Europe/Paris"),
+    ).toBe("Course de nuit")
+    expect(
+      defaultRunName(new Date("2026-06-02T10:30:00Z"), "Europe/Paris"),
+    ).toBe("Course du midi")
+  })
 })

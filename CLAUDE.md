@@ -17,6 +17,10 @@
 - **Discord notifications**: rich run embeds, badges, welcome, weekly recap (Vercel Cron), delivery log + admin resend (`/admin/discord`) → @src/lib/discord/CLAUDE.md
 - **Run formatting utils**: pace, distance, duration, dates → @src/lib/utils/CLAUDE.md
 - **Tooling**: Node 24 (`.nvmrc`), pnpm 11, Biome, lefthook, knip, Vitest, React Compiler. Claude Code config in `.claude/` (see `.claude/SKILLS.md`)
+- **E2E**: Playwright (Chromium) in `e2e/` — prod build on port **3100**, DB from `.env.e2e.local` else
+  `.env.local` (refuses the `.env` prod endpoint), dedicated user `e2e_runner` (`scripts/e2e-user.ts`,
+  run by `auth.setup.ts`), its runs wiped before/after each test, map tiles + Discord webhook
+  stubbed, 1 worker. Trace files: `e2e/fixtures/generate.ts`. Not in lefthook (slow, needs the DB)
 - **Env validation**: `@t3-oss/env-nextjs` — never use `process.env` directly, always go through `src/env.ts`
 
 ## Route Groups
@@ -71,6 +75,8 @@ Shared actions used across multiple routes live in `src/lib/actions/`.
 | `pnpm format`      | Biome format write                    |
 | `pnpm typecheck`   | `next typegen` + `tsc --noEmit`       |
 | `pnpm test`        | Vitest (colocated `src/**/*.test.ts`) |
+| `pnpm test:e2e`    | Playwright e2e (`e2e/*.spec.ts`)      |
+| `pnpm test:e2e:ui` | Playwright UI mode                    |
 | `pnpm knip`        | Dead code / dependencies              |
 | `pnpm db:migrate`  | Create + apply migration (dev)        |
 | `pnpm db:push`     | Push schema without migration file    |

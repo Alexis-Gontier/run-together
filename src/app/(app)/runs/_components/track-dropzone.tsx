@@ -38,9 +38,9 @@ export function TrackDropzone({ onParsed }: TrackDropzoneProps) {
 
   function handleFile(file: File | undefined) {
     if (!file) return
-    if (!/\.(gpx|fit)$/i.test(file.name)) {
+    if (!/\.(gpx|tcx|fit)(\.gz)?$/i.test(file.name)) {
       toast.error(
-        "Format non pris en charge : utilise un fichier .gpx ou .fit.",
+        "Format non pris en charge : utilise un fichier .gpx, .tcx ou .fit.",
       )
       return
     }
@@ -75,7 +75,7 @@ export function TrackDropzone({ onParsed }: TrackDropzoneProps) {
       <input
         ref={inputRef}
         type="file"
-        accept=".gpx,.fit"
+        accept=".gpx,.tcx,.fit,.gz"
         className="sr-only"
         onChange={(e) => {
           handleFile(e.target.files?.[0])
@@ -91,11 +91,10 @@ export function TrackDropzone({ onParsed }: TrackDropzoneProps) {
         <p className="font-medium text-sm">
           {isPending
             ? "Analyse du fichier…"
-            : "Glisse ton fichier .gpx ou .fit ici, ou clique pour le choisir"}
+            : "Glisse ton fichier .gpx, .tcx ou .fit ici, ou clique pour le choisir"}
         </p>
         <p className="text-muted-foreground text-xs">
-          Exporte-le depuis Garmin Connect, Coros, Suunto, Polar ou Apple Santé
-          (via une app d&apos;export). 15 Mo max.
+          Fichier de ta montre ou de Strava, compressé en .gz ou non. 15 Mo max.
         </p>
       </div>
     </label>

@@ -25,7 +25,11 @@ export function RouteThumbnail({
 
   return (
     <div
-      className={cn("relative aspect-600/220 w-full bg-muted/40", className)}
+      // `isolate` : le z-10 des libellés reste interne, sinon il couvre le lien de la carte.
+      className={cn(
+        "relative isolate aspect-600/220 w-full bg-muted/40",
+        className,
+      )}
     >
       {(["light", "dark"] as const).flatMap((style) =>
         (["base", "labels"] as const).flatMap((layer) =>

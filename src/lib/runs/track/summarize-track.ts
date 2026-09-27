@@ -20,9 +20,15 @@ const MIN_LAST_SPLIT = 50
 const SUMMARY_MAX_POINTS = 200
 
 export function summarizeTrack(parsed: ParsedTrack): TrackSummary {
-  const pts = parsed.points
-  if (pts.length < 2)
+  const all = parsed.points
+  if (all.length < 2)
     throw new TrackParseError("Le fichier ne contient aucun point exploitable.")
+  // Certaines montres (Amazfit) ne rafraîchissent la distance que toutes les 2-3 s : les points
+  // intermédiaires la répètent et passeraient pour des pauses. On ne garde que ceux qui la font
+  // avancer ; un vrai arrêt reste un long segment sans distance, donc une pause.
+  const pts = all.filter(
+    (p, i) => i === 0 || p.dist == null || p.dist !== all[i - 1].dist,
+  )
 
   let distance = 0
   let moving = 0
@@ -94,7 +100,7 @@ export function summarizeTrack(parsed: ParsedTrack): TrackSummary {
     })
   }
 
-  const coords = pts.flatMap((p) =>
+  const coords = all.flatMap((p) =>
     p.lat != null && p.lng != null ? [[p.lat, p.lng] as [number, number]] : [],
   )
   const step = Math.max(1, Math.ceil(coords.length / SUMMARY_MAX_POINTS))
@@ -102,8 +108,8 @@ export function summarizeTrack(parsed: ParsedTrack): TrackSummary {
     (_, i) => i % step === 0 || i === coords.length - 1,
   )
 
-  const hrs = pts.flatMap((p) => (p.hr != null ? [p.hr] : []))
-  const cads = pts.flatMap((p) => (p.cad != null ? [p.cad] : []))
+  const hrs = all.flatMap((p) => (p.hr != null ? [p.hr] : []))
+  const cads = all.flatMap((p) => (p.cad != null ? [p.cad] : []))
 
   return {
     name: parsed.name,

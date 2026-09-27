@@ -45,8 +45,10 @@ import {
   runFormSchema,
   runFormToInput,
 } from "../_schemas/run-form-schema"
+import { BulkImport } from "./bulk-import"
 import { RunDatePicker } from "./run-date-picker"
 import { TrackDropzone } from "./track-dropzone"
+import { TrackFileHelp } from "./track-file-help"
 
 const SPORT_LABELS: Record<RunSportType, string> = {
   Run: "Route",
@@ -503,10 +505,18 @@ export function RunForm({ run, defaultPublish = true }: RunFormProps) {
         <TabsTrigger value="file" className="cursor-pointer">
           Importer un fichier
         </TabsTrigger>
+        <TabsTrigger value="bulk" className="cursor-pointer">
+          Plusieurs fichiers
+        </TabsTrigger>
       </TabsList>
       <TabsContent value="manual">{formBody}</TabsContent>
-      <TabsContent value="file">
+      <TabsContent value="file" className="space-y-4">
         <TrackDropzone onParsed={onParsed} />
+        <TrackFileHelp mode="single" />
+      </TabsContent>
+      <TabsContent value="bulk" className="space-y-4">
+        <BulkImport />
+        <TrackFileHelp mode="bulk" />
       </TabsContent>
     </Tabs>
   )
