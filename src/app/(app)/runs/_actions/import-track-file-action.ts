@@ -2,7 +2,11 @@
 
 import { z } from "zod"
 import { RunSource } from "@/generated/prisma/client"
-import { findDuplicateRun, recordRun } from "@/lib/runs/record-run"
+import {
+  findDuplicateRun,
+  findNearbyRun,
+  recordRun,
+} from "@/lib/runs/record-run"
 import { RUN_SPORT_TYPES, recordRunInputSchema } from "@/lib/runs/schemas"
 import { parseTrackFile } from "@/lib/runs/track/parse-track"
 import { trackSummaryToRunInput } from "@/lib/runs/track/summary-to-input"
@@ -16,6 +20,8 @@ const MAX_BYTES = 15 * 1024 * 1024
  * Import en masse, un fichier par appel : enregistre la course directement, sans formulaire ni
  * notification Discord (rattrapage d'historique). Un doublon ou un autre sport est ignoré, pas
  * une erreur. `name` / `sportType` viennent de `activities.csv` (archive Strava) s'il est fourni.
+ * Une course partie à ±30 min d'une existante n'est enregistrée qu'avec `force` (confirmation).
+ * Les badges ne sont pas évalués ici : `evaluateMyBadgesAction` le fait une fois, à la fin.
  */
 export const importTrackFileAction = authActionClient
   .inputSchema(
@@ -25,6 +31,7 @@ export const importTrackFileAction = authActionClient
         .refine((f) => f.size <= MAX_BYTES, "Fichier trop lourd (15 Mo max)."),
       name: z.string().trim().max(100).optional(),
       sportType: z.enum(RUN_SPORT_TYPES).optional(),
+      force: z.boolean().optional(),
     }),
   )
   .action(async ({ parsedInput: { file, ...meta }, ctx: { user } }) => {
@@ -59,12 +66,17 @@ export const importTrackFileAction = authActionClient
     if (await findDuplicateRun(user.id, values)) {
       return { status: "duplicate" as const }
     }
+    if (!meta.force) {
+      const nearby = await findNearbyRun(user.id, values.date)
+      if (nearby) return { status: "conflict" as const, nearby }
+    }
 
     const { run } = await recordRun(values, {
       userId: user.id,
       userName: displayName(user),
       source: RunSource.MANUAL,
       notify: false,
+      skipBadges: true,
     })
     return {
       status: "imported" as const,

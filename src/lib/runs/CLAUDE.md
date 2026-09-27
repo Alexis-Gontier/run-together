@@ -6,7 +6,7 @@ Indépendant de la source : formulaire, fichier GPX/FIT et Strava passent tous p
 
 | File                  | Purpose                                                                 |
 | --------------------- | ----------------------------------------------------------------------- |
-| `record-run.ts`       | `recordRun()`, `removeRun()`, `findDuplicateRun()`                      |
+| `record-run.ts`       | `recordRun()`, `removeRun()`, `findDuplicateRun()`, `findNearbyRun()`   |
 | `schemas.ts`          | `recordRunInputSchema`, `trackDataSchema`, `RUN_SPORT_TYPES`            |
 | `pace.ts`             | `computePace(m, s)` → s/km, `defaultRunName(date)`                      |
 | `personal-records.ts` | `extractCandidates`, `updatePersonalRecords`, `recalculatePersonalRecords` |
@@ -47,6 +47,9 @@ tel quel).
   appel par fichier, `recordRunInputSchema` + `findDuplicateRun` (doublon = ignoré), `notify: false`.
   Avec `activities.csv` de l'archive Strava (`_utils/strava-archive.ts`, en-têtes EN/FR) : autres
   sports écartés côté client, titre et type Strava transmis à l'action.
+  Départ à ±30 min d'une course existante (`findNearbyRun`, distance libre) → « à confirmer »,
+  enregistrée seulement avec `force`. `recordRun(…, { skipBadges: true })` puis
+  `evaluateMyBadgesAction` une fois en fin d'import.
 - `NotARunError` (sous-classe de `TrackParseError`) : fichier lisible mais autre sport → « ignorée »
   en masse. GPX : type explicite non-course (vélo, marche…) refusé ; type absent/inconnu = course.
 - Les fichiers ne sont jamais stockés. Limite 15 Mo (`serverActions.bodySizeLimit` = 16 Mo).

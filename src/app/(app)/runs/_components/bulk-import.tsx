@@ -2,6 +2,7 @@
 
 import {
   CheckCircle2,
+  CircleAlert,
   Copy,
   FilesIcon,
   FolderOpen,
@@ -18,6 +19,7 @@ import { Progress } from "@/components/shadcn-ui/progress"
 import { runRoute } from "@/lib/constants/routes"
 import { cn } from "@/lib/utils/cn"
 import { formatRunDate, formatRunDistance } from "@/lib/utils/run"
+import { evaluateMyBadgesAction } from "../_actions/evaluate-my-badges-action"
 import { importTrackFileAction } from "../_actions/import-track-file-action"
 import {
   type ArchiveActivity,
@@ -28,10 +30,19 @@ const MAX_BYTES = 15 * 1024 * 1024
 const ACCEPTED = /\.(gpx|tcx|fit)(\.gz)?$/i
 const CSV_NAME = "activities.csv"
 
+type NearbyRun = {
+  id: string
+  name: string | null
+  date: Date
+  distance: number
+}
+type Job = { file: File; meta?: ArchiveActivity }
+
 type Row = { name: string } & (
   | { status: "pending" | "running" }
   | { status: "imported"; runId: string; date: Date; distance: number }
   | { status: "duplicate" }
+  | { status: "conflict"; nearby: NearbyRun }
   | { status: "skipped"; message: string }
   | { status: "error"; message: string }
 )
@@ -39,7 +50,8 @@ type Row = { name: string } & (
 /**
  * Import de plusieurs fichiers, ou du dossier de l'archive Strava : un appel par fichier, à la
  * suite, sans notification Discord. Avec `activities.csv`, les autres sports sont écartés sans
- * appel serveur et les courses reprennent leur titre Strava. Doublons et autres sports sont ignorés.
+ * appel serveur et les courses reprennent leur titre Strava. Doublons et autres sports sont ignorés ;
+ * une course proche d'une existante attend confirmation. Badges évalués une fois, à la fin.
  */
 export function BulkImport() {
   const [rows, setRows] = useState<Row[]>([])
@@ -47,7 +59,9 @@ export function BulkImport() {
   const [running, setRunning] = useState(false)
   const [dragging, setDragging] = useState(false)
   const folderRef = useRef<HTMLInputElement>(null)
+  const jobs = useRef<Job[]>([])
   const { executeAsync } = useAction(importTrackFileAction)
+  const badges = useAction(evaluateMyBadgesAction)
 
   // Quitter la page interrompt l'import : on prévient tant qu'il tourne.
   useEffect(() => {
@@ -80,17 +94,27 @@ export function BulkImport() {
     }
     setCsvCount(csv ? archive.size : null)
 
-    const set = (i: number, row: Row) =>
-      setRows((prev) => prev.map((r, j) => (j === i ? row : r)))
     const label = (f: File) => archive.get(f.name)?.name ?? f.name
-
+    jobs.current = files.map((file) => ({ file, meta: archive.get(file.name) }))
     setRows(files.map((f) => ({ name: label(f), status: "pending" })))
+    await importAll(
+      files.map((_, i) => i),
+      false,
+    )
+  }
+
+  const setRow = (i: number, row: Row) =>
+    setRows((prev) => prev.map((r, j) => (j === i ? row : r)))
+
+  /** Importe les fichiers d'indices donnés, à la suite, puis évalue les badges une fois. */
+  async function importAll(indices: number[], force: boolean) {
     setRunning(true)
-    for (const [i, file] of files.entries()) {
-      const name = label(file)
-      const meta = archive.get(file.name)
+    let imported = 0
+    for (const i of indices) {
+      const { file, meta } = jobs.current[i]
+      const name = meta?.name ?? file.name
       if (meta && !meta.sportType) {
-        set(i, {
+        setRow(i, {
           name,
           status: "skipped",
           message: meta.type || "Pas une course",
@@ -98,32 +122,45 @@ export function BulkImport() {
         continue
       }
       if (file.size > MAX_BYTES) {
-        set(i, {
+        setRow(i, {
           name,
           status: "error",
           message: "Fichier trop lourd (15 Mo max).",
         })
         continue
       }
-      set(i, { name, status: "running" })
+      setRow(i, { name, status: "running" })
       try {
         const { data } = await executeAsync({
           file,
           name: meta?.name ?? undefined,
           sportType: meta?.sportType ?? undefined,
+          force,
         })
         if (!data) throw new Error()
-        set(i, { name, ...data })
+        setRow(i, { name, ...data })
+        if (data.status === "imported") imported++
       } catch {
-        set(i, {
+        setRow(i, {
           name,
           status: "error",
           message: "Impossible d'importer ce fichier.",
         })
       }
     }
-    setRunning(false)
+    try {
+      if (imported > 0) {
+        const result = await badges.executeAsync()
+        const unlocked = result?.data?.unlocked ?? 0
+        if (unlocked > 0)
+          toast.success(`${unlocked} badge(s) débloqué(s) avec cet historique.`)
+      }
+    } finally {
+      setRunning(false)
+    }
   }
+
+  const conflicts = rows.flatMap((r, i) => (r.status === "conflict" ? [i] : []))
 
   return (
     <div className="space-y-4">
@@ -217,12 +254,30 @@ export function BulkImport() {
               </span>
               <span>
                 {count("imported")} importée(s) · {count("duplicate")}{" "}
-                doublon(s) · {count("skipped")} ignorée(s) · {count("error")}{" "}
-                erreur(s)
+                doublon(s) · {count("conflict")} à confirmer ·{" "}
+                {count("skipped")} ignorée(s) · {count("error")} erreur(s)
               </span>
             </div>
             <Progress value={(done / rows.length) * 100} className="h-1.5" />
           </div>
+
+          {conflicts.length > 0 && !running && (
+            <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-amber-500/40 bg-amber-500/5 px-3 py-2 text-xs">
+              <span>
+                {conflicts.length} course(s) démarrent à moins de 30 min
+                d&apos;une course déjà enregistrée : sans doute la même, mesurée
+                autrement. Vérifie avant d&apos;importer.
+              </span>
+              <Button
+                size="sm"
+                variant="outline"
+                className="cursor-pointer"
+                onClick={() => importAll(conflicts, true)}
+              >
+                Tout importer quand même
+              </Button>
+            </div>
+          )}
 
           <ul className="divide-y rounded-lg border text-sm">
             {rows.map((r, i) => (
@@ -238,6 +293,17 @@ export function BulkImport() {
                   {r.name}
                 </span>
                 <RowDetail row={r} />
+                {r.status === "conflict" && (
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-7 shrink-0 cursor-pointer px-2 text-xs"
+                    disabled={running}
+                    onClick={() => importAll([i], true)}
+                  >
+                    Importer
+                  </Button>
+                )}
               </li>
             ))}
           </ul>
@@ -258,6 +324,8 @@ function RowIcon({ status }: { status: Row["status"] }) {
       return <CheckCircle2 className={cn(cls, "text-emerald-500")} />
     case "duplicate":
       return <Copy className={cn(cls, "text-muted-foreground")} />
+    case "conflict":
+      return <CircleAlert className={cn(cls, "text-amber-500")} />
     case "skipped":
       return <MinusCircle className={cn(cls, "text-muted-foreground")} />
     case "error":
@@ -278,6 +346,17 @@ function RowDetail({ row }: { row: Row }) {
       )
     case "duplicate":
       return <span className={cls}>Déjà enregistrée</span>
+    case "conflict":
+      return (
+        <Link
+          href={runRoute(row.nearby.id)}
+          target="_blank"
+          className={cn(cls, "max-w-1/2 truncate hover:underline")}
+        >
+          Proche de « {row.nearby.name ?? "course"} » ·{" "}
+          {formatRunDistance(row.nearby.distance)} km
+        </Link>
+      )
     case "skipped":
       return (
         <span className={cn(cls, "max-w-1/2 truncate")}>

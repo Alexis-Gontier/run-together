@@ -18,6 +18,8 @@ type RecordRunOptions = {
   notify: boolean
   // Supprime d'abord la course de même `stravaId` (événement « update » du webhook)
   replaceExisting?: boolean
+  // Import en masse : les badges sont évalués une seule fois, à la fin (`evaluateBadges`).
+  skipBadges?: boolean
 }
 
 /**
@@ -91,6 +93,8 @@ export async function recordRun(
 
   if (options.notify) await notifyRunCreated(run.id, newPRs)
 
+  if (options.skipBadges) return { run, newPRs }
+
   // Après les records : deux badges dépendent du nombre de records détenus.
   try {
     const badges = await evaluateBadges(userId, run.id)
@@ -139,5 +143,24 @@ export function findDuplicateRun(
       },
     },
     select: { id: true },
+  })
+}
+
+const NEARBY_WINDOW_MS = 30 * 60 * 1000
+
+/**
+ * Course de l'utilisateur partie à ±30 min, quelle que soit la distance : sans doute la même
+ * course mesurée autrement (GPS vs montre). L'import en masse demande confirmation.
+ */
+export function findNearbyRun(userId: string, date: Date) {
+  return prisma.run.findFirst({
+    where: {
+      userId,
+      date: {
+        gte: new Date(date.getTime() - NEARBY_WINDOW_MS),
+        lte: new Date(date.getTime() + NEARBY_WINDOW_MS),
+      },
+    },
+    select: { id: true, name: true, date: true, distance: true },
   })
 }
