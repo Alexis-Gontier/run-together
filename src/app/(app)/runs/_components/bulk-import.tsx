@@ -113,8 +113,7 @@ export function BulkImport() {
             Glisse plusieurs fichiers ici, ou clique pour les choisir
           </p>
           <p className="text-muted-foreground text-xs">
-            .gpx, .tcx, .fit, ou compressés en .gz — par exemple le dossier{" "}
-            <code>activities/</code> de ton archive Strava. Les courses sont
+            .gpx, .tcx, .fit, compressés en .gz ou non. Les courses sont
             enregistrées directement, sans publication sur Discord ; les
             doublons sont ignorés.
           </p>

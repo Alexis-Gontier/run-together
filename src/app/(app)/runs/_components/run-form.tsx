@@ -48,6 +48,7 @@ import {
 import { BulkImport } from "./bulk-import"
 import { RunDatePicker } from "./run-date-picker"
 import { TrackDropzone } from "./track-dropzone"
+import { TrackFileHelp } from "./track-file-help"
 
 const SPORT_LABELS: Record<RunSportType, string> = {
   Run: "Route",
@@ -509,11 +510,13 @@ export function RunForm({ run, defaultPublish = true }: RunFormProps) {
         </TabsTrigger>
       </TabsList>
       <TabsContent value="manual">{formBody}</TabsContent>
-      <TabsContent value="file">
+      <TabsContent value="file" className="space-y-4">
         <TrackDropzone onParsed={onParsed} />
+        <TrackFileHelp mode="single" />
       </TabsContent>
-      <TabsContent value="bulk">
+      <TabsContent value="bulk" className="space-y-4">
         <BulkImport />
+        <TrackFileHelp mode="bulk" />
       </TabsContent>
     </Tabs>
   )

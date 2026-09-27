@@ -94,8 +94,7 @@ export function TrackDropzone({ onParsed }: TrackDropzoneProps) {
             : "Glisse ton fichier .gpx, .tcx ou .fit ici, ou clique pour le choisir"}
         </p>
         <p className="text-muted-foreground text-xs">
-          Exporte-le depuis Garmin Connect, Coros, Suunto, Polar ou Apple Santé
-          (via une app d&apos;export). 15 Mo max.
+          Fichier de ta montre ou de Strava, compressé en .gz ou non. 15 Mo max.
         </p>
       </div>
     </label>
