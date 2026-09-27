@@ -10,14 +10,20 @@ import { E2E } from "./e2e/support/env"
 const PORT = 3100
 const baseURL = `http://localhost:${PORT}`
 
-console.log(`[e2e] base de données : ${E2E.dbHost} (${E2E.source})`)
+// Une fois, dans le processus principal (la config est rechargée par chaque worker).
+if (!process.env.TEST_WORKER_INDEX) {
+  console.log(`[e2e] base de données : ${E2E.dbHost} (${E2E.source})`)
+}
 
 export default defineConfig({
   testDir: "./e2e",
   fullyParallel: false,
   workers: 1,
-  retries: 0,
-  reporter: [["list"], ["html", { open: "never" }]],
+  forbidOnly: !!process.env.CI,
+  retries: process.env.CI ? 2 : 0,
+  reporter: process.env.CI
+    ? [["github"], ["html", { open: "never" }]]
+    : [["list"], ["html", { open: "never" }]],
   use: {
     baseURL,
     locale: "fr-FR",
@@ -35,7 +41,7 @@ export default defineConfig({
   webServer: {
     command: "pnpm build && pnpm start",
     url: baseURL,
-    reuseExistingServer: true,
+    reuseExistingServer: !process.env.CI,
     timeout: 300_000,
     env: {
       // Les variables du processus priment sur `.env.local` / `.env` chargés par Next.

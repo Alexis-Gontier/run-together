@@ -18,6 +18,7 @@ const ENV_ALLOWLIST = [
   "prisma.config.ts",
   "postcss.config.mjs",
   "vitest.config.mts",
+  "playwright.config.ts",
   "prisma/seed.ts",
 ]
 
