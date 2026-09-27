@@ -11,7 +11,7 @@ Indépendant de la source : formulaire, fichier GPX/FIT et Strava passent tous p
 | `pace.ts`             | `computePace(m, s)` → s/km, `defaultRunName(date)`                      |
 | `personal-records.ts` | `extractCandidates`, `updatePersonalRecords`, `recalculatePersonalRecords` |
 | `pr-display.ts`       | `PR_DISTANCE_LABELS`, `PR_DISTANCE_ORDER` (importable côté client)      |
-| `track/`              | Parsing GPX / FIT → `TrackSummary`                                      |
+| `track/`              | Parsing GPX / TCX / FIT → `TrackSummary`                                      |
 
 ## Règles
 
@@ -30,7 +30,7 @@ Indépendant de la source : formulaire, fichier GPX/FIT et Strava passent tous p
 
 ## `track/`
 
-`parseTrackFile(fileName, bytes)` → `parseGpx` (`fast-xml-parser`) ou `parseFit`
+`parseTrackFile(fileName, bytes)` → `parseGpx` / `parseTcx` (`fast-xml-parser`) ou `parseFit`
 (`@garmin/fitsdk`) → `summarizeTrack`. Erreurs attendues : `TrackParseError` (message FR montré
 tel quel).
 

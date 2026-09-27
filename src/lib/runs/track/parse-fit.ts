@@ -59,7 +59,7 @@ export function parseFit(bytes: Uint8Array): ParsedTrack {
   const points: TrackPoint[] = []
   for (const r of (messages.recordMesgs as FitRecord[] | undefined) ?? []) {
     if (!r.timestamp) continue
-    points.push({
+    const point: TrackPoint = {
       lat: deg(r.positionLat),
       lng: deg(r.positionLong),
       ele: r.enhancedAltitude ?? r.altitude ?? null,
@@ -67,7 +67,18 @@ export function parseFit(bytes: Uint8Array): ParsedTrack {
       hr: r.heartRate ?? null,
       cad: r.cadence ?? null,
       dist: r.distance ?? null,
-    })
+    }
+    // Amazfit écrit deux records par seconde (position, puis distance) : on les fusionne,
+    // sinon aucun segment n'a à la fois un temps et une distance.
+    const prev = points.at(-1)
+    if (prev?.time.getTime() === point.time.getTime()) {
+      for (const key of Object.keys(point) as (keyof TrackPoint)[]) {
+        if (key !== "time" && point[key] != null)
+          Object.assign(prev, { [key]: point[key] })
+      }
+      continue
+    }
+    points.push(point)
   }
 
   return {
