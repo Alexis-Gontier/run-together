@@ -62,6 +62,16 @@
   },
   "overrides": [
     {
+      "includes": ["e2e/**", "playwright.config.ts"],
+      "linter": {
+        "rules": {
+          "nursery": {
+            "noFloatingPromises": "error"
+          }
+        }
+      }
+    },
+    {
       "includes": ["src/components/shadcn-ui/**"],
       "linter": {
         "rules": {
