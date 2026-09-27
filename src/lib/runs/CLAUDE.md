@@ -45,4 +45,8 @@ tel quel).
   (rafraîchie toutes les 2-3 s) n'est pas prise pour une pause.
 - Import en masse (`/runs/new`, onglet « Plusieurs fichiers ») : `importTrackFileAction`, un
   appel par fichier, `recordRunInputSchema` + `findDuplicateRun` (doublon = ignoré), `notify: false`.
+  Avec `activities.csv` de l'archive Strava (`_utils/strava-archive.ts`, en-têtes EN/FR) : autres
+  sports écartés côté client, titre et type Strava transmis à l'action.
+- `NotARunError` (sous-classe de `TrackParseError`) : fichier lisible mais autre sport → « ignorée »
+  en masse. GPX : type explicite non-course (vélo, marche…) refusé ; type absent/inconnu = course.
 - Les fichiers ne sont jamais stockés. Limite 15 Mo (`serverActions.bodySizeLimit` = 16 Mo).

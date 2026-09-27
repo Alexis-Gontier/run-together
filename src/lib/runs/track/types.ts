@@ -35,3 +35,10 @@ export type TrackSummary = {
 
 /** Erreur attendue (fichier illisible, mauvais sport) : son message est montré tel quel. */
 export class TrackParseError extends Error {}
+
+/** Fichier lisible mais qui n'est pas une course (vélo, marche…) : ignoré par l'import en masse. */
+export class NotARunError extends TrackParseError {
+  constructor() {
+    super("Ce fichier n'est pas une course à pied.")
+  }
+}

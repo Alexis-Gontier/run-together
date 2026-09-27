@@ -41,11 +41,12 @@ const STRAVA_ALL: Guide = {
       lien par e-mail (compter quelques heures).
     </>,
     <>
-      Dézippe l&apos;archive, ouvre le dossier <code>activities/</code> et
-      dépose tous ses fichiers ici (les .gz sont acceptés tels quels).
+      Dézippe l&apos;archive, puis{" "}
+      <strong>« Choisir le dossier de l&apos;archive Strava »</strong> et
+      sélectionne le dossier dézippé (les .gz sont acceptés tels quels).
     </>,
   ],
-  note: "Les activités qui ne sont pas des courses (vélo, marche…) sont refusées une à une, c'est normal.",
+  note: "Le fichier activities.csv de l'archive sert à écarter vélo, marche… et à garder tes titres Strava. Sans lui (fichiers déposés à la main), ajoute-le à ta sélection.",
 }
 
 const AMAZFIT: Guide = {

@@ -1,6 +1,11 @@
 import { XMLParser } from "fast-xml-parser"
 import type { RunSportType } from "../schemas"
-import { type ParsedTrack, TrackParseError, type TrackPoint } from "./types"
+import {
+  NotARunError,
+  type ParsedTrack,
+  TrackParseError,
+  type TrackPoint,
+} from "./types"
 
 type GpxPoint = {
   lat?: string
@@ -24,13 +29,20 @@ const num = (v: unknown): number | null => {
   return v == null || v === "" || Number.isNaN(n) ? null : n
 }
 
-/** Type GPX libre (`running`, `trail_running`, `treadmill`…) → type de course, ou null. */
+// Types GPX explicitement étrangers à la course : le fichier est refusé plutôt que pris pour une course.
+const NOT_RUN_TYPE = /cycl|bik|ride|walk|hik|swim|ski|row|kayak|paddle/
+
+/**
+ * Type GPX libre (`running`, `trail_running`, `treadmill`…) → type de course, ou null si absent
+ * ou inconnu. Lève `NotARunError` pour un autre sport reconnu (vélo, marche…).
+ */
 export function gpxSportType(type: unknown): RunSportType | null {
   if (typeof type !== "string") return null
   const t = type.toLowerCase()
   if (t.includes("trail")) return "TrailRun"
   if (t.includes("treadmill") || t.includes("virtual")) return "VirtualRun"
   if (t.includes("run")) return "Run"
+  if (NOT_RUN_TYPE.test(t)) throw new NotARunError()
   return null
 }
 

@@ -1,6 +1,11 @@
 import { XMLParser } from "fast-xml-parser"
 import type { RunSportType } from "../schemas"
-import { type ParsedTrack, TrackParseError, type TrackPoint } from "./types"
+import {
+  NotARunError,
+  type ParsedTrack,
+  TrackParseError,
+  type TrackPoint,
+} from "./types"
 
 type TcxPoint = {
   Time?: string
@@ -38,9 +43,7 @@ function tcxSportType(sport: unknown): RunSportType | null {
   const s = sport.toLowerCase()
   if (s.startsWith("run")) return "Run"
   if (s === "other") return null
-  throw new TrackParseError(
-    "Ce fichier n'est pas une course à pied : seules les courses sont acceptées.",
-  )
+  throw new NotARunError()
 }
 
 export function parseTcx(xml: string): ParsedTrack {

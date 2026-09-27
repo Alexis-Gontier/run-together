@@ -1,6 +1,11 @@
 import { Decoder, Stream } from "@garmin/fitsdk"
 import type { RunSportType } from "../schemas"
-import { type ParsedTrack, TrackParseError, type TrackPoint } from "./types"
+import {
+  NotARunError,
+  type ParsedTrack,
+  TrackParseError,
+  type TrackPoint,
+} from "./types"
 
 // Les positions FIT sont en semicercles : 2³¹ semicercles = 180°.
 const SEMICIRCLE_TO_DEG = 180 / 2 ** 31
@@ -28,8 +33,7 @@ const deg = (v: number | undefined) =>
 function fitSportType(session: FitSession | undefined): RunSportType {
   const sport = session?.sport
   const sub = session?.subSport ?? ""
-  if (sport !== "running")
-    throw new TrackParseError("Ce fichier n'est pas une course à pied.")
+  if (sport !== "running") throw new NotARunError()
   if (sub.includes("trail")) return "TrailRun"
   if (sub.includes("treadmill") || sub.includes("virtual")) return "VirtualRun"
   return "Run"

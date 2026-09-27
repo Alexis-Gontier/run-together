@@ -1,34 +1,52 @@
 "use client"
 
-import { CheckCircle2, Copy, FilesIcon, Loader2, XCircle } from "lucide-react"
+import {
+  CheckCircle2,
+  Copy,
+  FilesIcon,
+  FolderOpen,
+  Loader2,
+  MinusCircle,
+  XCircle,
+} from "lucide-react"
 import Link from "next/link"
 import { useAction } from "next-safe-action/hooks"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { toast } from "sonner"
+import { Button } from "@/components/shadcn-ui/button"
 import { Progress } from "@/components/shadcn-ui/progress"
 import { runRoute } from "@/lib/constants/routes"
 import { cn } from "@/lib/utils/cn"
 import { formatRunDate, formatRunDistance } from "@/lib/utils/run"
 import { importTrackFileAction } from "../_actions/import-track-file-action"
+import {
+  type ArchiveActivity,
+  parseActivitiesCsv,
+} from "../_utils/strava-archive"
 
 const MAX_BYTES = 15 * 1024 * 1024
 const ACCEPTED = /\.(gpx|tcx|fit)(\.gz)?$/i
+const CSV_NAME = "activities.csv"
 
 type Row = { name: string } & (
   | { status: "pending" | "running" }
   | { status: "imported"; runId: string; date: Date; distance: number }
   | { status: "duplicate" }
+  | { status: "skipped"; message: string }
   | { status: "error"; message: string }
 )
 
 /**
- * Import de plusieurs fichiers (ex. dossier `activities/` de l'archive Strava) : un appel par
- * fichier, à la suite, sans notification Discord. Les doublons sont ignorés.
+ * Import de plusieurs fichiers, ou du dossier de l'archive Strava : un appel par fichier, à la
+ * suite, sans notification Discord. Avec `activities.csv`, les autres sports sont écartés sans
+ * appel serveur et les courses reprennent leur titre Strava. Doublons et autres sports sont ignorés.
  */
 export function BulkImport() {
   const [rows, setRows] = useState<Row[]>([])
+  const [csvCount, setCsvCount] = useState<number | null>(null)
   const [running, setRunning] = useState(false)
   const [dragging, setDragging] = useState(false)
+  const folderRef = useRef<HTMLInputElement>(null)
   const { executeAsync } = useAction(importTrackFileAction)
 
   // Quitter la page interrompt l'import : on prévient tant qu'il tourne.
@@ -45,20 +63,40 @@ export function BulkImport() {
   const count = (s: Row["status"]) => rows.filter((r) => r.status === s).length
 
   async function run(fileList: FileList | null) {
-    const files = Array.from(fileList ?? []).filter((f) =>
-      ACCEPTED.test(f.name),
-    )
+    const all = Array.from(fileList ?? [])
+    const files = all.filter((f) => ACCEPTED.test(f.name))
     if (files.length === 0) {
       toast.error("Aucun fichier .gpx, .tcx ou .fit (compressé ou non).")
       return
     }
+    const csv = all.find((f) => f.name.toLowerCase() === CSV_NAME)
+    let archive = new Map<string, ArchiveActivity>()
+    if (csv) {
+      try {
+        archive = parseActivitiesCsv(await csv.text())
+      } catch {
+        toast.error(`${CSV_NAME} illisible : import sans titres ni types.`)
+      }
+    }
+    setCsvCount(csv ? archive.size : null)
+
     const set = (i: number, row: Row) =>
       setRows((prev) => prev.map((r, j) => (j === i ? row : r)))
+    const label = (f: File) => archive.get(f.name)?.name ?? f.name
 
-    setRows(files.map((f) => ({ name: f.name, status: "pending" })))
+    setRows(files.map((f) => ({ name: label(f), status: "pending" })))
     setRunning(true)
     for (const [i, file] of files.entries()) {
-      const name = file.name
+      const name = label(file)
+      const meta = archive.get(file.name)
+      if (meta && !meta.sportType) {
+        set(i, {
+          name,
+          status: "skipped",
+          message: meta.type || "Pas une course",
+        })
+        continue
+      }
       if (file.size > MAX_BYTES) {
         set(i, {
           name,
@@ -69,7 +107,11 @@ export function BulkImport() {
       }
       set(i, { name, status: "running" })
       try {
-        const { data } = await executeAsync({ file })
+        const { data } = await executeAsync({
+          file,
+          name: meta?.name ?? undefined,
+          sportType: meta?.sportType ?? undefined,
+        })
         if (!data) throw new Error()
         set(i, { name, ...data })
       } catch {
@@ -107,7 +149,7 @@ export function BulkImport() {
         <input
           type="file"
           multiple
-          accept=".gpx,.tcx,.fit,.gz"
+          accept=".gpx,.tcx,.fit,.gz,.csv"
           className="sr-only"
           disabled={running}
           onChange={(e) => {
@@ -123,22 +165,60 @@ export function BulkImport() {
           <p className="text-muted-foreground text-xs">
             .gpx, .tcx, .fit, compressés en .gz ou non. Les courses sont
             enregistrées directement, sans publication sur Discord ; les
-            doublons sont ignorés.
+            doublons et les autres sports sont ignorés.
           </p>
         </div>
       </label>
 
+      <div className="flex flex-col items-center gap-1.5 text-center">
+        <Button
+          type="button"
+          variant="outline"
+          className="cursor-pointer"
+          disabled={running}
+          onClick={() => folderRef.current?.click()}
+        >
+          <FolderOpen />
+          Choisir le dossier de l&apos;archive Strava
+        </Button>
+        <p className="text-muted-foreground text-xs">
+          Avec <code>{CSV_NAME}</code>, vélo et marche sont écartés et tes
+          courses gardent leur titre Strava.
+        </p>
+        <input
+          ref={folderRef}
+          type="file"
+          className="sr-only"
+          tabIndex={-1}
+          disabled={running}
+          // Attribut non standard (pas typé par React) : sélection d'un dossier entier.
+          {...({ webkitdirectory: "" } as object)}
+          onChange={(e) => {
+            run(e.target.files)
+            e.target.value = ""
+          }}
+        />
+      </div>
+
       {rows.length > 0 && (
         <div className="space-y-3">
+          {csvCount != null && (
+            <p className="rounded-md bg-muted/50 px-3 py-2 text-muted-foreground text-xs">
+              {csvCount > 0
+                ? `${CSV_NAME} lu : ${csvCount} activités, types et titres Strava appliqués.`
+                : `${CSV_NAME} trouvé mais aucune activité reconnue : import sans titres ni types.`}
+            </p>
+          )}
           <div className="space-y-1.5">
-            <div className="flex justify-between text-muted-foreground text-xs">
+            <div className="flex flex-wrap justify-between gap-x-3 text-muted-foreground text-xs">
               <span>
                 {running ? "Import en cours…" : "Import terminé"} · {done}/
                 {rows.length}
               </span>
               <span>
                 {count("imported")} importée(s) · {count("duplicate")}{" "}
-                doublon(s) · {count("error")} erreur(s)
+                doublon(s) · {count("skipped")} ignorée(s) · {count("error")}{" "}
+                erreur(s)
               </span>
             </div>
             <Progress value={(done / rows.length) * 100} className="h-1.5" />
@@ -149,7 +229,14 @@ export function BulkImport() {
               // biome-ignore lint/suspicious/noArrayIndexKey: deux fichiers peuvent porter le même nom
               <li key={i} className="flex items-center gap-3 px-3 py-2">
                 <RowIcon status={r.status} />
-                <span className="min-w-0 flex-1 truncate">{r.name}</span>
+                <span
+                  className={cn(
+                    "min-w-0 flex-1 truncate",
+                    r.status === "skipped" && "text-muted-foreground",
+                  )}
+                >
+                  {r.name}
+                </span>
                 <RowDetail row={r} />
               </li>
             ))}
@@ -161,17 +248,23 @@ export function BulkImport() {
 }
 
 function RowIcon({ status }: { status: Row["status"] }) {
-  if (status === "running")
-    return (
-      <Loader2 className="size-4 shrink-0 animate-spin text-muted-foreground" />
-    )
-  if (status === "imported")
-    return <CheckCircle2 className="size-4 shrink-0 text-emerald-500" />
-  if (status === "duplicate")
-    return <Copy className="size-4 shrink-0 text-muted-foreground" />
-  if (status === "error")
-    return <XCircle className="size-4 shrink-0 text-destructive" />
-  return <span className="size-4 shrink-0" />
+  const cls = "size-4 shrink-0"
+  switch (status) {
+    case "running":
+      return (
+        <Loader2 className={cn(cls, "animate-spin text-muted-foreground")} />
+      )
+    case "imported":
+      return <CheckCircle2 className={cn(cls, "text-emerald-500")} />
+    case "duplicate":
+      return <Copy className={cn(cls, "text-muted-foreground")} />
+    case "skipped":
+      return <MinusCircle className={cn(cls, "text-muted-foreground")} />
+    case "error":
+      return <XCircle className={cn(cls, "text-destructive")} />
+    default:
+      return <span className={cls} />
+  }
 }
 
 function RowDetail({ row }: { row: Row }) {
@@ -185,6 +278,12 @@ function RowDetail({ row }: { row: Row }) {
       )
     case "duplicate":
       return <span className={cls}>Déjà enregistrée</span>
+    case "skipped":
+      return (
+        <span className={cn(cls, "max-w-1/2 truncate")}>
+          Ignorée · {row.message}
+        </span>
+      )
     case "error":
       return (
         <span className={cn(cls, "max-w-1/2 truncate text-destructive")}>
