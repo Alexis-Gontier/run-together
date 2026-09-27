@@ -11,7 +11,8 @@ Indépendant de la source : formulaire, fichier GPX/FIT et Strava passent tous p
 | `pace.ts`             | `computePace(m, s)` → s/km, `defaultRunName(date)`                      |
 | `personal-records.ts` | `extractCandidates`, `updatePersonalRecords`, `recalculatePersonalRecords` |
 | `pr-display.ts`       | `PR_DISTANCE_LABELS`, `PR_DISTANCE_ORDER` (importable côté client)      |
-| `track/`              | Parsing GPX / TCX / FIT → `TrackSummary`                                      |
+| `track/`              | Parsing GPX / TCX / FIT (+ `.gz`) → `TrackSummary`                           |
+| `track/summary-to-input.ts` | `trackSummaryToRunInput` — résumé → `RecordRunInput` (import en masse) |
 
 ## Règles
 
@@ -39,4 +40,9 @@ tel quel).
 - Splits interpolés au kilomètre (durée, FC, dénivelé net) ; dernier split gardé s'il fait ≥ 50 m.
 - Distance cumulée de l'appareil (FIT `distance`) préférée au GPS quand elle existe.
 - `summaryPolyline` = tracé sous-échantillonné à ≤ 200 points (miniatures).
+- `.gz` décompressé avant parsing (archive Strava : `activities/*.fit.gz`).
+- FIT Amazfit : deux records par seconde (position / distance) fusionnés ; une distance répétée
+  (rafraîchie toutes les 2-3 s) n'est pas prise pour une pause.
+- Import en masse (`/runs/new`, onglet « Plusieurs fichiers ») : `importTrackFileAction`, un
+  appel par fichier, `recordRunInputSchema` + `findDuplicateRun` (doublon = ignoré), `notify: false`.
 - Les fichiers ne sont jamais stockés. Limite 15 Mo (`serverActions.bodySizeLimit` = 16 Mo).

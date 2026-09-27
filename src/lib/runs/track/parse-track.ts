@@ -1,15 +1,28 @@
+import { gunzipSync } from "node:zlib"
 import { parseFit } from "./parse-fit"
 import { parseGpx } from "./parse-gpx"
 import { parseTcx } from "./parse-tcx"
 import { summarizeTrack } from "./summarize-track"
 import { TrackParseError, type TrackSummary } from "./types"
 
-/** Point d'entrée : fichier .gpx, .tcx ou .fit → résumé prêt à pré-remplir le formulaire. */
+/**
+ * Point d'entrée : fichier .gpx, .tcx ou .fit → résumé prêt à pré-remplir le formulaire.
+ * Accepte aussi leur version compressée (`.fit.gz`…), telle que l'archive Strava la fournit.
+ */
 export function parseTrackFile(
   fileName: string,
   bytes: Uint8Array,
 ): TrackSummary {
-  const ext = fileName.toLowerCase().split(".").pop()
+  let name = fileName.toLowerCase()
+  if (name.endsWith(".gz")) {
+    try {
+      bytes = new Uint8Array(gunzipSync(bytes))
+    } catch {
+      throw new TrackParseError("Archive .gz illisible.")
+    }
+    name = name.slice(0, -3)
+  }
+  const ext = name.split(".").pop()
   if (ext === "gpx")
     return summarizeTrack(parseGpx(new TextDecoder().decode(bytes)))
   if (ext === "tcx")

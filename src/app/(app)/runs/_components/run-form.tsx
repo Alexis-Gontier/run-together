@@ -45,6 +45,7 @@ import {
   runFormSchema,
   runFormToInput,
 } from "../_schemas/run-form-schema"
+import { BulkImport } from "./bulk-import"
 import { RunDatePicker } from "./run-date-picker"
 import { TrackDropzone } from "./track-dropzone"
 
@@ -503,10 +504,16 @@ export function RunForm({ run, defaultPublish = true }: RunFormProps) {
         <TabsTrigger value="file" className="cursor-pointer">
           Importer un fichier
         </TabsTrigger>
+        <TabsTrigger value="bulk" className="cursor-pointer">
+          Plusieurs fichiers
+        </TabsTrigger>
       </TabsList>
       <TabsContent value="manual">{formBody}</TabsContent>
       <TabsContent value="file">
         <TrackDropzone onParsed={onParsed} />
+      </TabsContent>
+      <TabsContent value="bulk">
+        <BulkImport />
       </TabsContent>
     </Tabs>
   )

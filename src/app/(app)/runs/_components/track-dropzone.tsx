@@ -38,7 +38,7 @@ export function TrackDropzone({ onParsed }: TrackDropzoneProps) {
 
   function handleFile(file: File | undefined) {
     if (!file) return
-    if (!/\.(gpx|tcx|fit)$/i.test(file.name)) {
+    if (!/\.(gpx|tcx|fit)(\.gz)?$/i.test(file.name)) {
       toast.error(
         "Format non pris en charge : utilise un fichier .gpx, .tcx ou .fit.",
       )
@@ -75,7 +75,7 @@ export function TrackDropzone({ onParsed }: TrackDropzoneProps) {
       <input
         ref={inputRef}
         type="file"
-        accept=".gpx,.tcx,.fit"
+        accept=".gpx,.tcx,.fit,.gz"
         className="sr-only"
         onChange={(e) => {
           handleFile(e.target.files?.[0])
