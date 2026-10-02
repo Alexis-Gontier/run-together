@@ -16,6 +16,8 @@ const MAPLIBRE_WORKER = join(
 )
 
 type Fixtures = {
+  /** Annonces marquées vues (`test.use({ seenAnnouncements: [] })` pour les voir). */
+  seenAnnouncements: string[]
   /** Erreurs console et exceptions de la page ; le test échoue s'il en reste à la fin. */
   consoleErrors: string[]
   /** Chemin d'un fichier de `e2e/fixtures/files/`. */
@@ -28,7 +30,12 @@ type AutoFixtures = {
   blockExternal: void
   // biome-ignore lint/suspicious/noConfusingVoidType: convention Playwright
   cleanRuns: void
+  // biome-ignore lint/suspicious/noConfusingVoidType: convention Playwright
+  skipAnnouncements: void
 }
+
+// Annonces de nouveautés (`AnnouncementDialog`) : marquées vues, sinon la modale bloque les clics.
+const SEEN_ANNOUNCEMENTS = ["profile-images-v1"]
 
 export const test = base.extend<Fixtures & AutoFixtures>({
   // Aucun appel réseau hors de l'app : tuiles de carte bouchonnées, le reste répond vide.
@@ -52,6 +59,18 @@ export const test = base.extend<Fixtures & AutoFixtures>({
           headers: { "access-control-allow-origin": "*" },
         }),
       )
+      await use()
+    },
+    { auto: true },
+  ],
+
+  seenAnnouncements: [SEEN_ANNOUNCEMENTS, { option: true }],
+
+  skipAnnouncements: [
+    async ({ context, seenAnnouncements }, use) => {
+      await context.addInitScript((ids) => {
+        for (const id of ids) localStorage.setItem(`announcement:${id}`, "e2e")
+      }, seenAnnouncements)
       await use()
     },
     { auto: true },

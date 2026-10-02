@@ -9,6 +9,7 @@
 | `notify.ts`              | `notify({ type, dedupeKey, message })`, `resendNotification(id)`        |
 | `events.ts`              | `notifyRunCreated`, `notifyMemberJoined`, `sendTestNotification`         |
 | `recap.ts`               | `previousWeek(now)`, `getWeeklyRecapData(start, end)`                    |
+| `ranking.ts`             | `previousMonth(now)`, `getMonthlyRankingData(start, end)`                |
 
 ## Rules
 
@@ -16,7 +17,8 @@
   `events.ts` function), which dedupes and writes the `DiscordNotification` log.
 - `notify()` never throws: a Discord failure must not fail the action that triggered it.
 - `dedupeKey` is unique; a key already `SENT` is skipped. Keys: `run.created:{runId}`,
-  `member.joined:{userId}`, `recap.weekly:{yyyy-MM-dd of Monday}`, `test:{timestamp}`.
+  `member.joined:{userId}`, `recap.weekly:{yyyy-MM-dd of Monday}`, `ranking.monthly:{yyyy-MM}`,
+  `battle.result:{sorted userIds}:{period}:{yyyy-MM-dd}`, `test:{timestamp}`.
 - The exact payload is stored, so `/admin/discord` can resend a `FAILED` row as-is.
 - Builders stay pure (no Prisma, no env): data loading happens in `events.ts` / `recap.ts`.
 
@@ -29,6 +31,8 @@
 | `recap.weekly`  | Vercel Cron `GET /api/cron/weekly-recap` (Monday 07:00 UTC, `Authorization: Bearer $CRON_SECRET`; `?dry=1[&at=YYYY-MM-DD]` returns the message without sending) |
 | `test`          | « Tester le webhook » in `/admin/discord`                            |
 | `badge.unlocked`| `recordRun()` when `notify` and the run unlocks badges (`badge.unlocked:{runId}`) |
+| `battle.result` | « Publier le résultat » on `/compare` (`publishBattleAction`, score recomputed server-side; once per pair/period/day) |
+| `ranking.monthly` | Vercel Cron `GET /api/cron/monthly-ranking` (1st of month 07:00 UTC, previous month UTC, distance ranking; same auth and `?dry=1[&at=]` as the recap) |
 
 Embed images (`next/og`, 1200×630, shared theme in `src/lib/og/theme.tsx`, URLs via
 `ogRunRoute` / `ogBadgesRoute` / `ogRecapRoute` in `routes.ts`):

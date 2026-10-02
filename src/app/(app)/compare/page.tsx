@@ -16,12 +16,12 @@ import {
 import { PeriodToggle } from "@/components/ui/period-toggle"
 import { getRequiredUser } from "@/lib/auth/auth-session"
 import { prisma } from "@/lib/db/prisma"
-import { PR_DISTANCE_LABELS } from "@/lib/runs/pr-display"
 import { cn } from "@/lib/utils/cn"
 import { displayName } from "@/lib/utils/display-name"
-import { formatRunDurationDisplay, formatRunPace } from "@/lib/utils/run"
+import { BattleScoreboard } from "./_components/battle-scoreboard"
 import { CompareChart } from "./_components/compare-chart"
 import { MemberSelect } from "./_components/member-select"
+import { type BattleLine, computeBattle, type Side } from "./_utils/battle"
 import {
   COMPARE_PERIODS,
   type ComparePeriod,
@@ -32,48 +32,35 @@ type Props = {
   searchParams: Promise<{ with?: string; period?: string }>
 }
 
-const fmt = (v: number) => String(v).replace(".", ",")
+const Point = () => (
+  <span className="rounded bg-emerald-500/15 px-1 font-bold text-[10px] leading-4">
+    +1
+  </span>
+)
 
-/** Une ligne « moi | métrique | l'autre », le meilleur des deux mis en avant. */
-function Row({
-  label,
-  me,
-  other,
-  // Pour l'allure et les records, plus petit = mieux.
-  lowerIsBetter = false,
-  display,
-}: {
-  label: string
-  me: number | null
-  other: number | null
-  lowerIsBetter?: boolean
-  display: (v: number) => string
-}) {
-  const best =
-    me === null || other === null || me === other
-      ? null
-      : (lowerIsBetter ? me < other : me > other)
-        ? "me"
-        : "other"
-  const cell = (v: number | null, side: "me" | "other") => (
+/** Une ligne « moi | métrique | l'autre » : celui qui marque le point est mis en avant. */
+function Row({ line }: { line: BattleLine }) {
+  const cell = (text: string, side: Side) => (
     <span
       className={cn(
-        "tabular-nums",
-        best === side
+        "inline-flex items-center gap-1.5 tabular-nums",
+        line.winner === side
           ? "font-semibold text-emerald-500"
           : "text-muted-foreground",
       )}
     >
-      {v === null || v === 0 ? "—" : display(v)}
+      {line.winner === side && side === "other" && <Point />}
+      {text}
+      {line.winner === side && side === "me" && <Point />}
     </span>
   )
   return (
     <li className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 py-2.5 text-sm">
-      <span className="text-right">{cell(me, "me")}</span>
+      <span className="text-right">{cell(line.meText, "me")}</span>
       <span className="w-28 text-center text-muted-foreground text-xs">
-        {label}
+        {line.label}
       </span>
-      <span>{cell(other, "other")}</span>
+      <span>{cell(line.otherText, "other")}</span>
     </li>
   )
 }
@@ -123,7 +110,11 @@ export default async function ComparePage({ searchParams }: Props) {
         <ComparisonView
           meId={me.id}
           meName={displayName(me)}
-          other={{ id: other.id, name: displayName(other) }}
+          other={{
+            id: other.id,
+            name: displayName(other),
+            username: other.username ?? "",
+          }}
           period={period}
         />
       )}
@@ -139,13 +130,22 @@ async function ComparisonView({
 }: {
   meId: string
   meName: string
-  other: { id: string; name: string }
+  other: { id: string; name: string; username: string }
   period: ComparePeriod
 }) {
   const data = await getComparison(meId, other.id, period)
+  const battle = computeBattle(data)
 
   return (
     <>
+      <BattleScoreboard
+        otherName={other.name}
+        otherUsername={other.username}
+        period={period}
+        score={battle.score}
+        winner={battle.winner}
+      />
+
       <Card>
         <CardHeader>
           <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
@@ -158,37 +158,9 @@ async function ComparisonView({
         </CardHeader>
         <CardContent>
           <ul className="divide-y">
-            <Row
-              label="Distance"
-              me={data.me.distanceKm}
-              other={data.other.distanceKm}
-              display={(v) => `${fmt(v)} km`}
-            />
-            <Row
-              label="Courses"
-              me={data.me.runs}
-              other={data.other.runs}
-              display={(v) => String(v)}
-            />
-            <Row
-              label="Allure moyenne"
-              me={data.me.pace}
-              other={data.other.pace}
-              lowerIsBetter
-              display={(v) => `${formatRunPace(v)} /km`}
-            />
-            <Row
-              label="Dénivelé"
-              me={data.me.elevation}
-              other={data.other.elevation}
-              display={(v) => `${v} m`}
-            />
-            <Row
-              label="Plus longue"
-              me={data.me.longestKm}
-              other={data.other.longestKm}
-              display={(v) => `${fmt(v)} km`}
-            />
+            {battle.stats.map((l) => (
+              <Row key={l.label} line={l} />
+            ))}
           </ul>
         </CardContent>
       </Card>
@@ -216,15 +188,8 @@ async function ComparisonView({
         </CardHeader>
         <CardContent>
           <ul className="divide-y">
-            {data.records.map((r) => (
-              <Row
-                key={r.distance}
-                label={PR_DISTANCE_LABELS[r.distance]}
-                me={r.me}
-                other={r.other}
-                lowerIsBetter
-                display={formatRunDurationDisplay}
-              />
+            {battle.records.map((l) => (
+              <Row key={l.label} line={l} />
             ))}
           </ul>
         </CardContent>

@@ -23,6 +23,9 @@ async function main() {
     publishRunsToDiscord: false,
     role: "user",
     banned: false,
+    // Ni photo ni bannière : l'annonce « photo de profil » doit pouvoir s'afficher.
+    image: null,
+    bannerImage: null,
   }
 
   const existing = await prisma.user.findUnique({
@@ -63,6 +66,25 @@ async function main() {
   await prisma.session.deleteMany({ where: { userId } })
 
   console.log(`[e2e] utilisateur ${E2E.username} prêt (${userId})`)
+
+  // Adversaire des batailles `/compare` : jamais connecté, aucune course hors des tests.
+  const rival = await prisma.user.upsert({
+    where: { username: E2E.rivalUsername },
+    update: {},
+    create: {
+      id: randomUUID(),
+      email: `${E2E.rivalUsername}@run-together.test`,
+      username: E2E.rivalUsername,
+      displayUsername: E2E.rivalUsername,
+      name: "Rival e2e",
+      onboardingCompleted: true,
+      publishRunsToDiscord: false,
+      role: "user",
+    },
+    select: { id: true },
+  })
+  await prisma.run.deleteMany({ where: { userId: rival.id } })
+  await prisma.personalRecord.deleteMany({ where: { userId: rival.id } })
 }
 
 main()

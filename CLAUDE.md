@@ -10,11 +10,14 @@
 - **UI**: shadcn/ui + Tailwind CSS v4 ; maps via mapcn (MapLibre GL, free CARTO vector basemaps, light/dark) — `src/components/ui/run-map.tsx`, list thumbnails = Esri raster tiles + SVG route (`route-thumbnail.tsx`, `src/lib/maps/raster-tiles.ts`)
 - **Badges**: catalog in code, `UserBadge` table, evaluated by `recordRun` → @src/lib/badges/CLAUDE.md
 - **Profile images**: avatar (`User.image`) + banner (`User.bannerImage`), cropped in the browser (`react-easy-crop` → WebP), stored in Vercel Blob (OIDC + `BLOB_STORE_ID` on Vercel, `BLOB_READ_WRITE_TOKEN` locally; neither → upload hidden) → `src/lib/profile-images/`, actions in `src/lib/actions/profile/`
+- **Compare battle**: `/compare` scores 1 pt per metric/record won (`compare/_utils/battle.ts`, pure)
+- **Announcements**: `AnnouncementDialog` (`src/components/ui/`) — one-time « nouveauté » modal,
+  seen-state in `localStorage` (`announcement:{id}`); e2e fixture `skipAnnouncements` marks ids as seen
 - **Stats**: week summary, highlights, streaks, milestones for the right panels → `src/lib/stats/`
 - **State**: Zustand (onboarding flow), nuqs (URL query params)
 - **Runs**: source-agnostic pipeline (`recordRun`), personal records, GPX/FIT parsing → @src/lib/runs/CLAUDE.md
 - **Strava integration** (disabled by `STRAVA_ENABLED=false`): OAuth 2 + webhook + auto token refresh → @src/lib/strava/CLAUDE.md
-- **Discord notifications**: rich run embeds, badges, welcome, weekly recap (Vercel Cron), delivery log + admin resend (`/admin/discord`) → @src/lib/discord/CLAUDE.md
+- **Discord notifications**: rich run embeds, badges, welcome, weekly recap + monthly distance ranking (Vercel Cron), compare battles, delivery log + admin resend (`/admin/discord`) → @src/lib/discord/CLAUDE.md
 - **Run formatting utils**: pace, distance, duration, dates → @src/lib/utils/CLAUDE.md
 - **Tooling**: Node 24 (`.nvmrc`), pnpm 11, Biome, lefthook, knip, Vitest, React Compiler. Claude Code config in `.claude/` (see `.claude/SKILLS.md`)
 - **E2E**: Playwright (Chromium) in `e2e/` — prod build on port **3100**, DB from `.env.e2e.local` else
@@ -32,7 +35,7 @@ src/app/
 ├── (admin)/       # Protected — role === "admin" required
 ├── (auth)/        # Public (login, register)
 ├── (onboarding)/  # Post-signup onboarding flow
-└── api/           # auth/[...all], strava/* (404 unless STRAVA_ENABLED), og/run/[runId], cron/weekly-recap, export
+└── api/           # auth/[...all], strava/* (404 unless STRAVA_ENABLED), og/run/[runId], cron/weekly-recap, cron/monthly-ranking, export
 ```
 
 Each route follows:
