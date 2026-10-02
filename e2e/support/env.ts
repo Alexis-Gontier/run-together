@@ -42,6 +42,8 @@ export const E2E = {
   databaseUrl: vars.DATABASE_URL,
   dbHost: new URL(vars.DATABASE_URL).hostname,
   username: "e2e_runner",
+  /** Adversaire de `/compare` : pas de mot de passe, des courses posées par les tests. */
+  rivalUsername: "e2e_rival",
   password: vars.E2E_USER_PASSWORD ?? "e2e-runner-password",
   storageState: join(ROOT, "playwright", ".auth", "user.json"),
   files: join(ROOT, "e2e", "fixtures", "files"),
