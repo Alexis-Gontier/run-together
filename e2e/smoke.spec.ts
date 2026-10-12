@@ -9,6 +9,7 @@ const PAGES = [
   ["classement", ROUTES.LEADERBOARD],
   ["badges", ROUTES.BADGES],
   ["comparer", ROUTES.COMPARE],
+  ["radars", ROUTES.CHARTS],
   ["profil", profileRoute(E2E.username)],
 ] as const
 

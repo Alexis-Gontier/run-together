@@ -61,6 +61,40 @@ test.describe("bataille /compare", () => {
   })
 })
 
+test("on choisit les deux coureurs et on peut les échanger", async ({
+  page,
+}) => {
+  await insertRun(E2E.username, {
+    distance: 10_000,
+    duration: 3000,
+    daysAgo: 2,
+  })
+  await insertRun(E2E.rivalUsername, {
+    distance: 5000,
+    duration: 1800,
+    daysAgo: 3,
+  })
+
+  await page.goto(compareRoute(E2E.rivalUsername))
+  const main = page.getByRole("main")
+  await expect(
+    main.getByRole("combobox", { name: "Premier coureur" }),
+  ).toContainText(`${E2E.username} (toi)`)
+
+  await page.getByRole("button", { name: "Échanger les coureurs" }).click()
+  await expect(page).toHaveURL(new RegExp(`a=${E2E.rivalUsername}`))
+  await expect(
+    main.getByRole("combobox", { name: "Second coureur" }),
+  ).toContainText(`${E2E.username} (toi)`)
+  // Toujours mon duel : le résultat se lit de mon point de vue, publiable.
+  await expect(
+    main.getByText("Tu remportes la bataille !", { exact: true }),
+  ).toBeVisible()
+  await expect(
+    page.getByRole("button", { name: "Publier le résultat sur Discord" }),
+  ).toBeVisible()
+})
+
 test.describe("annonce photo de profil", () => {
   test.use({ seenAnnouncements: [] })
 

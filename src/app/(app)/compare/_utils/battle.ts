@@ -1,6 +1,7 @@
 import { PR_DISTANCE_LABELS } from "@/lib/runs/pr-display"
+import type { StatsPeriod } from "@/lib/stats/periods"
 import { formatRunDurationDisplay, formatRunPace } from "@/lib/utils/run"
-import type { ComparePeriod, getComparison } from "./comparison"
+import type { getComparison } from "./comparison"
 
 type Comparison = Awaited<ReturnType<typeof getComparison>>
 
@@ -25,7 +26,7 @@ export type Battle = {
 }
 
 /** « sur 3 mois » : complément de phrase pour Discord. */
-export const BATTLE_PERIOD_PHRASES: Record<ComparePeriod, string> = {
+export const BATTLE_PERIOD_PHRASES: Record<StatsPeriod, string> = {
   "1m": "sur 30 jours",
   "3m": "sur 3 mois",
   "6m": "sur 6 mois",

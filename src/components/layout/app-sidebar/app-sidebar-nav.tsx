@@ -5,6 +5,7 @@ import {
   Home,
   Medal,
   Plus,
+  Radar,
   Route,
   Swords,
   Trophy,
@@ -25,12 +26,13 @@ type NavItem = {
   Icon: React.ComponentType<{ size?: number }>
   href: string
   newUntil?: Date
-  // Absent de la barre mobile (5 entrées max) : accessible depuis le profil.
+  // Absent de la barre mobile (5 entrées max) : accessible depuis le profil ou le classement.
   desktopOnly?: boolean
 }
 
 // « Progression » et « Badges » sont mises en avant jusqu'à fin octobre (nouvelles pages).
 const PROGRESS_NEW_UNTIL = new Date("2026-10-31")
+const CHARTS_NEW_UNTIL = new Date("2026-11-30")
 
 /** Entrées de navigation, identiques en desktop et en mobile. Paramètres : menu utilisateur. */
 function navItems(username?: string | null): NavItem[] {
@@ -60,6 +62,13 @@ function navItems(username?: string | null): NavItem[] {
       Icon: Swords,
       href: ROUTES.COMPARE,
       newUntil: PROGRESS_NEW_UNTIL,
+      desktopOnly: true,
+    },
+    {
+      label: ROUTE_LABELS[ROUTES.CHARTS],
+      Icon: Radar,
+      href: ROUTES.CHARTS,
+      newUntil: CHARTS_NEW_UNTIL,
       desktopOnly: true,
     },
   ]
