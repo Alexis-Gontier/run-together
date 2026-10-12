@@ -1,7 +1,10 @@
 "use client"
 
+import { Radar } from "lucide-react"
+import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useTransition } from "react"
+import { Button } from "@/components/shadcn-ui/button"
 import { Tabs, TabsList, TabsTrigger } from "@/components/shadcn-ui/tabs"
 import {
   ToggleGroup,
@@ -105,6 +108,19 @@ export function LeaderboardFilters({ metric, period, prDist }: Props) {
           </ToggleGroupItem>
         ))}
       </ToggleGroup>
+
+      {/* Radars n'a pas de place dans la barre mobile : on y accède depuis le classement. */}
+      <Button
+        variant="outline"
+        size="sm"
+        asChild
+        className="w-full cursor-pointer md:hidden"
+      >
+        <Link href={ROUTES.CHARTS}>
+          <Radar />
+          Voir les radars du groupe
+        </Link>
+      </Button>
     </div>
   )
 }

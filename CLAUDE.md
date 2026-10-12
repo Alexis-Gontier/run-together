@@ -10,7 +10,10 @@
 - **UI**: shadcn/ui + Tailwind CSS v4 ; maps via mapcn (MapLibre GL, free CARTO vector basemaps, light/dark) — `src/components/ui/run-map.tsx`, list thumbnails = Esri raster tiles + SVG route (`route-thumbnail.tsx`, `src/lib/maps/raster-tiles.ts`)
 - **Badges**: catalog in code, `UserBadge` table, evaluated by `recordRun` → @src/lib/badges/CLAUDE.md
 - **Profile images**: avatar (`User.image`) + banner (`User.bannerImage`), cropped in the browser (`react-easy-crop` → WebP), stored in Vercel Blob (OIDC + `BLOB_STORE_ID` on Vercel, `BLOB_READ_WRITE_TOKEN` locally; neither → upload hidden) → `src/lib/profile-images/`, actions in `src/lib/actions/profile/`
-- **Compare battle**: `/compare` scores 1 pt per metric/record won (`compare/_utils/battle.ts`, pure)
+- **Compare battle**: `/compare?a=&with=` (any two members, `a` defaults to me) scores 1 pt per
+  metric/record won (`compare/_utils/battle.ts`, pure); Discord publish only when I'm in the duel
+- **Radars**: `/charts` ranks members by radar area; scores relative to the group's best
+  (`src/lib/stats/radar.ts`, pure), shared `RunnerRadar` (also on `/compare`), periods in `stats/periods.ts`
 - **Announcements**: `AnnouncementDialog` (`src/components/ui/`) — one-time « nouveauté » modal,
   seen-state in `localStorage` (`announcement:{id}`); e2e fixture `skipAnnouncements` marks ids as seen
 - **Stats**: week summary, highlights, streaks, milestones for the right panels → `src/lib/stats/`

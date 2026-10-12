@@ -31,6 +31,7 @@ describe("computeBattle", () => {
         longestKm: 15,
       },
       weekly: [],
+      buckets: [],
       records: [
         { distance: "KM_5", me: 1500, other: 1400 },
         ...noRecords.slice(2),
@@ -49,6 +50,7 @@ describe("computeBattle", () => {
       me: { ...totals, pace: 300 },
       other: totals,
       weekly: [],
+      buckets: [],
       records: [{ distance: "KM_10", me: 2800, other: null }],
     })
     expect(b.score).toEqual({ me: 0, other: 0 })
@@ -61,6 +63,7 @@ describe("computeBattle", () => {
       me: totals,
       other: { ...totals, runs: 2, distanceKm: 10, longestKm: 6 },
       weekly: [],
+      buckets: [],
       records: [],
     })
     expect(b.score).toEqual({ me: 0, other: 3 })

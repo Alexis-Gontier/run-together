@@ -6,6 +6,7 @@ export const ROUTES = {
   LEADERBOARD: "/leaderboard",
   BADGES: "/badges",
   COMPARE: "/compare",
+  CHARTS: "/charts",
   SETTINGS: "/settings",
   LANDING: "/",
   ONBOARDING: "/onboarding",
@@ -23,6 +24,7 @@ export const ROUTE_LABELS: Record<string, string> = {
   [ROUTES.LEADERBOARD]: "Classement",
   [ROUTES.BADGES]: "Badges",
   [ROUTES.COMPARE]: "Comparer",
+  [ROUTES.CHARTS]: "Radars",
   [ROUTES.SETTINGS]: "Paramètres",
 }
 

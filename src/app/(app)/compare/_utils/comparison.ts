@@ -2,24 +2,16 @@ import { startOfWeek } from "date-fns"
 import type { PRDistance } from "@/generated/prisma/enums"
 import { prisma } from "@/lib/db/prisma"
 import { computePace } from "@/lib/runs/pace"
-import { getPeriodRange } from "@/lib/utils/date"
+import { type StatsPeriod, statsPeriodRange } from "@/lib/stats/periods"
 
-export type ComparePeriod = "1m" | "3m" | "6m" | "1y" | "all"
-
-export const COMPARE_PERIODS: { value: ComparePeriod; label: string }[] = [
-  { value: "1m", label: "30 j" },
-  { value: "3m", label: "3 mois" },
-  { value: "6m", label: "6 mois" },
-  { value: "1y", label: "1 an" },
-  { value: "all", label: "Tout" },
+/** Tranches de distance (km) du graphique « Distances courues ». */
+const BUCKETS = [
+  { label: "< 5 km", max: 5 },
+  { label: "5–10 km", max: 10 },
+  { label: "10–15 km", max: 15 },
+  { label: "15–21 km", max: 21 },
+  { label: "21 km +", max: Number.POSITIVE_INFINITY },
 ]
-
-const DAYS: Record<string, number> = {
-  "1m": 30,
-  "3m": 91,
-  "6m": 182,
-  "1y": 365,
-}
 
 export type Totals = {
   distanceKm: number
@@ -54,9 +46,9 @@ function totals(runs: RunRow[]): Totals {
 export async function getComparison(
   meId: string,
   otherId: string,
-  period: ComparePeriod,
+  period: StatsPeriod,
 ) {
-  const { currentStart, currentEnd } = getPeriodRange(period, DAYS)
+  const { start: currentStart, end: currentEnd } = statsPeriodRange(period)
   const [runs, records] = await Promise.all([
     prisma.run.findMany({
       where: {
@@ -97,8 +89,15 @@ export async function getComparison(
     records.find((r) => r.userId === userId && r.distance === distance)
       ?.duration ?? null
 
+  const bucketOf = (meters: number) =>
+    BUCKETS.findIndex((b) => meters / 1000 < b.max)
+  const buckets = BUCKETS.map((b) => ({ label: b.label, me: 0, other: 0 }))
+  for (const r of runs)
+    buckets[bucketOf(r.distance)][r.userId === meId ? "me" : "other"]++
+
   return {
     me: totals(mine),
+    buckets,
     other: totals(theirs),
     weekly: [...weeks.values()]
       .sort((a, b) => a.week.localeCompare(b.week))
