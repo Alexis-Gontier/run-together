@@ -135,6 +135,40 @@ function fitFile(points: Point[]): Uint8Array {
   return encoder.close()
 }
 
+/**
+ * Façon Zepp sans GPS : records sans position ni distance, seulement la vitesse (constante,
+ * un point par seconde) ; la distance réelle n'est que dans la session.
+ */
+function speedOnlyFitFile(start: string, seconds: number, speed: number) {
+  const t0 = new Date(start)
+  const encoder = new Encoder()
+  const fileId: FileIdMesg = {
+    type: "activity",
+    manufacturer: "zepp",
+    product: 93,
+    timeCreated: t0,
+  }
+  encoder.onMesg(Profile.MesgNum.FILE_ID, fileId)
+  for (let i = 0; i <= seconds; i++) {
+    const record: RecordMesg = {
+      timestamp: new Date(t0.getTime() + i * 1000),
+      speed: i === 0 ? 0 : speed,
+      cadence: 80,
+    }
+    encoder.onMesg(Profile.MesgNum.RECORD, record)
+  }
+  const session: SessionMesg = {
+    timestamp: new Date(t0.getTime() + seconds * 1000),
+    startTime: t0,
+    sport: "running",
+    subSport: "street",
+    totalDistance: seconds * speed,
+    totalCalories: 210,
+  }
+  encoder.onMesg(Profile.MesgNum.SESSION, session)
+  return encoder.close()
+}
+
 function write(path: string, data: string | Uint8Array) {
   const full = join(FILES, path)
   mkdirSync(dirname(full), { recursive: true })
@@ -150,6 +184,7 @@ write(
 )
 write("single/loop.tcx", tcx(loop("2025-03-09T07:00:00Z", 850, 3)))
 write("single/loop.fit", fitFile(loop("2025-03-16T07:00:00Z", 900, 3)))
+write("single/no-gps.fit", speedOnlyFitFile("2025-05-11T06:00:00Z", 1000, 3))
 write(
   "single/drop.gpx",
   gpx("Boucle déposée e2e", "running", loop("2025-03-23T07:00:00Z", 700, 3)),
@@ -205,4 +240,13 @@ write(
 write(
   "nearby/second.gpx",
   gpx("Seconde e2e", "running", loop("2025-05-04T07:15:00Z", 950, 3)),
+)
+// Deuxième paire, pour choisir parmi plusieurs courses à confirmer.
+write(
+  "nearby/third.gpx",
+  gpx("Troisième e2e", "running", loop("2025-05-18T07:00:00Z", 800, 3)),
+)
+write(
+  "nearby/fourth.gpx",
+  gpx("Quatrième e2e", "running", loop("2025-05-18T07:20:00Z", 1000, 3)),
 )

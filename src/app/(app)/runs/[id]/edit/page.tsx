@@ -61,7 +61,14 @@ export default async function EditRunPage({ params }: EditRunPageProps) {
 
   return (
     <div className="p-4">
-      <RunForm run={editable} />
+      <RunForm
+        run={editable}
+        user={{
+          name: user.name,
+          username: user.username ?? null,
+          image: user.image ?? null,
+        }}
+      />
     </div>
   )
 }

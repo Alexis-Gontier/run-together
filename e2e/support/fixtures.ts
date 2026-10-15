@@ -109,9 +109,14 @@ export const test = base.extend<Fixtures & AutoFixtures>({
 export { expect }
 
 /** Importe un fichier depuis l'onglet « Importer un fichier » de `/runs/new`. */
+/** Page d'une course : `/runs/{id}`, mais pas `/runs/new` (sinon l'attente passe avant la redirection). */
+export const RUN_PAGE = /\/runs\/(?!new$)[^/]+$/
+
+/** Zone de dépôt de `/runs/new` : un fichier → formulaire, plusieurs → import en masse. */
+export const dropInput = (page: Page) => page.getByLabel(/Fichiers de course/)
+
 export async function importSingleFile(page: Page, file: string) {
-  await page.getByRole("tab", { name: "Importer un fichier" }).click()
-  await page.getByLabel(/Glisse ton fichier/).setInputFiles(file)
+  await dropInput(page).setInputFiles(file)
 }
 
 /** Décoche « Publier sur Discord » (décoché par défaut pour l'utilisateur e2e, on s'en assure). */

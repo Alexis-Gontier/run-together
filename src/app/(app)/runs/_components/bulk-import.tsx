@@ -4,16 +4,23 @@ import {
   CheckCircle2,
   CircleAlert,
   Copy,
-  FilesIcon,
-  FolderOpen,
+  FileText,
   Loader2,
   MinusCircle,
+  RotateCcw,
+  TriangleAlert,
   XCircle,
 } from "lucide-react"
 import Link from "next/link"
 import { useAction } from "next-safe-action/hooks"
 import { useEffect, useRef, useState } from "react"
 import { toast } from "sonner"
+import {
+  Alert,
+  AlertAction,
+  AlertDescription,
+  AlertTitle,
+} from "@/components/shadcn-ui/alert"
 import { Button } from "@/components/shadcn-ui/button"
 import { Progress } from "@/components/shadcn-ui/progress"
 import { runRoute } from "@/lib/constants/routes"
@@ -25,24 +32,20 @@ import {
   type ArchiveActivity,
   parseActivitiesCsv,
 } from "../_utils/strava-archive"
+import { CSV_NAME, isTrackFile, MAX_TRACK_BYTES } from "../_utils/track-files"
+import { type NearbyRun, NearbyRunComparison } from "./nearby-run-comparison"
 
-const MAX_BYTES = 15 * 1024 * 1024
-const ACCEPTED = /\.(gpx|tcx|fit)(\.gz)?$/i
-const CSV_NAME = "activities.csv"
-
-type NearbyRun = {
-  id: string
-  name: string | null
-  date: Date
-  distance: number
-}
 type Job = { file: File; meta?: ArchiveActivity }
 
 type Row = { name: string } & (
   | { status: "pending" | "running" }
   | { status: "imported"; runId: string; date: Date; distance: number }
   | { status: "duplicate" }
-  | { status: "conflict"; nearby: NearbyRun }
+  | {
+      status: "conflict"
+      nearby: NearbyRun
+      candidate: { date: Date; distance: number; duration: number }
+    }
   | { status: "skipped"; message: string }
   | { status: "error"; message: string }
 )
@@ -53,13 +56,18 @@ type Row = { name: string } & (
  * appel serveur et les courses reprennent leur titre Strava. Doublons et autres sports sont ignorés ;
  * une course proche d'une existante attend confirmation. Badges évalués une fois, à la fin.
  */
-export function BulkImport() {
+export function BulkImport({
+  files,
+  onRestart,
+}: {
+  files: File[]
+  onRestart: () => void
+}) {
   const [rows, setRows] = useState<Row[]>([])
   const [csvCount, setCsvCount] = useState<number | null>(null)
   const [running, setRunning] = useState(false)
-  const [dragging, setDragging] = useState(false)
-  const folderRef = useRef<HTMLInputElement>(null)
   const jobs = useRef<Job[]>([])
+  const started = useRef(false)
   const { executeAsync } = useAction(importTrackFileAction)
   const badges = useAction(evaluateMyBadgesAction)
 
@@ -76,9 +84,16 @@ export function BulkImport() {
   ).length
   const count = (s: Row["status"]) => rows.filter((r) => r.status === s).length
 
-  async function run(fileList: FileList | null) {
-    const all = Array.from(fileList ?? [])
-    const files = all.filter((f) => ACCEPTED.test(f.name))
+  // Lancé une seule fois avec les fichiers déposés (le ref résiste au double effet de StrictMode).
+  // biome-ignore lint/correctness/useExhaustiveDependencies: import unique, au montage
+  useEffect(() => {
+    if (started.current) return
+    started.current = true
+    run(files)
+  }, [])
+
+  async function run(all: File[]) {
+    const files = all.filter((f) => isTrackFile(f.name))
     if (files.length === 0) {
       toast.error("Aucun fichier .gpx, .tcx ou .fit (compressé ou non).")
       return
@@ -121,7 +136,7 @@ export function BulkImport() {
         })
         continue
       }
-      if (file.size > MAX_BYTES) {
+      if (file.size > MAX_TRACK_BYTES) {
         setRow(i, {
           name,
           status: "error",
@@ -162,153 +177,137 @@ export function BulkImport() {
 
   const conflicts = rows.flatMap((r, i) => (r.status === "conflict" ? [i] : []))
 
+  /** Garde la course déjà enregistrée : le fichier n'est pas importé. */
+  const ignore = (indices: number[]) =>
+    setRows((prev) =>
+      prev.map((r, i) =>
+        indices.includes(i) && r.status === "conflict"
+          ? { name: r.name, status: "skipped", message: "Existante gardée" }
+          : r,
+      ),
+    )
+
   return (
-    <div className="space-y-4">
-      <label
-        onDragOver={(e) => {
-          e.preventDefault()
-          setDragging(true)
-        }}
-        onDragLeave={() => setDragging(false)}
-        onDrop={(e) => {
-          e.preventDefault()
-          setDragging(false)
-          if (!running) run(e.dataTransfer.files)
-        }}
-        className={cn(
-          "flex cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed px-6 py-12 text-center transition-colors",
-          dragging
-            ? "border-primary bg-primary/5"
-            : "border-border hover:bg-muted/40",
-          running && "pointer-events-none opacity-70",
-        )}
-      >
-        <input
-          type="file"
-          multiple
-          accept=".gpx,.tcx,.fit,.gz,.csv"
-          className="sr-only"
-          disabled={running}
-          onChange={(e) => {
-            run(e.target.files)
-            e.target.value = ""
-          }}
-        />
-        <FilesIcon className="size-8 text-muted-foreground" />
-        <div className="space-y-1">
-          <p className="font-medium text-sm">
-            Glisse plusieurs fichiers ici, ou clique pour les choisir
-          </p>
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex min-w-0 flex-col gap-0.5">
+          <h2 className="font-semibold text-lg tracking-tight">
+            {running ? "Import en cours…" : "Import terminé"} · {done}/
+            {rows.length}
+          </h2>
           <p className="text-muted-foreground text-xs">
-            .gpx, .tcx, .fit, compressés en .gz ou non. Les courses sont
-            enregistrées directement, sans publication sur Discord ; les
-            doublons et les autres sports sont ignorés.
+            {count("imported")} importée(s) · {count("duplicate")} doublon(s) ·{" "}
+            {count("conflict")} à confirmer · {count("skipped")} ignorée(s) ·{" "}
+            {count("error")} erreur(s)
           </p>
         </div>
-      </label>
-
-      <div className="flex flex-col items-center gap-1.5 text-center">
         <Button
           type="button"
           variant="outline"
-          className="cursor-pointer"
+          size="sm"
+          className="shrink-0 cursor-pointer"
           disabled={running}
-          onClick={() => folderRef.current?.click()}
+          onClick={onRestart}
         >
-          <FolderOpen />
-          Choisir le dossier de l&apos;archive Strava
+          <RotateCcw data-icon="inline-start" />
+          Nouvel import
         </Button>
-        <p className="text-muted-foreground text-xs">
-          Avec <code>{CSV_NAME}</code>, vélo et marche sont écartés et tes
-          courses gardent leur titre Strava.
-        </p>
-        <input
-          ref={folderRef}
-          type="file"
-          className="sr-only"
-          tabIndex={-1}
-          disabled={running}
-          // Attribut non standard (pas typé par React) : sélection d'un dossier entier.
-          {...({ webkitdirectory: "" } as object)}
-          onChange={(e) => {
-            run(e.target.files)
-            e.target.value = ""
-          }}
-        />
       </div>
+      <Progress value={rows.length ? (done / rows.length) * 100 : 0} />
 
-      {rows.length > 0 && (
-        <div className="space-y-3">
-          {csvCount != null && (
-            <p className="rounded-md bg-muted/50 px-3 py-2 text-muted-foreground text-xs">
-              {csvCount > 0
-                ? `${CSV_NAME} lu : ${csvCount} activités, types et titres Strava appliqués.`
-                : `${CSV_NAME} trouvé mais aucune activité reconnue : import sans titres ni types.`}
-            </p>
-          )}
-          <div className="space-y-1.5">
-            <div className="flex flex-wrap justify-between gap-x-3 text-muted-foreground text-xs">
-              <span>
-                {running ? "Import en cours…" : "Import terminé"} · {done}/
-                {rows.length}
-              </span>
-              <span>
-                {count("imported")} importée(s) · {count("duplicate")}{" "}
-                doublon(s) · {count("conflict")} à confirmer ·{" "}
-                {count("skipped")} ignorée(s) · {count("error")} erreur(s)
-              </span>
-            </div>
-            <Progress value={(done / rows.length) * 100} className="h-1.5" />
-          </div>
+      {csvCount != null && (
+        <Alert>
+          <FileText />
+          <AlertDescription>
+            {csvCount > 0
+              ? `${CSV_NAME} lu : ${csvCount} activités, types et titres Strava appliqués.`
+              : `${CSV_NAME} trouvé mais aucune activité reconnue : import sans titres ni types.`}
+          </AlertDescription>
+        </Alert>
+      )}
 
-          {conflicts.length > 0 && !running && (
-            <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-amber-500/40 bg-amber-500/5 px-3 py-2 text-xs">
-              <span>
-                {conflicts.length} course(s) démarrent à moins de 30 min
-                d&apos;une course déjà enregistrée : sans doute la même, mesurée
-                autrement. Vérifie avant d&apos;importer.
-              </span>
-              <Button
-                size="sm"
-                variant="outline"
-                className="cursor-pointer"
-                onClick={() => importAll(conflicts, true)}
+      {conflicts.length > 0 && !running && (
+        <Alert className="fade-in animate-in">
+          <TriangleAlert />
+          <AlertTitle>{conflicts.length} course(s) à confirmer</AlertTitle>
+          <AlertDescription>
+            Elles démarrent à moins de 30 min d&apos;une course déjà enregistrée
+            : sans doute la même, mesurée autrement. Compare et choisis ligne
+            par ligne, ou d&apos;un coup.
+          </AlertDescription>
+          <AlertAction className="flex gap-2">
+            <Button
+              size="sm"
+              variant="ghost"
+              className="cursor-pointer"
+              onClick={() => ignore(conflicts)}
+            >
+              Tout ignorer
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              className="cursor-pointer"
+              onClick={() => importAll(conflicts, true)}
+            >
+              Tout importer
+            </Button>
+          </AlertAction>
+        </Alert>
+      )}
+
+      <ul className="divide-y overflow-hidden rounded-xl border text-sm">
+        {rows.map((r, i) => (
+          <li
+            // biome-ignore lint/suspicious/noArrayIndexKey: deux fichiers peuvent porter le même nom
+            key={i}
+            data-status={r.status}
+            className="flex flex-col gap-2 px-4 py-2.5 transition-colors data-[status=conflict]:bg-muted/40"
+          >
+            <div className="flex items-center gap-3">
+              <RowIcon status={r.status} />
+              <span
+                className={cn(
+                  "min-w-0 flex-1 truncate",
+                  r.status === "skipped" && "text-muted-foreground",
+                )}
               >
-                Tout importer quand même
-              </Button>
-            </div>
-          )}
-
-          <ul className="divide-y rounded-lg border text-sm">
-            {rows.map((r, i) => (
-              // biome-ignore lint/suspicious/noArrayIndexKey: deux fichiers peuvent porter le même nom
-              <li key={i} className="flex items-center gap-3 px-3 py-2">
-                <RowIcon status={r.status} />
-                <span
-                  className={cn(
-                    "min-w-0 flex-1 truncate",
-                    r.status === "skipped" && "text-muted-foreground",
-                  )}
-                >
-                  {r.name}
-                </span>
-                <RowDetail row={r} />
-                {r.status === "conflict" && (
+                {r.name}
+              </span>
+              <RowDetail row={r} />
+              {r.status === "conflict" && (
+                <div className="flex shrink-0 gap-1">
                   <Button
                     size="sm"
                     variant="ghost"
-                    className="h-7 shrink-0 cursor-pointer px-2 text-xs"
+                    className="h-7 cursor-pointer px-2 text-xs"
+                    disabled={running}
+                    onClick={() => ignore([i])}
+                  >
+                    Ignorer
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-7 cursor-pointer px-2 text-xs"
                     disabled={running}
                     onClick={() => importAll([i], true)}
                   >
                     Importer
                   </Button>
-                )}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+                </div>
+              )}
+            </div>
+            {r.status === "conflict" && (
+              <NearbyRunComparison
+                candidate={r.candidate}
+                existing={r.nearby}
+                className="pl-7"
+              />
+            )}
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }
@@ -347,16 +346,7 @@ function RowDetail({ row }: { row: Row }) {
     case "duplicate":
       return <span className={cls}>Déjà enregistrée</span>
     case "conflict":
-      return (
-        <Link
-          href={runRoute(row.nearby.id)}
-          target="_blank"
-          className={cn(cls, "max-w-1/2 truncate hover:underline")}
-        >
-          Proche de « {row.nearby.name ?? "course"} » ·{" "}
-          {formatRunDistance(row.nearby.distance)} km
-        </Link>
-      )
+      return <span className={cn(cls, "text-amber-600")}>À confirmer</span>
     case "skipped":
       return (
         <span className={cn(cls, "max-w-1/2 truncate")}>

@@ -6,6 +6,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/shadcn-ui/accordion"
+import { cn } from "@/lib/utils/cn"
 
 type Guide = { id: string; title: string; steps: ReactNode[]; note?: ReactNode }
 
@@ -104,21 +105,18 @@ const OTHERS: Guide = {
   ],
 }
 
-const GUIDES = {
-  single: [STRAVA_ONE, AMAZFIT, GARMIN, OTHERS],
-  bulk: [STRAVA_ALL, GARMIN, AMAZFIT, OTHERS],
-}
+const GUIDES = [STRAVA_ONE, STRAVA_ALL, AMAZFIT, GARMIN, OTHERS]
 
 /** Aide repliable : comment récupérer ses fichiers selon la montre ou l'appli. */
-export function TrackFileHelp({ mode }: { mode: "single" | "bulk" }) {
+export function TrackFileHelp({ className }: { className?: string }) {
   return (
-    <div className="rounded-lg border px-4">
-      <p className="flex items-center gap-2 pt-4 font-medium text-sm">
+    <section className={cn("rounded-xl border bg-card px-4", className)}>
+      <h2 className="flex items-center gap-2 pt-4 font-semibold text-sm">
         <CircleHelp className="size-4 text-muted-foreground" />
         Comment récupérer mes fichiers ?
-      </p>
+      </h2>
       <Accordion type="single" collapsible>
-        {GUIDES[mode].map((g) => (
+        {GUIDES.map((g) => (
           <AccordionItem key={g.id} value={g.id}>
             <AccordionTrigger className="cursor-pointer">
               {g.title}
@@ -135,6 +133,6 @@ export function TrackFileHelp({ mode }: { mode: "single" | "bulk" }) {
           </AccordionItem>
         ))}
       </Accordion>
-    </div>
+    </section>
   )
 }
