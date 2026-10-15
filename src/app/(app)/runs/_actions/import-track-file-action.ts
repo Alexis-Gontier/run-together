@@ -68,7 +68,15 @@ export const importTrackFileAction = authActionClient
     }
     if (!meta.force) {
       const nearby = await findNearbyRun(user.id, values.date)
-      if (nearby) return { status: "conflict" as const, nearby }
+      if (nearby) {
+        // La nouvelle course est renvoyée avec l'existante : le client les compare.
+        const candidate = {
+          date: values.date,
+          distance: values.distance,
+          duration: values.duration,
+        }
+        return { status: "conflict" as const, nearby, candidate }
+      }
     }
 
     const { run } = await recordRun(values, {

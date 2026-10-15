@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import { getRequiredUser } from "@/lib/auth/auth-session"
-import { RunForm } from "../_components/run-form"
+import { NewRunFlow } from "../_components/new-run-flow"
 
 export const metadata: Metadata = {
   title: "Ajouter une course",
@@ -11,7 +11,14 @@ export default async function NewRunPage() {
 
   return (
     <div className="p-4">
-      <RunForm defaultPublish={user.publishRunsToDiscord ?? true} />
+      <NewRunFlow
+        user={{
+          name: user.name,
+          username: user.username ?? null,
+          image: user.image ?? null,
+        }}
+        defaultPublish={user.publishRunsToDiscord ?? true}
+      />
     </div>
   )
 }

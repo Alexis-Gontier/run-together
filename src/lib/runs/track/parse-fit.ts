@@ -19,8 +19,15 @@ type FitRecord = {
   heartRate?: number
   cadence?: number
   distance?: number
+  speed?: number
+  enhancedSpeed?: number
 }
-type FitSession = { sport?: string; subSport?: string; totalCalories?: number }
+type FitSession = {
+  sport?: string
+  subSport?: string
+  totalCalories?: number
+  totalDistance?: number
+}
 type FitFileId = {
   manufacturer?: string
   garminProduct?: string
@@ -60,8 +67,9 @@ export function parseFit(bytes: Uint8Array): ParsedTrack {
   const session = (messages.sessionMesgs as FitSession[] | undefined)?.[0]
   const sportType = fitSportType(session)
 
+  const records = (messages.recordMesgs as FitRecord[] | undefined) ?? []
   const points: TrackPoint[] = []
-  for (const r of (messages.recordMesgs as FitRecord[] | undefined) ?? []) {
+  for (const r of records) {
     if (!r.timestamp) continue
     const point: TrackPoint = {
       lat: deg(r.positionLat),
@@ -84,6 +92,8 @@ export function parseFit(bytes: Uint8Array): ParsedTrack {
     }
     points.push(point)
   }
+  if (!points.some((p) => p.dist != null || p.lat != null))
+    distanceFromSpeed(points, records, session?.totalDistance)
 
   return {
     points,
@@ -93,5 +103,35 @@ export function parseFit(bytes: Uint8Array): ParsedTrack {
       (messages.fileIdMesgs as FitFileId[] | undefined)?.[0],
     ),
     calories: session?.totalCalories ?? null,
+  }
+}
+
+/**
+ * Zepp sans GPS (tapis, GPS coupé) : les records n'ont ni position ni distance, seulement la
+ * vitesse. On l'intègre en distance cumulée, recalée sur le total de la session s'il existe.
+ */
+function distanceFromSpeed(
+  points: TrackPoint[],
+  records: FitRecord[],
+  totalDistance: number | undefined,
+) {
+  const speedAt = new Map<number, number>()
+  for (const r of records) {
+    const v = r.enhancedSpeed ?? r.speed
+    if (r.timestamp && v != null) speedAt.set(r.timestamp.getTime(), v)
+  }
+  if (speedAt.size === 0 || points.length === 0) return
+
+  let dist = 0
+  points[0].dist = 0
+  for (let i = 1; i < points.length; i++) {
+    const t = points[i].time.getTime()
+    const dt = (t - points[i - 1].time.getTime()) / 1000
+    dist += (speedAt.get(t) ?? 0) * dt
+    points[i].dist = dist
+  }
+  if (totalDistance && dist > 0) {
+    const scale = totalDistance / dist
+    for (const p of points) p.dist = (p.dist ?? 0) * scale
   }
 }

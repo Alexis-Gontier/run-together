@@ -22,6 +22,9 @@ Indépendant de la source : formulaire, fichier GPX/FIT et Strava passent tous p
 - **`removeRun(userId, runId)` est le seul chemin de suppression** : il recalcule les records
   (la course en portait peut-être). Une mise à jour de distance/durée recalcule aussi.
 - `findDuplicateRun` : même user, départ ±2 min, distance ±2 % → refus côté action.
+- `findNearbyRun` : départ ±30 min, distance libre → confirmation (formulaire : « Enregistrer
+  quand même », `force` ; masse : Ignorer / Importer par ligne ou « Tout … »), comparaison
+  côte à côte via `NearbyRunComparison` (`runs/_components/`).
 - Bornes de `recordRunInputSchema` : 0,1–300 km, allure 2'00"–20'00"/km, date ≤ maintenant.
   **Les données Strava ne passent pas par ce schéma** (`stravaActivityToRunInput`) : l'historique
   peut sortir des bornes et doit rester importable.
@@ -40,6 +43,8 @@ tel quel).
 - Splits interpolés au kilomètre (durée, FC, dénivelé net) ; dernier split gardé s'il fait ≥ 50 m.
 - Distance cumulée de l'appareil (FIT `distance`) préférée au GPS quand elle existe.
 - `summaryPolyline` = tracé sous-échantillonné à ≤ 200 points (miniatures).
+- FIT sans GPS ni distance (Zepp, tapis) : distance intégrée depuis `speed`, recalée sur
+  `session.totalDistance` ; pas de tracé (« Sans tracé GPS » dans le formulaire).
 - `.gz` décompressé avant parsing (archive Strava : `activities/*.fit.gz`).
 - FIT Amazfit : deux records par seconde (position / distance) fusionnés ; une distance répétée
   (rafraîchie toutes les 2-3 s) n'est pas prise pour une pause.

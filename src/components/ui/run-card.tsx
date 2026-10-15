@@ -31,7 +31,10 @@ export type RunWithUser = Run & {
 // ── RunCardHeader ─────────────────────────────────────────────────────────────
 
 interface RunCardHeaderProps {
-  run: RunWithUser
+  // Champs lus seulement : une course pas encore enregistrée (aperçu du formulaire) convient aussi.
+  run: Pick<Run, "date" | "name" | "deviceName" | "source"> & {
+    user: RunWithUser["user"]
+  }
   prs?: PRDistance[]
   className?: string
 }

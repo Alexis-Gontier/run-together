@@ -161,6 +161,12 @@ export function findNearbyRun(userId: string, date: Date) {
         lte: new Date(date.getTime() + NEARBY_WINDOW_MS),
       },
     },
-    select: { id: true, name: true, date: true, distance: true },
+    select: {
+      id: true,
+      name: true,
+      date: true,
+      distance: true,
+      duration: true,
+    },
   })
 }
