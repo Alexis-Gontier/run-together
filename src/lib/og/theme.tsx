@@ -29,6 +29,148 @@ export const OG_BADGE_TONES: Record<BadgeCategory, string> = {
 
 export const OG_HEADER_H = 88
 
+/** Badges dessinés sur l'image `badge.unlocked` ; au-delà, « + N autres badges ». */
+export const OG_MAX_BADGES = 5
+
+/** Lignes du classement mensuel dessinées sur l'image ; l'embed liste la suite. */
+export const OG_MAX_RANKING = 8
+
+/** Records dessinés sur l'image du récap ; l'embed liste la suite. */
+export const OG_MAX_RECAP_RECORDS = 3
+
+export const OG_PODIUM = ["#fbbf24", "#d4d4d8", "#d97706"]
+
+/** Largeur du panneau de gauche des images de groupe (récap, classement). */
+export const OG_SUMMARY_W = 430
+
+/**
+ * Panneau de gauche des images de groupe, dans l'esprit du panneau de l'image de course :
+ * période en haut, total de km en gros, puis courses et coureurs.
+ */
+export function OgSummaryPanel({
+  eyebrow,
+  period,
+  totalDistance,
+  totalRuns,
+  runners,
+}: {
+  eyebrow: string
+  period: string
+  totalDistance: number
+  totalRuns: number
+  runners: number
+}) {
+  const stats = [
+    { value: totalRuns, unit: totalRuns > 1 ? "courses" : "course" },
+    { value: runners, unit: runners > 1 ? "coureurs" : "coureur" },
+  ]
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        width: `${OG_SUMMARY_W}px`,
+        height: "100%",
+        padding: "44px",
+        borderRight: `1px solid ${OG.border}`,
+        backgroundImage: `linear-gradient(160deg, ${OG.brand}1a, ${OG.bg} 55%)`,
+      }}
+    >
+      <span
+        style={{
+          color: OG.brand,
+          fontSize: "15px",
+          fontWeight: 700,
+          letterSpacing: "3px",
+        }}
+      >
+        {eyebrow}
+      </span>
+      <span
+        style={{
+          marginTop: "10px",
+          color: OG.text,
+          fontSize: "30px",
+          fontWeight: 700,
+        }}
+      >
+        {period}
+      </span>
+
+      <div
+        style={{
+          display: "flex",
+          alignItems: "baseline",
+          gap: "10px",
+          marginTop: "auto",
+        }}
+      >
+        <span
+          style={{
+            color: OG.brand,
+            fontSize: "120px",
+            fontWeight: 800,
+            lineHeight: 1,
+            letterSpacing: "-4px",
+          }}
+        >
+          {(totalDistance / 1000).toFixed(1).replace(".", ",")}
+        </span>
+        <span style={{ color: OG.muted, fontSize: "34px", fontWeight: 600 }}>
+          km
+        </span>
+      </div>
+
+      <div
+        style={{
+          display: "flex",
+          gap: "48px",
+          marginTop: "28px",
+          paddingTop: "24px",
+          borderTop: `1px solid ${OG.border}`,
+        }}
+      >
+        {stats.map((s) => (
+          <div
+            key={s.unit}
+            style={{ display: "flex", alignItems: "baseline", gap: "8px" }}
+          >
+            <span style={{ color: OG.text, fontSize: "36px", fontWeight: 700 }}>
+              {s.value}
+            </span>
+            <span style={{ color: OG.muted, fontSize: "20px" }}>{s.unit}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** Pastille de rang : or, argent, bronze sur le podium, neutre ensuite. */
+export function OgRank({ rank, size = 36 }: { rank: number; size?: number }) {
+  const tone = OG_PODIUM[rank - 1]
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        flexShrink: 0,
+        width: `${size}px`,
+        height: `${size}px`,
+        borderRadius: "9999px",
+        backgroundColor: tone ? `${tone}26` : OG.border,
+        border: `2px solid ${tone ?? OG.border}`,
+        color: tone ?? OG.muted,
+        fontSize: `${Math.round(size * 0.45)}px`,
+        fontWeight: 800,
+      }}
+    >
+      {rank}
+    </div>
+  )
+}
+
 /** En-tête : titre + sous-titre à gauche, marque + date à droite. */
 export function OgHeader({
   title,

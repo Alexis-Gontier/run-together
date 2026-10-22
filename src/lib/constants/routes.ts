@@ -52,3 +52,14 @@ export const ogRunRoute = (runId: string) => `/api/og/run/${runId}`
 export const ogBadgesRoute = (runId: string) => `/api/og/badges/${runId}`
 /** `week` = lundi de la semaine, `yyyy-MM-dd` (UTC). */
 export const ogRecapRoute = (week: string) => `/api/og/recap/${week}`
+/** `month` = `yyyy-MM` (UTC). */
+export const ogRankingRoute = (month: string) => `/api/og/ranking/${month}`
+/** `day` (yyyy-MM-dd) : jour de publication, qui fige la période et l'URL en cache chez Discord. */
+export const ogBattleRoute = (
+  aId: string,
+  bId: string,
+  period: string,
+  day: string,
+) => `/api/og/battle/${aId}/${bId}/${period}?at=${day}`
+export const ogMemberRoute = (userId: string) => `/api/og/member/${userId}`
+export const ogTestRoute = "/api/og/test"

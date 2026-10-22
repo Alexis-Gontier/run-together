@@ -1,18 +1,13 @@
 "use server"
 
 import { format } from "date-fns"
+import { env } from "@/env"
 import { prisma } from "@/lib/db/prisma"
 import { buildBattleResultMessage } from "@/lib/discord/embeds/battle-result"
 import { notify } from "@/lib/discord/notify"
 import { authActionClient } from "@/lib/safe-action/auth-action-client"
-import { displayName } from "@/lib/utils/display-name"
 import { publishBattleSchema } from "../_schemas/battle-schema"
-import {
-  BATTLE_PERIOD_PHRASES,
-  type BattleLine,
-  computeBattle,
-  type Side,
-} from "../_utils/battle"
+import { computeBattle } from "../_utils/battle"
 import { getComparison } from "../_utils/comparison"
 
 /** Recalcule la bataille côté serveur et publie le résultat (une fois par jour et par duel). */
@@ -21,38 +16,29 @@ export const publishBattleAction = authActionClient
   .action(async ({ parsedInput, ctx: { user } }) => {
     const other = await prisma.user.findFirst({
       where: { username: parsedInput.with.toLowerCase(), id: { not: user.id } },
-      select: { id: true, name: true, username: true, displayUsername: true },
+      select: { id: true },
     })
     if (!other) return { error: "Membre introuvable." }
 
+    const now = new Date()
+    const day = format(now, "yyyy-MM-dd")
     const battle = computeBattle(
-      await getComparison(user.id, other.id, parsedInput.period),
+      await getComparison(user.id, other.id, parsedInput.period, now),
     )
-    const wins = (side: Side) =>
-      [...battle.stats, ...battle.records]
-        .filter((l) => l.winner === side)
-        .map(
-          (l: BattleLine) =>
-            `${l.label} — ${side === "me" ? l.meText : l.otherText}`,
-        )
 
     const pair = [user.id, other.id].sort().join(":")
     const status = await notify({
       type: "battle.result",
-      dedupeKey: `battle.result:${pair}:${parsedInput.period}:${format(new Date(), "yyyy-MM-dd")}`,
-      message: buildBattleResultMessage({
-        a: {
-          name: displayName(user),
-          points: battle.score.me,
-          wins: wins("me"),
+      dedupeKey: `battle.result:${pair}:${parsedInput.period}:${day}`,
+      message: buildBattleResultMessage(
+        {
+          a: { id: user.id, points: battle.score.me },
+          b: { id: other.id, points: battle.score.other },
+          period: parsedInput.period,
+          day,
         },
-        b: {
-          name: displayName(other),
-          points: battle.score.other,
-          wins: wins("other"),
-        },
-        periodPhrase: BATTLE_PERIOD_PHRASES[parsedInput.period],
-      }),
+        env.NEXT_PUBLIC_APP_URL,
+      ),
     })
     if (status === "skipped")
       return {

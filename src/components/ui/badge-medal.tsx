@@ -40,7 +40,8 @@ import {
 import type { BadgeCategory, BadgeIcon } from "@/lib/badges/catalog"
 import { cn } from "@/lib/utils/cn"
 
-const ICONS: Record<BadgeIcon, LucideIcon> = {
+// Exporté pour les images OG (`/api/og/badges`), qui dessinent les mêmes icônes.
+export const BADGE_ICONS: Record<BadgeIcon, LucideIcon> = {
   route: Route,
   footprints: Footprints,
   mountain: Mountain,
@@ -104,7 +105,7 @@ export function BadgeMedal({
   locked?: boolean
   size?: "sm" | "md"
 }) {
-  const Icon = ICONS[icon]
+  const Icon = BADGE_ICONS[icon]
   return (
     <span
       className={cn(

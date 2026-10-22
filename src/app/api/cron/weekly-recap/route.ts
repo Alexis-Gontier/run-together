@@ -1,9 +1,9 @@
-import { format } from "date-fns"
 import { type NextRequest, NextResponse } from "next/server"
 import { env } from "@/env"
 import { buildWeeklyRecapMessage } from "@/lib/discord/embeds/weekly-recap"
 import { notify } from "@/lib/discord/notify"
 import { getWeeklyRecapData, previousWeek } from "@/lib/discord/recap"
+import { parisDay } from "@/lib/utils/paris"
 
 /**
  * Cron Vercel du lundi matin (voir vercel.json). Vercel envoie
@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
 
   const status = await notify({
     type: "recap.weekly",
-    dedupeKey: `recap.weekly:${format(start, "yyyy-MM-dd")}`,
+    dedupeKey: `recap.weekly:${parisDay(start)}`,
     message,
   })
   return NextResponse.json({ status })

@@ -1,36 +1,29 @@
-import { profileRoute } from "@/lib/constants/routes"
-import { displayName } from "@/lib/utils/display-name"
+import { ogMemberRoute, ogTestRoute } from "@/lib/constants/routes"
 import type { DiscordMessage } from "../client"
-import { BRAND_COLOR, FOOTER } from "./common"
+import { BRAND_COLOR } from "./common"
 
+/** Image seule : avatar, bannière et « Bienvenue … ! » sont dessinés dessus. */
 export function buildMemberJoinedMessage(
-  user: { name: string; username: string | null },
+  userId: string,
   appUrl: string,
 ): DiscordMessage {
   const base = appUrl.replace(/\/$/, "")
   return {
     embeds: [
-      {
-        color: BRAND_COLOR,
-        title: `👋 Bienvenue ${displayName(user)} !`,
-        url: user.username ? base + profileRoute(user.username) : undefined,
-        description: `**${displayName(user)}** vient de rejoindre Run Together. Première sortie à suivre !`,
-        footer: FOOTER,
-        timestamp: new Date().toISOString(),
-      },
+      { color: BRAND_COLOR, image: { url: base + ogMemberRoute(userId) } },
     ],
   }
 }
 
-export function buildTestMessage(adminName: string): DiscordMessage {
+/** Image seule : si elle s'affiche, le webhook et les images OG fonctionnent. */
+export function buildTestMessage(appUrl: string): DiscordMessage {
+  const base = appUrl.replace(/\/$/, "")
   return {
     embeds: [
       {
         color: BRAND_COLOR,
-        title: "✅ Webhook opérationnel",
-        description: `Message de test envoyé par **${adminName}** depuis l'administration.`,
-        footer: FOOTER,
-        timestamp: new Date().toISOString(),
+        // Discord met les images en cache par URL : le test doit vraiment la recharger.
+        image: { url: `${base}${ogTestRoute}?t=${Date.now()}` },
       },
     ],
   }

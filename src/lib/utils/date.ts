@@ -5,13 +5,14 @@ export function isNavItemNew(newUntil?: Date): boolean {
 export function getPeriodRange(
   period: string,
   daysMap: Record<string, number>,
+  at: Date = new Date(),
 ): {
   currentStart: Date
   currentEnd: Date
   prevStart: Date | null
   prevEnd: Date | null
 } {
-  const now = new Date()
+  const now = new Date(at)
   now.setUTCHours(23, 59, 59, 999)
 
   if (period === "all") {

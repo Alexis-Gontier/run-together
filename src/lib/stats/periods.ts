@@ -23,7 +23,8 @@ export function parseStatsPeriod(raw: string | undefined): StatsPeriod {
   return STATS_PERIODS.find((p) => p.value === raw)?.value ?? "3m"
 }
 
-export function statsPeriodRange(period: StatsPeriod) {
-  const { currentStart, currentEnd } = getPeriodRange(period, DAYS)
+/** Fenêtre de la période, terminée le jour `at` (aujourd'hui par défaut). */
+export function statsPeriodRange(period: StatsPeriod, at?: Date) {
+  const { currentStart, currentEnd } = getPeriodRange(period, DAYS, at)
   return { start: currentStart, end: currentEnd }
 }

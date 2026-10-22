@@ -1,32 +1,29 @@
 import { describe, expect, it } from "vitest"
 import { buildBattleResultMessage } from "./battle-result"
+import { BRAND_COLOR, RECORD_COLOR } from "./common"
+
+const build = (a: number, b: number) =>
+  buildBattleResultMessage(
+    {
+      a: { id: "u1", points: a },
+      b: { id: "u2", points: b },
+      period: "3m",
+      day: "2026-10-22",
+    },
+    "https://run-together.app/",
+  ).embeds[0]
 
 describe("buildBattleResultMessage", () => {
-  it("annonce le vainqueur et le score", () => {
-    const e = buildBattleResultMessage({
-      a: { name: "Alice", points: 6, wins: ["Distance — 120,5 km"] },
-      b: { name: "Bob", points: 3, wins: [] },
-      periodPhrase: "sur 3 mois",
-    }).embeds[0]
-    expect(e.title).toBe("⚔️ Bataille : Alice vs Bob")
-    expect(e.description).toBe("**Alice** l'emporte sur 3 mois : **6 – 3**")
-    expect(e.fields?.[0]).toMatchObject({
-      name: "🏆 Alice — 6 pts",
-      value: "Distance — 120,5 km",
-    })
-    expect(e.fields?.[1]).toMatchObject({
-      name: "Bob — 3 pts",
-      value: "Aucun point",
+  it("n'envoie que l'image du duel", () => {
+    expect(build(6, 3)).toEqual({
+      color: RECORD_COLOR,
+      image: {
+        url: "https://run-together.app/api/og/battle/u1/u2/3m?at=2026-10-22",
+      },
     })
   })
 
-  it("gère le match nul", () => {
-    const e = buildBattleResultMessage({
-      a: { name: "Alice", points: 1, wins: ["Courses — 4"] },
-      b: { name: "Bob", points: 1, wins: ["Dénivelé — 200 m"] },
-      periodPhrase: "depuis toujours",
-    }).embeds[0]
-    expect(e.description).toBe("**Match nul** depuis toujours : **1 – 1**")
-    expect(e.fields?.[0].name).toBe("Alice — 1 pt")
+  it("reste vert sur un match nul", () => {
+    expect(build(1, 1).color).toBe(BRAND_COLOR)
   })
 })

@@ -49,6 +49,9 @@ importers:
       fast-xml-parser:
         specifier: ^5.11.1
         version: 5.11.1
+      lucide:
+        specifier: 1.48.0
+        version: 1.48.0
       lucide-react:
         specifier: ^1.48.0
         version: 1.48.0(react@19.3.0)
@@ -94,6 +97,9 @@ importers:
       shadcn:
         specifier: ^4.21.0
         version: 4.21.0(supports-color@7.2.0)(typescript@7.0.2)
+      sharp:
+        specifier: 0.35.4
+        version: 0.35.4(@types/node@24.13.6)
       sonner:
         specifier: ^2.0.8
         version: 2.0.8(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
@@ -4092,6 +4098,9 @@ packages:
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
+  lucide@1.48.0:
+    resolution: {integrity: sha512-8FglIlGkcIItJjJfLUiqAufUCdbtnTOsdG02/fxXd4oIt+NrcrEVH8t0ZcKAfawxHckorO5qJ9XDfnJbdf0TOg==}
+
   magic-string@0.30.21:
     resolution: {integrity: sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==}
 
@@ -5914,8 +5923,7 @@ snapshots:
       valibot: 1.4.2(typescript@7.0.2)
       zod: 4.6.5
 
-  '@img/colour@1.1.0':
-    optional: true
+  '@img/colour@1.1.0': {}
 
   '@img/sharp-darwin-arm64@0.35.4':
     optionalDependencies:
@@ -8820,6 +8828,8 @@ snapshots:
     dependencies:
       react: 19.3.0
 
+  lucide@1.48.0: {}
+
   magic-string@0.30.21:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.6.0
@@ -9672,7 +9682,6 @@ snapshots:
       '@img/sharp-win32-ia32': 0.35.4
       '@img/sharp-win32-x64': 0.35.4
       '@types/node': 24.13.6
-    optional: true
 
   shebang-command@2.0.0:
     dependencies:

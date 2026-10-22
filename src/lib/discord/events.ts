@@ -3,41 +3,45 @@ import { prisma } from "@/lib/db/prisma"
 import type { NewPR } from "@/lib/runs/personal-records"
 import { displayName } from "@/lib/utils/display-name"
 import { buildBadgeUnlockedMessage } from "./embeds/badge-unlocked"
+import { buildRecordSetMessage } from "./embeds/record-set"
 import { buildRunCreatedMessage } from "./embeds/run-created"
 import { buildMemberJoinedMessage, buildTestMessage } from "./embeds/simple"
-import { notify } from "./notify"
+import { holdNotification, notify } from "./notify"
 
-/** Nouvelle course (formulaire, fichier ou Strava). Appelé par `recordRun`. */
+/**
+ * Nouvelle course (formulaire, fichier ou Strava). Appelé par `recordRun`. L'image de la
+ * course d'abord, puis, si elle bat des records, un message texte qui les annonce.
+ */
 export async function notifyRunCreated(runId: string, newPRs: NewPR[]) {
   try {
-    const run = await prisma.run.findUniqueOrThrow({
-      where: { id: runId },
-      include: {
-        user: { select: { name: true, username: true, image: true } },
-      },
-    })
-    await notify({
+    const runStatus = await notify({
       type: "run.created",
       dedupeKey: `run.created:${runId}`,
       message: buildRunCreatedMessage(
-        {
-          runId,
-          runName: run.name || "Course sans nom",
-          userName: displayName(run.user),
-          username: run.user.username,
-          userImage: run.user.image,
-          distance: run.distance,
-          duration: run.duration,
-          pace: run.pace,
-          elevation: run.elevation,
-          heartRateAvg: run.heartRateAvg,
-          date: run.date,
-          sportType: run.sportType,
-          newPRs,
-        },
+        { runId, hasRecords: newPRs.length > 0 },
         env.NEXT_PUBLIC_APP_URL,
       ),
     })
+    if (newPRs.length === 0) return
+
+    const run = await prisma.run.findUniqueOrThrow({
+      where: { id: runId },
+      select: {
+        user: { select: { name: true, username: true, displayUsername: true } },
+      },
+    })
+    const records = {
+      type: "record.set",
+      dedupeKey: `record.set:${runId}`,
+      message: buildRecordSetMessage(displayName(run.user), newPRs),
+    }
+    // Sans l'image de la course, le texte des records arriverait seul : il attend un renvoi.
+    if (runStatus === "failed")
+      await holdNotification(
+        records,
+        "Non envoyé : la course a échoué. Renvoyer la course, puis ce message.",
+      )
+    else await notify(records)
   } catch (err) {
     console.error("[discord] run.created failed", runId, err)
   }
@@ -46,14 +50,10 @@ export async function notifyRunCreated(runId: string, newPRs: NewPR[]) {
 /** Fin d'onboarding d'un nouveau membre. */
 export async function notifyMemberJoined(userId: string) {
   try {
-    const user = await prisma.user.findUniqueOrThrow({
-      where: { id: userId },
-      select: { name: true, username: true },
-    })
     await notify({
       type: "member.joined",
       dedupeKey: `member.joined:${userId}`,
-      message: buildMemberJoinedMessage(user, env.NEXT_PUBLIC_APP_URL),
+      message: buildMemberJoinedMessage(userId, env.NEXT_PUBLIC_APP_URL),
     })
   } catch (err) {
     console.error("[discord] member.joined failed", userId, err)
@@ -61,35 +61,25 @@ export async function notifyMemberJoined(userId: string) {
 }
 
 /** Bouton « Tester le webhook » de l'admin : clé unique à chaque clic. */
-export function sendTestNotification(adminName: string) {
+export function sendTestNotification() {
   return notify({
     type: "test",
     dedupeKey: `test:${Date.now()}`,
-    message: buildTestMessage(adminName),
+    message: buildTestMessage(env.NEXT_PUBLIC_APP_URL),
   })
 }
 
 /** Badges débloqués par une course : un seul message, dédoublonné par course. */
 export async function notifyBadgesUnlocked(
-  userId: string,
   runId: string,
   badges: { emoji: string; name: string; description: string }[],
 ) {
   if (badges.length === 0) return
   try {
-    const user = await prisma.user.findUniqueOrThrow({
-      where: { id: userId },
-      select: { name: true, username: true },
-    })
     await notify({
       type: "badge.unlocked",
       dedupeKey: `badge.unlocked:${runId}`,
-      message: buildBadgeUnlockedMessage(
-        user,
-        badges,
-        runId,
-        env.NEXT_PUBLIC_APP_URL,
-      ),
+      message: buildBadgeUnlockedMessage(runId, env.NEXT_PUBLIC_APP_URL),
     })
   } catch (err) {
     console.error("[discord] badge.unlocked failed", runId, err)

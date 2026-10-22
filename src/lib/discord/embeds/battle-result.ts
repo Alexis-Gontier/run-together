@@ -1,44 +1,29 @@
+import { ogBattleRoute } from "@/lib/constants/routes"
+import type { StatsPeriod } from "@/lib/stats/periods"
 import type { DiscordMessage } from "../client"
-import { BRAND_COLOR, FOOTER, RECORD_COLOR } from "./common"
-
-type Fighter = {
-  name: string
-  points: number
-  /** Lignes gagnées, avec la valeur : « Distance — 120,5 km ». */
-  wins: string[]
-}
+import { BRAND_COLOR, RECORD_COLOR } from "./common"
 
 export type BattleResultData = {
-  a: Fighter
-  b: Fighter
-  /** « sur 3 mois », « depuis toujours »… */
-  periodPhrase: string
+  /** `a` = celui qui publie. */
+  a: { id: string; points: number }
+  b: { id: string; points: number }
+  period: StatsPeriod
+  /** Jour de publication (yyyy-MM-dd) : la période se termine ce jour-là. */
+  day: string
 }
 
-const pts = (n: number) => `${n} pt${n > 1 ? "s" : ""}`
-
+/** Image seule : noms, score et chaque ligne du duel sont dessinés dessus. */
 export function buildBattleResultMessage(
   data: BattleResultData,
+  appUrl: string,
 ): DiscordMessage {
+  const base = appUrl.replace(/\/$/, "")
   const { a, b } = data
-  const winner = a.points === b.points ? null : a.points > b.points ? a : b
-  const field = (f: Fighter) => ({
-    name: `${f === winner ? "🏆 " : ""}${f.name} — ${pts(f.points)}`,
-    value: f.wins.length > 0 ? f.wins.join("\n") : "Aucun point",
-    inline: true,
-  })
-
   return {
     embeds: [
       {
-        color: winner ? RECORD_COLOR : BRAND_COLOR,
-        title: `⚔️ Bataille : ${a.name} vs ${b.name}`,
-        description: `${
-          winner ? `**${winner.name}** l'emporte` : "**Match nul**"
-        } ${data.periodPhrase} : **${a.points} – ${b.points}**`,
-        fields: [field(a), field(b)],
-        footer: FOOTER,
-        timestamp: new Date().toISOString(),
+        color: a.points === b.points ? BRAND_COLOR : RECORD_COLOR,
+        image: { url: base + ogBattleRoute(a.id, b.id, data.period, data.day) },
       },
     ],
   }
