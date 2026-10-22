@@ -98,7 +98,7 @@ export async function recordRun(
   // Après les records : deux badges dépendent du nombre de records détenus.
   try {
     const badges = await evaluateBadges(userId, run.id)
-    if (options.notify) await notifyBadgesUnlocked(userId, run.id, badges)
+    if (options.notify) await notifyBadgesUnlocked(run.id, badges)
   } catch (err) {
     console.error("[badges] evaluate failed", run.id, err)
   }

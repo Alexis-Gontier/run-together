@@ -1,17 +1,27 @@
 import { prisma } from "@/lib/db/prisma"
 import { displayName } from "@/lib/utils/display-name"
+import { parisMidnight, parisParts } from "@/lib/utils/paris"
 import type { MonthlyRankingData } from "./embeds/monthly-ranking"
 
+/** Mois `yyyy-MM` (heure de Paris) : du 1er 00:00 au 1er du mois suivant (exclu). */
+export function monthRange(yearMonth: string): { start: Date; end: Date } {
+  const [year, month] = yearMonth.split("-").map(Number)
+  return {
+    start: parisMidnight(year, month, 1),
+    end: parisMidnight(year, month + 1, 1),
+  }
+}
+
 /**
- * Mois écoulé : du 1er 00:00 **UTC** du mois précédent au 1er du mois courant (exclu).
- * Le cron tourne le 1er au matin, donc « le mois précédent ».
+ * Mois écoulé : du 1er 00:00 du mois précédent au 1er du mois courant (exclu), heure de
+ * Paris. Le cron tourne le 1er au matin, donc « le mois précédent ».
  */
 export function previousMonth(now: Date): { start: Date; end: Date } {
-  const end = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1))
-  const start = new Date(
-    Date.UTC(end.getUTCFullYear(), end.getUTCMonth() - 1, 1),
-  )
-  return { start, end }
+  const { year, month } = parisParts(now)
+  return {
+    start: parisMidnight(year, month - 1, 1),
+    end: parisMidnight(year, month, 1),
+  }
 }
 
 /** Classement du groupe à la distance sur la fenêtre ; `null` si personne n'a couru. */

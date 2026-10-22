@@ -3,6 +3,7 @@ import { env } from "@/env"
 import { buildMonthlyRankingMessage } from "@/lib/discord/embeds/monthly-ranking"
 import { notify } from "@/lib/discord/notify"
 import { getMonthlyRankingData, previousMonth } from "@/lib/discord/ranking"
+import { parisDay } from "@/lib/utils/paris"
 
 /**
  * Cron Vercel du 1er du mois (voir vercel.json). Vercel envoie
@@ -26,12 +27,12 @@ export async function GET(request: NextRequest) {
   const data = await getMonthlyRankingData(start, end)
   if (!data) return NextResponse.json({ status: "empty", start, end })
 
-  const message = buildMonthlyRankingMessage(data)
+  const message = buildMonthlyRankingMessage(data, env.NEXT_PUBLIC_APP_URL)
   if (dry) return NextResponse.json({ status: "dry", message })
 
   const status = await notify({
     type: "ranking.monthly",
-    dedupeKey: `ranking.monthly:${start.toISOString().slice(0, 7)}`,
+    dedupeKey: `ranking.monthly:${parisDay(start).slice(0, 7)}`,
     message,
   })
   return NextResponse.json({ status })

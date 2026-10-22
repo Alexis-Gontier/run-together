@@ -1,25 +1,33 @@
 import { prisma } from "@/lib/db/prisma"
 import { computePace } from "@/lib/runs/pace"
 import { displayName } from "@/lib/utils/display-name"
+import { parisMidnight, parisParts } from "@/lib/utils/paris"
 import type { WeeklyRecapData } from "./embeds/weekly-recap"
 
-const DAY = 24 * 60 * 60 * 1000
 // Allure moyenne retenue seulement au-delà de 10 km cumulés dans la semaine.
 const BEST_PACE_MIN_DISTANCE = 10_000
 
+/** Semaine qui commence le lundi `monday` (`yyyy-MM-dd`, jour de Paris). */
+export function weekFromMonday(monday: string): { start: Date; end: Date } {
+  const [year, month, day] = monday.split("-").map(Number)
+  return {
+    start: parisMidnight(year, month, day),
+    end: parisMidnight(year, month, day + 7),
+  }
+}
+
 /**
- * Semaine écoulée : du lundi 00:00 **UTC** précédent au lundi courant 00:00 UTC (exclu).
- * Le cron tourne le lundi matin, donc « la semaine précédente ».
+ * Semaine écoulée : du lundi 00:00 précédent au lundi courant 00:00 (exclu), heure de
+ * Paris. Le cron tourne le lundi matin, donc « la semaine précédente ».
  */
 export function previousWeek(now: Date): { start: Date; end: Date } {
-  const today = Date.UTC(
-    now.getUTCFullYear(),
-    now.getUTCMonth(),
-    now.getUTCDate(),
-  )
-  const daysSinceMonday = (new Date(today).getUTCDay() + 6) % 7
-  const end = new Date(today - daysSinceMonday * DAY)
-  return { start: new Date(end.getTime() - 7 * DAY), end }
+  const { year, month, day } = parisParts(now)
+  const daysSinceMonday =
+    (new Date(Date.UTC(year, month - 1, day)).getUTCDay() + 6) % 7
+  return {
+    start: parisMidnight(year, month, day - daysSinceMonday - 7),
+    end: parisMidnight(year, month, day - daysSinceMonday),
+  }
 }
 
 /** Statistiques du groupe sur la fenêtre ; `null` si personne n'a couru. */
@@ -34,7 +42,7 @@ export async function getWeeklyRecapData(
         distance: true,
         duration: true,
         userId: true,
-        user: { select: { name: true, username: true } },
+        user: { select: { name: true, username: true, displayUsername: true } },
       },
     }),
     prisma.personalRecord.findMany({
@@ -42,7 +50,7 @@ export async function getWeeklyRecapData(
       select: {
         distance: true,
         duration: true,
-        user: { select: { name: true, username: true } },
+        user: { select: { name: true, username: true, displayUsername: true } },
       },
       orderBy: { duration: "asc" },
     }),

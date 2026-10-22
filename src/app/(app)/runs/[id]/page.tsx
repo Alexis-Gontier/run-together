@@ -39,7 +39,8 @@ export default async function RunDetailPage({ params }: RunDetailPageProps) {
         />
         {(run.polyline ?? run.summaryPolyline) && (
           <div className="px-4 pt-1">
-            <div className="h-72 overflow-hidden rounded-t-lg border border-b-0 sm:h-96">
+            {/* Même format que la miniature du fil (`RouteThumbnail`). */}
+            <div className="aspect-600/220 overflow-hidden rounded-t-lg border border-b-0">
               <RunMapLazy
                 polyline={run.polyline ?? run.summaryPolyline ?? ""}
               />

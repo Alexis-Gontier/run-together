@@ -13,6 +13,7 @@ export const metadata: Metadata = {
 
 const TYPE_LABELS: Record<string, string> = {
   "run.created": "Course",
+  "record.set": "Record",
   "member.joined": "Bienvenue",
   "recap.weekly": "Récap",
   "badge.unlocked": "Badge",

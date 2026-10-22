@@ -42,13 +42,17 @@ function totals(runs: RunRow[]): Totals {
   }
 }
 
-/** Mes chiffres face à ceux d'un autre membre sur la période, + records (tous temps). */
+/**
+ * Mes chiffres face à ceux d'un autre membre sur la période, + records (tous temps).
+ * `at` : jour de fin de la période (image d'une bataille publiée ce jour-là).
+ */
 export async function getComparison(
   meId: string,
   otherId: string,
   period: StatsPeriod,
+  at?: Date,
 ) {
-  const { start: currentStart, end: currentEnd } = statsPeriodRange(period)
+  const { start: currentStart, end: currentEnd } = statsPeriodRange(period, at)
   const [runs, records] = await Promise.all([
     prisma.run.findMany({
       where: {

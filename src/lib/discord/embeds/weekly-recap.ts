@@ -2,13 +2,15 @@ import { format, subDays } from "date-fns"
 import { fr } from "date-fns/locale"
 import type { PRDistance } from "@/generated/prisma/enums"
 import { ogRecapRoute } from "@/lib/constants/routes"
+import { OG_MAX_RECAP_RECORDS } from "@/lib/og/theme"
 import { PR_DISTANCE_LABELS } from "@/lib/runs/pr-display"
-import { formatRunDurationDisplay, formatRunPace } from "@/lib/utils/run"
+import { parisCalendarDate, parisDay } from "@/lib/utils/paris"
+import { formatRunDurationDisplay } from "@/lib/utils/run"
 import type { DiscordEmbed, DiscordMessage } from "../client"
-import { BRAND_COLOR, FOOTER, km } from "./common"
+import { BRAND_COLOR } from "./common"
 
 export type WeeklyRecapData = {
-  weekStart: Date // lundi 00:00 inclus
+  weekStart: Date // lundi 00:00 (heure de Paris) inclus
   weekEnd: Date // lundi suivant 00:00 exclu
   totalDistance: number
   totalRuns: number
@@ -19,23 +21,19 @@ export type WeeklyRecapData = {
   records: { name: string; distance: PRDistance; duration: number }[]
 }
 
-const MEDALS = ["🥇", "🥈", "🥉"]
-
-function podium(lines: string[]): string {
-  return lines
-    .map((line, i) => `${MEDALS[i] ?? `${i + 1}.`} ${line}`)
-    .join("\n")
-}
-
 /** Jour du mois à la française : « 1er », puis « 2 », « 3 »… */
 function day(date: Date): string {
   const d = date.getDate()
   return d === 1 ? "1er" : String(d)
 }
 
-/** « du 21 au 27 septembre », « du 1er au 7 juin », « du 29 septembre au 5 octobre ». */
-export function formatWeekRange(start: Date, end: Date): string {
-  const last = subDays(end, 1)
+/**
+ * « du 21 au 27 septembre », « du 1er au 7 juin », « du 29 septembre au 5 octobre ».
+ * Jours de Paris, quel que soit le fuseau du serveur.
+ */
+export function formatWeekRange(weekStart: Date, weekEnd: Date): string {
+  const start = parisCalendarDate(weekStart)
+  const last = parisCalendarDate(subDays(weekEnd, 1))
   const sameMonth = start.getMonth() === last.getMonth()
   const from = sameMonth
     ? day(start)
@@ -43,59 +41,56 @@ export function formatWeekRange(start: Date, end: Date): string {
   return `du ${from} au ${day(last)} ${format(last, "MMMM", { locale: fr })}`
 }
 
+// Discord refuse tout le message si la valeur d'un champ dépasse 1024 caractères.
+const FIELD_MAX = 1024
+
+/** Lignes jointes tant qu'elles tiennent dans un champ, la fin résumée en « … et N autres ». */
+export function fitField(lines: string[]): string {
+  const kept: string[] = []
+  for (const [i, line] of lines.entries()) {
+    const isLast = i === lines.length - 1
+    const more = `… et ${lines.length - i} autres`
+    const next = [...kept, line].join("\n")
+    if (next.length + (isLast ? 0 : more.length + 1) > FIELD_MAX)
+      return [...kept, more].join("\n")
+    kept.push(line)
+  }
+  return kept.join("\n")
+}
+
+/**
+ * Image seule : totaux, podiums distance et régularité, meilleure allure et records. Le
+ * texte ne liste que les records qu'elle n'a pas la place de montrer.
+ */
 export function buildWeeklyRecapMessage(
   data: WeeklyRecapData,
   appUrl: string,
 ): DiscordMessage {
   const base = appUrl.replace(/\/$/, "")
-  const fields: NonNullable<DiscordEmbed["fields"]> = []
-
-  if (data.topDistance.length > 0)
-    fields.push({
-      name: "Distance",
-      value: podium(
-        data.topDistance.map((r) => `${r.name} — ${km(r.distance)} km`),
-      ),
-      inline: true,
-    })
-  if (data.topRuns.length > 0)
-    fields.push({
-      name: "Régularité",
-      value: podium(
-        data.topRuns.map(
-          (r) => `${r.name} — ${r.runs} course${r.runs > 1 ? "s" : ""}`,
-        ),
-      ),
-      inline: true,
-    })
-  if (data.bestPace)
-    fields.push({
-      name: "⚡ Meilleure allure",
-      value: `${data.bestPace.name} — ${formatRunPace(data.bestPace.pace)} /km sur ${km(data.bestPace.distance)} km`,
-    })
-  if (data.records.length > 0)
-    fields.push({
-      name: "🏆 Records de la semaine",
-      value: data.records
-        .map(
-          (r) =>
-            `${r.name} — **${PR_DISTANCE_LABELS[r.distance]}** en ${formatRunDurationDisplay(r.duration)}`,
-        )
-        .join("\n"),
-    })
+  const rest = data.records.slice(OG_MAX_RECAP_RECORDS)
+  const fields: NonNullable<DiscordEmbed["fields"]> =
+    rest.length > 0
+      ? [
+          {
+            name: "🏆 Autres records de la semaine",
+            value: fitField(
+              rest.map(
+                (r) =>
+                  `${r.name} — **${PR_DISTANCE_LABELS[r.distance]}** en ${formatRunDurationDisplay(r.duration)}`,
+              ),
+            ),
+          },
+        ]
+      : []
 
   return {
     embeds: [
       {
         color: BRAND_COLOR,
-        title: `📊 Récap de la semaine ${formatWeekRange(data.weekStart, data.weekEnd)}`,
-        description: `**${data.runners}** coureur${data.runners > 1 ? "s" : ""} · **${data.totalRuns}** course${data.totalRuns > 1 ? "s" : ""} · **${km(data.totalDistance)} km** au total`,
         fields,
         image: {
-          url: base + ogRecapRoute(data.weekStart.toISOString().slice(0, 10)),
+          url: base + ogRecapRoute(parisDay(data.weekStart)),
         },
-        footer: FOOTER,
-        timestamp: data.weekEnd.toISOString(),
       },
     ],
   }

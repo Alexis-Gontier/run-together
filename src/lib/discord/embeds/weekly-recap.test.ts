@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest"
 import {
   buildWeeklyRecapMessage,
+  fitField,
   formatWeekRange,
   type WeeklyRecapData,
 } from "./weekly-recap"
@@ -45,36 +46,45 @@ describe("formatWeekRange", () => {
 })
 
 describe("buildWeeklyRecapMessage", () => {
-  it("résume la semaine du groupe", () => {
+  it("n'envoie que l'image quand elle montre tous les records", () => {
     const e = buildWeeklyRecapMessage(data, "https://run-together.app/")
       .embeds[0]
-    expect(e.title).toBe("📊 Récap de la semaine du 21 au 27 septembre")
+    expect(e.title).toBeUndefined()
+    expect(e.description).toBeUndefined()
+    expect(e.footer).toBeUndefined()
+    expect(e.fields).toEqual([])
     expect(e.image?.url).toBe(
       "https://run-together.app/api/og/recap/2026-09-21",
     )
-    expect(e.description).toBe(
-      "**3** coureurs · **9** courses · **84,30 km** au total",
-    )
-    const byName = Object.fromEntries(
-      (e.fields ?? []).map((f) => [f.name, f.value]),
-    )
-    expect(byName.Distance).toBe("🥇 Alice — 42,30 km\n🥈 Bob — 30,00 km")
-    expect(byName.Régularité).toBe("🥇 Alice — 5 courses")
-    expect(byName["⚡ Meilleure allure"]).toBe("Bob — 4'28\" /km sur 30,00 km")
-    expect(byName["🏆 Records de la semaine"]).toBe(
-      "Alice — **10 km** en 48'10\"",
-    )
   })
 
-  it("omet les sections vides", () => {
+  it("liste en texte les records au-delà de l'image", () => {
+    const record = data.records[0]
     const e = buildWeeklyRecapMessage(
       {
         ...data,
-        bestPace: null,
-        records: [],
+        records: [record, record, record, { ...record, name: "Bob" }],
       },
       "https://run-together.app",
     ).embeds[0]
-    expect(e.fields?.map((f) => f.name)).toEqual(["Distance", "Régularité"])
+    expect(e.fields).toEqual([
+      {
+        name: "🏆 Autres records de la semaine",
+        value: "Bob — **10 km** en 48'10\"",
+      },
+    ])
+  })
+})
+
+describe("fitField", () => {
+  it("garde tout quand ça tient", () => {
+    expect(fitField(["a", "b"])).toBe("a\nb")
+  })
+
+  it("résume la fin sans dépasser 1024 caractères", () => {
+    const lines = Array.from({ length: 40 }, (_, i) => `${i}`.padEnd(40, "x"))
+    const value = fitField(lines)
+    expect(value.length).toBeLessThanOrEqual(1024)
+    expect(value).toMatch(/… et \d+ autres$/)
   })
 })

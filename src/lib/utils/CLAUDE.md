@@ -17,8 +17,14 @@
 
 ## `date.ts` — Date utilities
 
-- `getPeriodRange(period, daysMap)` — returns `{ currentStart, currentEnd, prevStart, prevEnd }`. Pass `"all"` to get unbounded range (prevStart/prevEnd are null). Used by progress and leaderboard.
+- `getPeriodRange(period, daysMap, at?)` — window ending on day `at` (today by default); returns `{ currentStart, currentEnd, prevStart, prevEnd }`. Pass `"all"` to get unbounded range (prevStart/prevEnd are null). Used by progress and leaderboard.
 - `isNavItemNew(newUntil?)` — returns true if current date is before `newUntil`.
+
+## `paris.ts` — Paris time
+
+- `parisParts(date)`, `parisDay(date)` (`yyyy-MM-dd`), `parisMidnight(y, m, d)` (instant),
+  `parisCalendarDate(date)` (Paris day at noon UTC, safe for date-fns `format` on any server TZ).
+  Used by the Discord recap / ranking windows.
 
 ## `route.ts` — Route utilities
 
