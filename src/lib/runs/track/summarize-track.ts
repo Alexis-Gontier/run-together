@@ -8,9 +8,12 @@ import {
   type TrackSummary,
 } from "./types"
 
-// Un segment est une pause s'il avance à moins de 0,5 m/s, ou s'il couvre plus de 30 s pour
-// moins de 10 m (montre en pause automatique qui reprend plus loin).
+// Pause : segments consécutifs à moins de 0,5 m/s totalisant au moins 10 s, ou un segment de
+// plus de 30 s pour moins de 10 m (montre en pause automatique qui reprend plus loin).
+// Une seconde isolée sans distance n'en est pas une : Garmin répète souvent la position
+// précédente et rattrape la distance au point suivant.
 const PAUSE_SPEED = 0.5
+const PAUSE_MIN_S = 10
 const PAUSE_GAP_S = 30
 const PAUSE_GAP_M = 10
 // Le D+ ne compte qu'au-delà de 3 m d'écart avec le dernier palier : lisse le bruit altimétrique.
@@ -43,14 +46,27 @@ export function summarizeTrack(parsed: ParsedTrack): TrackSummary {
   let splitHr: number[] = []
   let nextKm = 1000
 
-  for (let i = 1; i < pts.length; i++) {
-    const a = pts[i - 1]
-    const b = pts[i]
+  const segs = pts.slice(1).flatMap((b, i) => {
+    const a = pts[i]
     const dt = (b.time.getTime() - a.time.getTime()) / 1000
-    if (dt <= 0) continue
-
+    if (dt <= 0) return []
     const d = segmentDistance(a, b)
-    const paused = d / dt < PAUSE_SPEED || (dt > PAUSE_GAP_S && d < PAUSE_GAP_M)
+    return [{ a, b, dt, d, slow: d / dt < PAUSE_SPEED, paused: false }]
+  })
+  for (let i = 0; i < segs.length; ) {
+    if (!segs[i].slow) {
+      i++
+      continue
+    }
+    let j = i
+    let still = 0
+    while (j < segs.length && segs[j].slow) still += segs[j++].dt
+    if (still >= PAUSE_MIN_S) for (let k = i; k < j; k++) segs[k].paused = true
+    i = j
+  }
+
+  for (const { a, b, dt, d, paused: slowStop } of segs) {
+    const paused = slowStop || (dt > PAUSE_GAP_S && d < PAUSE_GAP_M)
 
     if (!paused) {
       // Interpoler chaque frontière de kilomètre franchie dans ce segment.
