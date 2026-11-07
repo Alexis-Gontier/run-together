@@ -38,7 +38,9 @@ Indépendant de la source : formulaire, fichier GPX/FIT et Strava passent tous p
 (`@garmin/fitsdk`) → `summarizeTrack`. Erreurs attendues : `TrackParseError` (message FR montré
 tel quel).
 
-- Pause : segment < 0,5 m/s, ou > 30 s pour < 10 m. Exclue du temps **et** de la distance.
+- Pause : segments consécutifs < 0,5 m/s totalisant ≥ 10 s, ou segment > 30 s pour < 10 m.
+  Exclue du temps **et** de la distance. Une seconde isolée sans distance n'est pas une pause
+  (GPX Garmin : position répétée ~1 s sur 10, rattrapée au point suivant).
 - D+ : hystérésis de 3 m.
 - Splits interpolés au kilomètre (durée, FC, dénivelé net) ; dernier split gardé s'il fait ≥ 50 m.
 - Distance cumulée de l'appareil (FIT `distance`) préférée au GPS quand elle existe.

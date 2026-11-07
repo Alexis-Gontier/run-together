@@ -48,6 +48,46 @@ describe("summarizeTrack", () => {
     expect(s.duration).toBeGreaterThanOrEqual(599)
   })
 
+  it("ne prend pas un point GPS répété une seconde pour une pause (Garmin)", () => {
+    // 1 point/s à 3 m/s, mais une position sur dix répète la précédente : la distance de
+    // cette seconde est rattrapée au point suivant.
+    const t0 = Date.UTC(2026, 8, 20, 7, 0, 0)
+    const pts: TrackPoint[] = Array.from({ length: 601 }, (_, i) => {
+      const at = i % 10 === 5 ? i - 1 : i
+      return {
+        lat: 45 + (at * 3) / M_PER_DEG_LAT,
+        lng: 5,
+        ele: null,
+        time: new Date(t0 + i * 1000),
+        hr: null,
+        cad: null,
+        dist: null,
+      }
+    })
+    const s = summarizeTrack(parsed(pts))
+    expect(s.duration).toBe(600)
+    expect(s.distance).toBeGreaterThan(1795)
+  })
+
+  it("exclut un vrai arrêt d'au moins 10 s, pas un ralentissement bref", () => {
+    // 1 point/s à 3 m/s, arrêt de 15 s après 100 s, puis 3 s quasi immobile après 300 s.
+    const t0 = Date.UTC(2026, 8, 20, 7, 0, 0)
+    let pos = 0
+    const pts: TrackPoint[] = Array.from({ length: 501 }, (_, i) => {
+      if (i > 0 && !(i > 100 && i <= 115) && !(i > 300 && i <= 303)) pos += 3
+      return {
+        lat: 45 + pos / M_PER_DEG_LAT,
+        lng: 5,
+        ele: null,
+        time: new Date(t0 + i * 1000),
+        hr: null,
+        cad: null,
+        dist: null,
+      }
+    })
+    expect(summarizeTrack(parsed(pts)).duration).toBe(485)
+  })
+
   it("distance, durée et splits d'une ligne de 3 km", () => {
     const s = summarizeTrack(parsed(line(101)))
     expect(s.distance).toBeGreaterThan(2990)
