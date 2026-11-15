@@ -14,26 +14,37 @@ import { holdNotification, notify } from "./notify"
  */
 export async function notifyRunCreated(runId: string, newPRs: NewPR[]) {
   try {
+    const run = await prisma.run.findUniqueOrThrow({
+      where: { id: runId },
+      select: {
+        distance: true,
+        duration: true,
+        pace: true,
+        user: { select: { name: true, username: true, displayUsername: true } },
+      },
+    })
+    const userName = displayName(run.user)
     const runStatus = await notify({
       type: "run.created",
       dedupeKey: `run.created:${runId}`,
       message: buildRunCreatedMessage(
-        { runId, hasRecords: newPRs.length > 0 },
+        {
+          runId,
+          hasRecords: newPRs.length > 0,
+          userName,
+          distance: run.distance,
+          duration: run.duration,
+          pace: run.pace,
+        },
         env.NEXT_PUBLIC_APP_URL,
       ),
     })
     if (newPRs.length === 0) return
 
-    const run = await prisma.run.findUniqueOrThrow({
-      where: { id: runId },
-      select: {
-        user: { select: { name: true, username: true, displayUsername: true } },
-      },
-    })
     const records = {
       type: "record.set",
       dedupeKey: `record.set:${runId}`,
-      message: buildRecordSetMessage(displayName(run.user), newPRs),
+      message: buildRecordSetMessage(userName, newPRs),
     }
     // Sans l'image de la course, le texte des records arriverait seul : il attend un renvoi.
     if (runStatus === "failed")

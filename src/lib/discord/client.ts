@@ -14,25 +14,15 @@ export type DiscordEmbed = {
   timestamp?: string
 }
 
-/** Bouton lien (style 5) : seul composant qu'un webhook non applicatif peut envoyer. */
-export type DiscordLinkButton = {
-  type: 2
-  style: 5
-  label: string
-  url: string
-}
-
 export type DiscordMessage = {
   content?: string
   embeds: DiscordEmbed[]
-  components?: { type: 1; components: DiscordLinkButton[] }[]
 }
 
 const discordFetch = up(fetch, () => ({
   baseUrl: env.DISCORD_WEBHOOK_URL,
   // `wait=true` : Discord renvoie le message créé, donc une vraie erreur si le corps est refusé.
-  // `with_components=true` : sans lui, un webhook non applicatif ignore les boutons.
-  params: { wait: true, with_components: true },
+  params: { wait: true },
   retry: {
     attempts: 2,
     delay: 1000,
