@@ -43,9 +43,9 @@
 URLs via the `og*Route` helpers in `routes.ts`). **Embeds are image-first**: no author, title,
 description, footer or timestamp — the image carries all that. Text only for what the image
 can't show: ranking lines beyond `OG_MAX_RANKING`, recap records beyond
-`OG_MAX_RECAP_RECORDS`. The run embed is the image alone, plus a « Voir la course » link button (`components`,
-webhook called with `with_components=true`) (gold when it sets
-records); the records follow as a separate `record.set` text message.
+`OG_MAX_RECAP_RECORDS`. The run embed adds a one-line `title` (name, distance, duration, pace)
+linking to the run: without text the phone push notification is empty. Gold when it sets
+records; the records follow as a separate `record.set` text message.
 
 - `/api/og/run/[runId]` — full-height map on the left (route as SVG over Esri « Dark Gray »
   raster tiles, free, no key, attribution drawn; `src/lib/maps/raster-tiles.ts`), panel on the

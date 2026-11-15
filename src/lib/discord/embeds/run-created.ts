@@ -1,34 +1,38 @@
 import { ogRunRoute, runRoute } from "@/lib/constants/routes"
+import {
+  formatRunDistance,
+  formatRunDurationDisplay,
+  formatRunPace,
+} from "@/lib/utils/run"
 import type { DiscordMessage } from "../client"
 import { BRAND_COLOR, RECORD_COLOR } from "./common"
 
+export type RunCreatedData = {
+  runId: string
+  hasRecords: boolean
+  userName: string
+  distance: number // mètres
+  duration: number // secondes
+  pace: number // s/km
+}
+
 /**
- * Image seule : coureur, course, date et stats sont dessinés dessus. Les records partent
- * ensuite dans un message texte à part (`buildRecordSetMessage`). Un bouton mène à la course.
+ * L'image porte coureur, course, date et stats. Le titre de l'embed les résume quand même
+ * (sans lui, la notification push sur téléphone arrive vide) et sert de lien vers la course.
+ * Les records partent ensuite dans un message texte à part (`buildRecordSetMessage`).
  */
 export function buildRunCreatedMessage(
-  data: { runId: string; hasRecords: boolean },
+  data: RunCreatedData,
   appUrl: string,
 ): DiscordMessage {
   const base = appUrl.replace(/\/$/, "")
   return {
     embeds: [
       {
+        title: `${data.userName} a couru ${formatRunDistance(data.distance)} km en ${formatRunDurationDisplay(data.duration)} (${formatRunPace(data.pace)}/km)`,
+        url: base + runRoute(data.runId),
         color: data.hasRecords ? RECORD_COLOR : BRAND_COLOR,
         image: { url: base + ogRunRoute(data.runId) },
-      },
-    ],
-    components: [
-      {
-        type: 1,
-        components: [
-          {
-            type: 2,
-            style: 5,
-            label: "Voir la course",
-            url: base + runRoute(data.runId),
-          },
-        ],
       },
     ],
   }
